@@ -1,7 +1,0 @@
--- CreateTable
-CREATE TABLE "BillingPeriod" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "from" DATETIME NOT NULL,
-    "to" DATETIME NOT NULL,
-    "closedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
