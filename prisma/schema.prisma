@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Ingredient {
+  id        String   @id @default(cuid())
+  name      String
+  unit      String
+  unitPrice Int
+  order     Int      @default(0)
+  archived  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  entries   Entry[]
+}
+
+model Entry {
+  id           String     @id @default(cuid())
+  ingredientId String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  date         DateTime
+  quantity     Float
+  createdAt    DateTime   @default(now())
+
+  @@index([ingredientId, date])
+}
+
+model BillingPeriod {
+  id       String   @id @default(cuid())
+  from     DateTime
+  to       DateTime
+  closedAt DateTime @default(now())
+}
