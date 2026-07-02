@@ -150,9 +150,8 @@ export default function DailyEntryPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <input
-                      type="number"
+                      type="text"
                       inputMode="decimal"
-                      step="any"
                       placeholder="mennyiség"
                       value={inputs[ing.id] ?? ""}
                       onChange={(e) =>
