@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
 import UpdateNotifier from "@/components/UpdateNotifier";
+import BottomNav from "@/components/BottomNav";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,12 +19,6 @@ export const metadata: Metadata = {
   description: "Alapanyag-nyilvántartó",
 };
 
-const navItems = [
-  { href: "/", label: "Rögzítés" },
-  { href: "/alapanyagok", label: "Alapanyagok" },
-  { href: "/osszesites", label: "Összesítő" },
-];
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -35,27 +29,19 @@ export default function RootLayout({
       lang="hu"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-neutral-50 text-yellow-500">
-        <header className="border-b border-neutral-200 bg-white sticky top-0 z-10">
-          <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
-            <span className="font-semibold text-lg text-yellow-500">Partiko</span>
-            <nav className="flex gap-4 text-sm">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="text-neutral-600 hover:text-neutral-900"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+      <body className="min-h-full flex flex-col bg-neutral-50">
+        <header className="bg-black sticky top-0 z-10">
+          <div className="max-w-3xl mx-auto px-4 py-4">
+            <span className="font-bold text-xl tracking-tight text-yellow-400">
+              Partiko
+            </span>
           </div>
         </header>
-        <main className="flex-1 max-w-3xl w-full mx-auto px-4 py-6">
+        <main className="flex-1 max-w-3xl w-full mx-auto px-4 py-6 pb-28">
           {children}
         </main>
         <UpdateNotifier />
+        <BottomNav />
       </body>
     </html>
   );

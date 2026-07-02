@@ -84,13 +84,13 @@ export default function IngredientsPage() {
     <div className="space-y-8">
       <section>
         <h2 className="text-lg font-semibold mb-3">Új alapanyag</h2>
-        <form onSubmit={createIngredient} className="flex flex-wrap gap-2 items-end">
+        <form onSubmit={createIngredient} className="flex flex-wrap gap-3 items-end">
           <div>
             <label className="block text-xs text-neutral-500 mb-1">Név</label>
             <input
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              className="border border-neutral-300 rounded-md px-3 py-2 text-sm"
+              className="border border-neutral-300 rounded-xl px-3 py-2.5 text-base"
               placeholder="pl. Csirkeszárny"
             />
           </div>
@@ -99,7 +99,7 @@ export default function IngredientsPage() {
             <input
               value={form.unit}
               onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))}
-              className="border border-neutral-300 rounded-md px-3 py-2 text-sm w-24"
+              className="border border-neutral-300 rounded-xl px-3 py-2.5 text-base w-24"
               placeholder="kg / db / l"
             />
           </div>
@@ -109,13 +109,13 @@ export default function IngredientsPage() {
               type="number"
               value={form.unitPrice}
               onChange={(e) => setForm((f) => ({ ...f, unitPrice: e.target.value }))}
-              className="border border-neutral-300 rounded-md px-3 py-2 text-sm w-28"
+              className="border border-neutral-300 rounded-xl px-3 py-2.5 text-base w-28"
               placeholder="1350"
             />
           </div>
           <button
             type="submit"
-            className="bg-neutral-900 text-white text-sm px-4 py-2 rounded-md"
+            className="bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500"
           >
             Hozzáadás
           </button>
@@ -142,7 +142,7 @@ export default function IngredientsPage() {
             {visible.map((ing) => (
               <li
                 key={ing.id}
-                className={`border border-neutral-200 bg-white rounded-lg p-3 ${
+                className={`border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm ${
                   ing.archived ? "opacity-50" : ""
                 }`}
               >
@@ -153,14 +153,14 @@ export default function IngredientsPage() {
                       onChange={(e) =>
                         setEditForm((f) => ({ ...f, name: e.target.value }))
                       }
-                      className="border border-neutral-300 rounded-md px-2 py-1 text-sm"
+                      className="border border-neutral-300 rounded-xl px-3 py-2 text-base"
                     />
                     <input
                       value={editForm.unit}
                       onChange={(e) =>
                         setEditForm((f) => ({ ...f, unit: e.target.value }))
                       }
-                      className="border border-neutral-300 rounded-md px-2 py-1 text-sm w-20"
+                      className="border border-neutral-300 rounded-xl px-3 py-2 text-base w-20"
                     />
                     <input
                       type="number"
@@ -168,41 +168,41 @@ export default function IngredientsPage() {
                       onChange={(e) =>
                         setEditForm((f) => ({ ...f, unitPrice: e.target.value }))
                       }
-                      className="border border-neutral-300 rounded-md px-2 py-1 text-sm w-24"
+                      className="border border-neutral-300 rounded-xl px-3 py-2 text-base w-24"
                     />
                     <button
                       onClick={() => saveEdit(ing.id)}
-                      className="bg-neutral-900 text-white text-xs px-3 py-1.5 rounded-md"
+                      className="bg-yellow-400 text-black font-semibold text-sm px-4 py-2.5 rounded-xl active:bg-yellow-500"
                     >
                       Mentés
                     </button>
                     <button
                       onClick={() => setEditingId(null)}
-                      className="text-xs px-3 py-1.5 rounded-md border border-neutral-300"
+                      className="text-sm px-4 py-2.5 rounded-xl border border-neutral-300"
                     >
                       Mégse
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <span className="font-medium">{ing.name}</span>
+                      <span className="font-semibold text-base">{ing.name}</span>
                       <span className="text-xs text-neutral-500 ml-2">
                         {ing.unit} · {ing.unitPrice.toLocaleString("hu-HU")} Ft/
                         {ing.unit}
                         {ing.archived ? " · archiválva" : ""}
                       </span>
                     </div>
-                    <div className="flex gap-2 text-xs">
+                    <div className="flex gap-2 text-sm">
                       <button
                         onClick={() => startEdit(ing)}
-                        className="px-3 py-1.5 rounded-md border border-neutral-300"
+                        className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-neutral-300 active:bg-neutral-100"
                       >
                         Szerkesztés
                       </button>
                       <button
                         onClick={() => toggleArchive(ing)}
-                        className="px-3 py-1.5 rounded-md border border-neutral-300"
+                        className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-neutral-300 active:bg-neutral-100"
                       >
                         {ing.archived ? "Visszaállítás" : "Archiválás"}
                       </button>

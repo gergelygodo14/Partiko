@@ -115,7 +115,7 @@ export default function DailyEntryPage() {
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="border border-neutral-300 rounded-md px-3 py-2 text-sm"
+            className="border border-neutral-300 rounded-xl px-3 py-2.5 text-base"
           />
         </div>
       </div>
@@ -138,11 +138,11 @@ export default function DailyEntryPage() {
             return (
               <li
                 key={ing.id}
-                className="border border-neutral-200 bg-white rounded-lg p-4"
+                className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm"
               >
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <div className="font-medium">{ing.name}</div>
+                    <div className="font-semibold text-base">{ing.name}</div>
                     <div className="text-xs text-neutral-500">
                       {ing.unit} · {ing.unitPrice.toLocaleString("hu-HU")} Ft/
                       {ing.unit}
@@ -163,12 +163,12 @@ export default function DailyEntryPage() {
                       onKeyDown={(e) => {
                         if (e.key === "Enter") addEntry(ing.id);
                       }}
-                      className="w-24 border border-neutral-300 rounded-md px-2 py-2 text-sm text-right"
+                      className="flex-1 sm:w-24 sm:flex-none border border-neutral-300 rounded-xl px-3 py-3 text-base text-right"
                     />
                     <button
                       onClick={() => addEntry(ing.id)}
                       disabled={savingId === ing.id}
-                      className="bg-neutral-900 text-white text-sm px-3 py-2 rounded-md disabled:opacity-50"
+                      className="bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500 disabled:opacity-50 whitespace-nowrap"
                     >
                       Hozzáadás
                     </button>
@@ -180,19 +180,19 @@ export default function DailyEntryPage() {
                     {todays.map((e) => (
                       <span
                         key={e.id}
-                        className="inline-flex items-center gap-1 bg-neutral-100 rounded-full px-3 py-1"
+                        className="inline-flex items-center gap-1.5 bg-neutral-100 rounded-full pl-3 pr-1.5 py-1.5"
                       >
                         {e.quantity.toLocaleString("hu-HU")}
                         <button
                           onClick={() => removeEntry(e.id)}
-                          className="text-neutral-400 hover:text-red-600"
+                          className="text-neutral-400 active:text-red-600 w-6 h-6 flex items-center justify-center rounded-full"
                           aria-label="Törlés"
                         >
                           ×
                         </button>
                       </span>
                     ))}
-                    <span className="text-neutral-500">
+                    <span className="text-neutral-500 flex items-center">
                       = {sum.toLocaleString("hu-HU")} {ing.unit}
                     </span>
                   </div>

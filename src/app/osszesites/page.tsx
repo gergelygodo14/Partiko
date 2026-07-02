@@ -55,23 +55,23 @@ function SummaryTable({ summary }: { summary: Summary | null }) {
     return <p className="text-neutral-500">Nincs rögzített adat ebben az időszakban.</p>;
   }
   return (
-    <div className="border border-neutral-200 bg-white rounded-lg overflow-hidden">
+    <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm">
       <table className="w-full text-sm">
         <thead className="bg-neutral-100 text-neutral-600">
           <tr>
-            <th className="text-left px-3 py-2">Alapanyag</th>
-            <th className="text-right px-3 py-2">Mennyiség</th>
-            <th className="text-right px-3 py-2">Érték (Ft)</th>
+            <th className="text-left px-3 py-3">Alapanyag</th>
+            <th className="text-right px-3 py-3">Mennyiség</th>
+            <th className="text-right px-3 py-3">Érték (Ft)</th>
           </tr>
         </thead>
         <tbody>
           {summary.rows.map((r) => (
             <tr key={r.ingredientId} className="border-t border-neutral-100">
-              <td className="px-3 py-2">{r.name}</td>
-              <td className="px-3 py-2 text-right">
+              <td className="px-3 py-3">{r.name}</td>
+              <td className="px-3 py-3 text-right">
                 {r.totalQuantity.toLocaleString("hu-HU")} {r.unit}
               </td>
-              <td className="px-3 py-2 text-right">
+              <td className="px-3 py-3 text-right">
                 {r.totalValue.toLocaleString("hu-HU")}
               </td>
             </tr>
@@ -79,10 +79,10 @@ function SummaryTable({ summary }: { summary: Summary | null }) {
         </tbody>
         <tfoot>
           <tr className="border-t border-neutral-300 font-semibold">
-            <td className="px-3 py-2" colSpan={2}>
+            <td className="px-3 py-3" colSpan={2}>
               Összesen
             </td>
-            <td className="px-3 py-2 text-right">
+            <td className="px-3 py-3 text-right">
               {summary.grandTotal.toLocaleString("hu-HU")} Ft
             </td>
           </tr>
@@ -142,7 +142,7 @@ function OpenPeriodSection() {
         <button
           onClick={closePeriod}
           disabled={closing || !summary || summary.rows.length === 0}
-          className="bg-neutral-900 text-white text-sm px-4 py-2 rounded-md disabled:opacity-50"
+          className="w-full sm:w-auto bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500 disabled:opacity-50"
         >
           Tételek leszámlázva
         </button>
@@ -189,7 +189,7 @@ function HistorySection() {
           <li key={p.id}>
             <button
               onClick={() => select(p)}
-              className="w-full text-left border border-neutral-200 bg-white rounded-lg p-3 text-sm hover:bg-neutral-50"
+              className="w-full text-left border border-neutral-200 bg-white rounded-2xl p-4 text-sm active:bg-neutral-100"
             >
               {formatDate(p.from)} – {formatDate(p.to)}
               <span className="text-neutral-400 ml-2">
@@ -236,22 +236,22 @@ function AdHocSection() {
     <section className="space-y-3">
       <h2 className="text-lg font-semibold">Egyéni lekérdezés</h2>
       <div className="flex flex-wrap items-end gap-3">
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => setPreset("day")}
-            className="text-sm px-3 py-2 rounded-md border border-neutral-300"
+            className="text-sm px-4 py-2.5 rounded-xl border border-neutral-300 active:bg-neutral-100"
           >
             Ma
           </button>
           <button
             onClick={() => setPreset("week")}
-            className="text-sm px-3 py-2 rounded-md border border-neutral-300"
+            className="text-sm px-4 py-2.5 rounded-xl border border-neutral-300 active:bg-neutral-100"
           >
             Ez a hét
           </button>
           <button
             onClick={() => setPreset("month")}
-            className="text-sm px-3 py-2 rounded-md border border-neutral-300"
+            className="text-sm px-4 py-2.5 rounded-xl border border-neutral-300 active:bg-neutral-100"
           >
             Ez a hónap
           </button>
@@ -263,7 +263,7 @@ function AdHocSection() {
               type="date"
               value={from}
               onChange={(e) => setFrom(e.target.value)}
-              className="border border-neutral-300 rounded-md px-2 py-2 text-sm"
+              className="border border-neutral-300 rounded-xl px-3 py-2.5 text-base"
             />
           </div>
           <div>
@@ -272,7 +272,7 @@ function AdHocSection() {
               type="date"
               value={to}
               onChange={(e) => setTo(e.target.value)}
-              className="border border-neutral-300 rounded-md px-2 py-2 text-sm"
+              className="border border-neutral-300 rounded-xl px-3 py-2.5 text-base"
             />
           </div>
         </div>
