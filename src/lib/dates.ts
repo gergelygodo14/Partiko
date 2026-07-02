@@ -29,3 +29,11 @@ export function addDaysStr(dateStr: string, days: number): string {
   d.setUTCDate(d.getUTCDate() + days);
   return toDayStr(d);
 }
+
+export function mondayOf(dateStr: string): string {
+  const d = parseDay(dateStr);
+  const day = d.getUTCDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setUTCDate(d.getUTCDate() + diff);
+  return toDayStr(d);
+}

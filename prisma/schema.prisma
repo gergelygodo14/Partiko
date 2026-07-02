@@ -40,3 +40,11 @@ model BillingPeriod {
   to       DateTime
   closedAt DateTime @default(now())
 }
+
+model WeeklyMenu {
+  id        String   @id @default(cuid())
+  weekStart DateTime @unique
+  days      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
