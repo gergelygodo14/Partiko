@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Geist, Geist_Mono } from "next/font/google";
 import UpdateNotifier from "@/components/UpdateNotifier";
 import BottomNav from "@/components/BottomNav";
@@ -31,10 +32,15 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-neutral-50">
         <header className="bg-black sticky top-0 z-10">
-          <div className="max-w-3xl mx-auto px-4 py-4">
-            <span className="font-bold text-xl tracking-tight text-yellow-400">
-              Partiko
-            </span>
+          <div className="max-w-3xl mx-auto px-4 py-2 flex items-center">
+            <Image
+              src="/logo-yellow.png"
+              alt="Partiko"
+              width={41}
+              height={50}
+              priority
+              className="h-12 w-auto"
+            />
           </div>
         </header>
         <main className="flex-1 max-w-3xl w-full mx-auto px-4 py-6 pb-28">
