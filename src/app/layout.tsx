@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import UpdateNotifier from "@/components/UpdateNotifier";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -54,6 +55,7 @@ export default function RootLayout({
         <main className="flex-1 max-w-3xl w-full mx-auto px-4 py-6">
           {children}
         </main>
+        <UpdateNotifier />
       </body>
     </html>
   );
