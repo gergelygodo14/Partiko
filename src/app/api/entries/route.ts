@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { dayRange, todayStr } from "@/lib/dates";
+import { isValidDateStr } from "@/lib/validate";
+import { withApiErrorHandling } from "@/lib/apiRoute";
 
-export async function GET(request: NextRequest) {
+export const GET = withApiErrorHandling(async (request: NextRequest) => {
   const date = request.nextUrl.searchParams.get("date") ?? todayStr();
+  if (!isValidDateStr(date)) {
+    return NextResponse.json({ error: "Érvénytelen date" }, { status: 400 });
+  }
   const { gte, lt } = dayRange(date);
 
   const entries = await prisma.entry.findMany({
@@ -12,13 +17,19 @@ export async function GET(request: NextRequest) {
     orderBy: { createdAt: "asc" },
   });
   return NextResponse.json(entries);
-}
+});
 
-export async function POST(request: NextRequest) {
+export const POST = withApiErrorHandling(async (request: NextRequest) => {
   const body = await request.json();
   const { ingredientId, date, quantity } = body;
 
-  if (!ingredientId || !date || typeof quantity !== "number" || quantity <= 0) {
+  if (
+    typeof ingredientId !== "string" ||
+    !ingredientId ||
+    !isValidDateStr(date) ||
+    !Number.isFinite(quantity) ||
+    quantity <= 0
+  ) {
     return NextResponse.json(
       { error: "ingredientId, date és quantity (pozitív szám) mezők kötelezők" },
       { status: 400 }
@@ -34,4 +45,4 @@ export async function POST(request: NextRequest) {
     include: { ingredient: true },
   });
   return NextResponse.json(entry, { status: 201 });
-}
+});

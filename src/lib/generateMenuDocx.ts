@@ -23,7 +23,7 @@ function formatShort(dateStr: string): string {
 }
 
 function optionLine(letter: string, text: string, isGM: boolean): Paragraph {
-  const value = text.trim();
+  const value = typeof text === "string" ? text.trim() : "";
   return new Paragraph({
     children: [
       new TextRun({ text: `${letter}.${value}`, font: BODY_FONT, size: BODY_SIZE, bold: true }),
