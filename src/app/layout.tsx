@@ -32,15 +32,24 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-neutral-50">
         <header className="bg-black sticky top-0 z-10">
-          <div className="max-w-3xl mx-auto px-4 py-2 flex items-center">
+          <div className="max-w-3xl mx-auto px-4 py-2 grid grid-cols-[1fr_auto_1fr] items-center">
             <Image
-              src="/logo-yellow.png"
-              alt="Partiko"
-              width={41}
-              height={50}
+              src="/logo-penguin-yellow.png"
+              alt=""
+              width={661}
+              height={680}
               priority
-              className="h-12 w-auto"
+              className="h-9 w-auto justify-self-start"
             />
+            <Image
+              src="/logo-text-yellow.png"
+              alt="Partiko"
+              width={1061}
+              height={510}
+              priority
+              className="h-11 w-auto"
+            />
+            <div aria-hidden="true" />
           </div>
         </header>
         <main className="flex-1 max-w-3xl w-full mx-auto px-4 py-6 pb-28">
