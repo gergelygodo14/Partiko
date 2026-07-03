@@ -1,0 +1,5188 @@
+[
+  {
+    "title": "12.14.-12.18. 2020-51.doc",
+    "year": 2020,
+    "month": 12,
+    "day": 14,
+    "week": 51,
+    "id": "1vkPOBoAWQGOvz27UXEEGrC2xGm9Ts5vI",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Mézes-mustáros csirkemell tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Baconkrémmel töltött pulykamell burgonyával és káposztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Brokkolis csirkemell főtt jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Zöldséges sertéskaraj tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Tüzes csirkemell basmati rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Gombás-sonkás csirkecomb petrezselymes burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Magyaros csibemáj burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sajttal-sonkával töltött csirkemell zöldséges rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Rakott karfiol",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rántott sajt tartármártással",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Párizsi csirkemell bulgurral és párolt zöldséggel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csőben sült sajtos zöldségek",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Grillezett csirkemell wok zöldséggel ás árpagyönggyel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sokmagvas csirkemellcsíkok rántva burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Brassói aprópecsenye",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "12.21.-12.22. 2020-52.doc",
+    "year": 2020,
+    "month": 12,
+    "day": 21,
+    "week": 52,
+    "id": "1li8UUCJ46AP1ZCcyd5QbAGIJwnCw9HWJ",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Paprikás csirkemell tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Pulykamell steak rántva burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Szecsuáni jérceragu jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Tárkonyos pulykaragu tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Egészben sült sertéskaraj hagymamártással és zöldséges rizzsel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "11.09.-11.13. 2020-46.doc",
+    "year": 2020,
+    "month": 11,
+    "day": 9,
+    "week": 46,
+    "id": "17aUwmkeQYtrjge3LwwjWCQBvIqIT4_Eh",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Borsos tokány tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Párizsi jércefilé petrezselymes burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Vietnami zöldséges csirkemell tojásos rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Baconkrémmel töltött pulykamell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott zöldséges csirkecomb",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Kemencés csirkemell párolt borsóval és répával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Töltött csirkecombfilé forgatott burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Zúzapörkölt nokedlivel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csőben sült sajtos-tejszínes karfiol",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Füstölt sonkával töltött pulykamell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sült sertésoldalas burgonyával és csemegeuborkával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Vaslapos csirkecomb káposzta salátával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Fokhagymás aprópecsenye",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sajttal töltött baconba göngyölt csirkemell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Paradicsomos penne",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "11.30.-12.04. 2020-49.doc",
+    "year": 2020,
+    "month": 11,
+    "day": 30,
+    "week": 49,
+    "id": "1Ip7iqiDGnAbLCKj-PfEVZAWdqDa7r7lF",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Bakonyi gombás csirkecomb tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sokmagvas csirkemell rántva burgonyával és lila káposztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Szójaszószos-pfefferonis csirkemell jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rántott sajt tartár mártással és tejfölös burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott karfiol",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pesztós darált szárnyasragu főtt durum tésztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Temesvári sertésborda árpagyönggyel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sonkával töltött csirkemell rántva chilis rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Genovai pulykamell penne tésztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Lasagna",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Zöldségbundás csirkemell főtt rizzsel és ceruzababbal",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Újhagymás-sajtos csirkemell paradicsomos bulgurral",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rozmaringos-tejfölös pulykaragu párolt rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sertéskaraj Orly-módra hagymás burgonyával és párolt répával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Narancsos jércefilé steak burgonyával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "10.12.-10.16. 2020-42.doc",
+    "year": 2020,
+    "month": 10,
+    "day": 12,
+    "week": 42,
+    "id": "18Crkn8zKt8P4_crfaBOXyR5hlhftpvu-",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Korianderes csirkemell jázmin rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Vörösboros csirkecomb tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Háromízű sertéskaraj steak burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Székelykáposzta árpagyönggyel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Körözöttel töltött csirkemell magvas bundában petrezselymes burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Rakott zöldbab",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Brassói aprópecsenye",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Ropogós csirkecomb rozmaringos burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csibemájjal töltött pulykamell tejfölös burgonyapürével",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Mexikói chilis bab",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Paradicsomos fasírtgolyók főtt burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Champion gomba paprikás tarhonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Gyros tokány sáfrányos rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Tárkonyos pulykaragu durum tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Vaslapos csirkemell grill zöldséggel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "09.07.-09.11. 2020-37.doc",
+    "year": 2020,
+    "month": 9,
+    "day": 7,
+    "week": 37,
+    "id": "1vHN-jiMNmqVfQZrW8_eV5KjU2S1cUduI",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Pácolt csirkecomb brokkolival és főtt rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Kemencés sertéskaraj parasztos burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Mexikói húsos chilis bab",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Pizzaiola pulykamell párolt rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Kijevi jércemell gratin burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "PAD-THAI csirkemell jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Csirkecombcsíkocskák zöldséges rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Egészben sült karaj párolt káposztával és hagymás burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csőben sült zöldségek trappista sajttal",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Vaslapos csirkemell cukkinivel és petrezselymes burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott erdélyi káposzta",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Rántott camambert áfonya lekvárral",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sajtos–húsos ropogós grill zöldségekkel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Frankfurti sertésragu tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Brassói aprópecsenye",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "09.14.-09.18. 2020-38.doc",
+    "year": 2020,
+    "month": 9,
+    "day": 14,
+    "week": 38,
+    "id": "1U1qAjW03Y6W4ga2MY7tnqKkkYcWuJgfQ",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Mustáros csirkemellcsíkok rántva bébirépával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Szerb gyuvecs",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pekingi csirke sült tojásos rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Goudával töltött sertéskaraj rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Máltai tonhalas tészta",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Kemencés mézes csirkecomb tarhonyával és párolt zöldséggel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rakott karfiol",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Zsályás csirkecombragu káposztás tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Zöldséges csibefasírt steak burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sajttal-baconnal töltött csirkemell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Lecsós csibemáj burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Vaslapos csirkecomb almafőzelékkel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Wingz csirkeszárnyak",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Barbecue csirkecombfilé tzatzikivel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Milánói makaróni",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "11.16.-11.20. 2020-47.doc",
+    "year": 2020,
+    "month": 11,
+    "day": 16,
+    "week": 47,
+    "id": "16iHSt-fBjTkJ2atjzx8YsBNQG-00AZO2",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Szárnyashúsos rakott zöldséges rizs",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sokmagvas bundában rántott pulykamell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Tárkonyos csirkemell főtt durum tésztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sonkakrémmel töltött pulykamell rántva gratin burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott burgonya",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Sült csirkecomb párolt almás káposztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Velővel töltött pulykamell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Kemencés zöldséges sertéskaraj durum tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Rántott sajt burgonyapürével és tiroli káposztasalátával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Chilis bab",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csirkemell Hawaii-módra",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Túrós csusza szalonnapörccel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Bolognai spagetti",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sajtbundás csirkemell zöldséges bulgurral",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Vaslapos csirkemellcsíkok grill zöldséggel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "10.26.-10.30. 2020-44.doc",
+    "year": 2020,
+    "month": 10,
+    "day": 26,
+    "week": 44,
+    "id": "1H8r1t1NvpBMkmkoT9GZ4B2JtTdmAvmWb",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sajttal-sonkával töltött pulykamell rántva alma és répa pürével",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Veronai jércecomb tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Vaslapos csirkemell tejszínes brokkolival és baconos burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Szalonnába göngyölt pulykamell forgatott burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Zöldséges sertéskaraj makarónival",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Tejfölös-gombás karfiol (vega)",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sertéspörkölt pirított tarhonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Füstölt sajttal töltött csirkemell steak burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Roston csirkecombfilé rizzsel és zöldborsóval",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Mozzarellával-pesztóval töltött jércefilé zöldséges burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Egészben sült karaj tejfölös-kapros mártással",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Tejszínes-baconos csirkés penne",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Csőben sült sajtos brokkoli",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Hagymás-sonkás szárnyasmáj tört burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Grillezett csirkemell tárkonyos török joghurttal,paprikás jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "11.02.-11.06. 2020-45.doc",
+    "year": 2020,
+    "month": 11,
+    "day": 2,
+    "week": 45,
+    "id": "1O3dD6ZOcyfAJx4K9vFVb_35F-akmLqeA",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rakott zöldséges csirkemell",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Erdei mézes jércecomb almaszósszal",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Baconos-hagymás rántott pulykamell kukoricás jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Pulykacombpörkölt kagylótésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sokmagvas rántott sajt szegedi burgonyasalátával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Zöldborsófőzelék fasírttal",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Paraszt kolbászos paprikás burgonya nokedlivel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Lasagna",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Szalonnás csibemáj burgonyapürével",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Székelykáposzta tejföllel és árpagyönggyel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csirkemellcsíkok rántva petrezselymes burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pleskavica ajvárral pirított hagymás burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Gyros tokány bulgurral",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Wingz csirkemell rántva párolt zöldséggel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Tüzes pfefferonis csirkemell jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "12.07.-12.11. 2020-50.doc",
+    "year": 2020,
+    "month": 12,
+    "day": 7,
+    "week": 50,
+    "id": "1dcA_crq00OAOdF_tm3CUY0zbTXFHzJAK",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rakott mexikói húsos rizs",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sajttal töltött csirkemell rántva petrezselymes burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Zsályás-citromos pulykaragu tésztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Bolognai spagetti",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Juhtúróval töltött csirkemell hagymás-kínai keles bulgurral",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Dubarry pulykamell burgonyapürével",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Buffalo csirkeszárny zöldséges jázmin rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Kemencés sertéscsülök burgonyával, paprika mártással",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Sajtos-húsos ropogós vegyes körettel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Egészben sült barbecue sertéskaraj burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Kapros-tejszínes csirkecomb tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Paprikás csirkemell káposztás árpagyönggyel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sokmagvas rántott sajt burgonyával és bébirépával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Vaslapos jércecomb forgatott burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csirkemell pirított gombával és párolt rizzsel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "10.05.-10.09. 2020-41.doc",
+    "year": 2020,
+    "month": 10,
+    "day": 5,
+    "week": 41,
+    "id": "1Y7EFRGu0zi4gyZ-k-7gkEhQfnPco-ioo",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sokmagvas pulykamell párolt rizzsel és szőlőmártással",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Firenzei csirkemell spagettivel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Sült csirkecombfilé burgonyával és párolt káposztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Vaslapos csibemáj hagymás burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Zöldfűszeres sajtkrémmel töltött csirkemell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Magyaros rizses hús csemegeuborkával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Egészben sült csirkemell mustáros mártásban tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott karfiol",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Stefánia vagdalt uborkasalátával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Malacsült lecsós burgonyával és hagymamártással",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Bolognai palacsinta vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csípős-savanyú csirkemell jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Milánói sertésborda",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Barbecue ropogós párolt zöldséggel és burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Rántott sajt joghurtos vitaminsalátával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "09.21.-09.25. 2020-39.doc",
+    "year": 2020,
+    "month": 9,
+    "day": 21,
+    "week": 39,
+    "id": "1XrlGmyxi7pFlWhMFRWC29Jjl0ScApWVc",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Thai citromfüves csirke sült zöldséges tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Bundázott csirkecombfilé zelleres pürével",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Rakott kel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Kolbászos pulykaragu tarhonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Füstölt sajt rántva burgonyapürével, tartármártással",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Sertéssült pirított burgonyával és párolt elzászi káposztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Édes-savanyú csirke gőzölt rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Currys csirke züld salátával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Rántott cukkini joghurtos öntettel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rakott zöldséges csirkemell",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Citromos pulykaragu túrós tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Hawaii csirkemell főtt rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sajtos csibefasírt rolád paradicsomos burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csabai kolbászhússal töltött csirkemell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Gombapaprikás tojásos nokedlivel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "09.28.-10.02. 2020-40.doc",
+    "year": 2020,
+    "month": 9,
+    "day": 28,
+    "week": 40,
+    "id": "19AJlHog9LLPpF7jy6B95T860BFpuBd99",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Töltött paprika főtt burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Fetás csirkecombfilé vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Mexikói csirkemell párolt rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rakott burgonya",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sajttal-sonkával töltött pulykamell rántva milánói tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csőben sült sajtos zöldségek",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sertéscomb Pékné-módra",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Velővel töltött palacsinta petrezselymes burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Zöldséges ropogós rizzsel és fokhagymás majonézzel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Juhtúróval töltött pulykamell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Hemtes tokány pirított tarhonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Zöldborsófőzelék csibefasírttal",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sertéskaraj berlini-módra vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Pleskavica forgatott burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Natúr csirkemell salátával és zöldséges bulgurral",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "10.19.-10.22. 2020-43.doc",
+    "year": 2020,
+    "month": 10,
+    "day": 19,
+    "week": 43,
+    "id": "1heurD0h592wpKU80cnCO_UsYIxMKltId",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Palócragu tepsis burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csirkemellpaprikás tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Zöldséges rizses hús",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rakott burgonya",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Mustáros pulykamell rántva hagymás burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Szecsuáni csirke jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rántott sajt burgonyapürével és tartármártással",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Wok zöldséges csirkecomb párolt rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csirkemell cheddar sajtmártással és spagettivel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Tonhalas-paradicsomos makaróni",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Alföldi sertéskaraj tarhonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Zöldségfasírt burgonyasalátával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "08.31.-09.04. 2020-36.doc",
+    "year": 2020,
+    "month": 8,
+    "day": 31,
+    "week": 36,
+    "id": "1ULAxgpKQdwhwhAb8FEu6s-S02bS2Ij9b",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Roston csirkemell sajtos cukkinivel és pesztós rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Szezámos csirkemell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Tejszínes-zöldséges sertéskaraj",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sonkás rántott sajttekercs burgonyával és tartármártással",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Bajor zöldséges fasírt burgonyasalátával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Székelygulyás gerslivel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Resztelt csibemáj hagymás burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Lasagna",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pulykamell pirított gombával, rizi-bizivel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Csirkecombfilé sajtos burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott zöldséges csirkemell",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Újhagymás-sajtos jércemell paradicsomos pennével",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Temesvári sertésborda tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Barbecue pulykacomb forgatott burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Grillezett csirkemell salátával és joghurtos öntettel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "08.24.-08.28. 2020-35.doc",
+    "year": 2020,
+    "month": 8,
+    "day": 24,
+    "week": 35,
+    "id": "1sV6jA5hBvkfWQWJlzcYSxZ1I7J4iehkU",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Bakonyi gombás ragu tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sajttal-sonkával töltött csirkemell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Cornflakes-ben sült csirkemell kókuszos rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Falusi göngyölt csirke vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott karfiol",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Vaslapos csirkecomb grill zöldséggel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Párizsi sertéskaraj párolt répával és rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Dubarry pulykamell burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Török joghurtos csirkecomb bulgurral",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Paprikás burgonya kolbásszal és savanyúsággal",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Tüzes csirkemell főtt rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Tzatzikis csirke spanyol burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Borsos tokány tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Almával és sajttal töltött csirkemell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Natúr csirkemell tejszínes cukkinivel és paradicsomos rizzsel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "11.23.-11.27. 2020-48.doc",
+    "year": 2020,
+    "month": 11,
+    "day": 23,
+    "week": 48,
+    "id": "1Gb44h7yLTgAlLkbg8gcwE-3U7s2HdA8Z",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Magyaros paprikás gulyás tarhonyával, csemegeuborkával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Brassói aprópecsenye",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Édes-savanyú csirkemell jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Paradicsomos húsgombóc",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csirkemellfilé toszkán-módra penne tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Mézes-mustáros csirkemell tojásos rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Köményes sertéskaraj hagymás burgonyával és párolt káposztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Gombás-paprikás pulykaragu tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pizzaiola burgonyával és salátával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Elzászi húsos káposzta",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Kijevi csirkemell burgonyával és tejszínes brokkolival",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Indonéz rizs hússal és zöldséggel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Gyros tokány török joghurtos öntettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Vaslapos jércecomb párolt répával és zöldborsóval",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Baconos-sonkás ragu spagettivel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "07.13-07.17. 2020-29.doc",
+    "year": 2020,
+    "month": 7,
+    "day": 13,
+    "week": 29,
+    "id": "1xfqlo4sTSPHg10a2oyS7hx6zjXMFIBbt",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Vietnami sült rizs csirkével",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Tiszai aprópecsenye",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Fűszeres húsgombóc paradicsomszósszal",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Csongrádi töltött pulykamell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Carbonara spagetti",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Cukkinis csirkés rizs",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Nagymama töltött pulykamelle rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csirkecombfilé zöldséges bulgurral",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Sült csirkés zöldséges tészta",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Dubarry pulyka burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Szezámos csirkemell rántva forgatott burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csípős csirkefilé árpagyönggyel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Currys csirkemell rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sörtésztában sült pulykamell tepsis burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Gyros tál rizzsel és salátával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "08.10.-08.14. 2020-33.doc",
+    "year": 2020,
+    "month": 8,
+    "day": 10,
+    "week": 33,
+    "id": "1oB0llIdCmwvpTMZQG9VaAl9PHRcRDC2O",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Indiai zöldséges csirkemell sült rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csirkecomb rántva zabpelyhes bundában vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Mézes-mustáros csirkemell grill zöldséggel, bulgurral",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Magyaróvári sertéskaraj tejszínes pennével",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott burgonya",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Tejfölös-borsós csirkemell főtt rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Egészben sült tarja párolt hagymával szalvéta gombóccal",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csongrádi töltött pulykamell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Trappista sajt rántva burgonyapürével és tartármártással",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Bolognai spagetti",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Dorozsmai rakott csirkecomb vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Barackos csirkemell burgonyafánkkal",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Kentucky csirkeszárnyak farmer burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sokmagvas pulykacombcsíkok rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Hawaii csirkemell sonkás rizzsel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "08.17.-08.19. 2020-34.doc",
+    "year": 2020,
+    "month": 8,
+    "day": 17,
+    "week": 34,
+    "id": "1WW-j17OS8Do9JL7MZ9WkRtlW-kxEuLWN",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sonkás rakott tészta",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Bácskai rizses hús házi csalamádéval",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Veronai csirke burgonyával és cukkinivel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Kijevi pulykamell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Milánói makaróni",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Svájci zöldséges röszti barbecue csirkével",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Gyros sáfrányos rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Tom-Yam csirke üvegtésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Sült csirkecomb párolt káposztával, steak burgonyával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "05.25.-05.29. 2020-22.doc",
+    "year": 2020,
+    "month": 5,
+    "day": 25,
+    "week": 22,
+    "id": "1mk7syCZWyBsAXfVMVZVTFY-7F7xWZ6wX",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sonkakrémmel töltött csirkemell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Tüzes jércecombfilé rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Brokkolis sertéskaraj tésztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Bolognai spagetti",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Magyaros csibemáj burgonyával és csemegeuborkával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pizzaiola cukkinis rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sokmagvas rántott csirkecomb párolt répával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Trappista sajt rántva majonézes burgonyasalátával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Wok zöldséges csirkemell jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Baconba göngyölt csirkemell sajttal töltve vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sörtésztás sertéskaraj burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Ananászos csirkemell főtt rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Gyros tokány",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sajttal töltött csirkemell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Barbecue csirkecomb párolt zöldséggel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "06.02-06.05 2020-23.doc",
+    "year": 2020,
+    "month": 6,
+    "day": 2,
+    "week": 23,
+    "id": "12q0RJ1fXi2hKpO6e9ILqnd5xxGeQTKwH",
+    "days": [
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Gombapaprikás tejfölös spagettivel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csibemájjal töltött csirkemell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Tárkonyos pulykacombragu durum tésztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Kentucky csirkeszárnyak steak burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Lasagna",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Rakott brokkoli",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Indiai édes-savanyú csirkecomb rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csülök Pékné-módra lecsós burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Zúzapörkölt nokedlivel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Mátrai borzaska (tócsniban sült csirkemell)",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Brassói aprópecsenye",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Mézes-chilis csirkecombfilé steak burgonyával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "06.15-06.19. 2020-25.doc",
+    "year": 2020,
+    "month": 6,
+    "day": 15,
+    "week": 25,
+    "id": "1ixkSCgvNqRGHeLE83tagxxpmsAYfb_P1",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rakott zöldséges csirkemell",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Pásztor tarhonya",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Sajtos-tejfölös párizsi csirkemell burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Csáki szalmájával töltött jércemell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Lecsós sertéskaraj",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Eszterházy szelet makarónival",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sült csirkecomb vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Pontypaprikás tépett csuszával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Hawaii csirkemell rizzsel és salátával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Falusi göngyölt csirkemell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Cigánypecsenye serpenyős burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Rántott karfiol salátával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Csirkecombfilé Budapest-módra",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csibefasírt burgonyával és káposztasalátával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Grillezett csirkemell csíkok párolt zöldséggel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "08.03.-08.07. 2020-32.doc",
+    "year": 2020,
+    "month": 8,
+    "day": 3,
+    "week": 32,
+    "id": "1_CUqnq3hP1CpGe0vayQ0hGgk6xZ6D82p",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Provance-i sertéskaraj gombás rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Baconkrémmel töltött pulykamell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csípős csirkemell tésztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rakott karfiol",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Camambert sajt rántva burgonyapürével és lekvárral",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csirkés Pad-Thai",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sajtos csirkecombfilé kerti zöldekkel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Lecsós csibemáj hagymás burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Brokkolis jércecomb vegyes körettel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sertéscsülök sütve burgonyasalátával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Stefánia vagdalt tepsis burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Grillezett csirkecomb sült almával és petrezselymes rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Barbecue csirkecombfilé steak burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Tiszai aprópecsenye basmati rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Mentás zöldborsófőzelék csirkemellel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "05.11-05.15. 2020-20.doc",
+    "year": 2020,
+    "month": 5,
+    "day": 11,
+    "week": 20,
+    "id": "1RORrwlOKij4SGsafTEfbIiYDwHghmNsp",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Snidlingkrémmel töltött pulykamell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Fokhagymás aprópecsenye steak burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Rakott zöldséges csirkemell",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rakott brokkoli",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Bolognai palacsinta rántva párolt zöldséges rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Ropogós csirkemellcsíkok burgonyapürével",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Zöldségbundás csirkemell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rántott trappista sajt tartármártással",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Dubarry csirkemell vegyes körettel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sajtkrémmel töltött sertéskaraj vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Dijoni mustáros csirkecombfilé tepsis burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Wok zöldséges jércemell rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Szegedi rizses hús",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Tejszínes-gombás pulykamell durum tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Sokmagvas csirkecombfilé rántva káposztasalátával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "07.20-07.24. 2020-30.doc",
+    "year": 2020,
+    "month": 7,
+    "day": 20,
+    "week": 30,
+    "id": "1RgRoahzjAKMXtMhVSBKdM26Vd4etX5vZ",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Temesvári sertéskaraj rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Mozzarellával töltött pulykamell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Veronai csirkemell pennével",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Kapros túróval töltött rántott sajt burgonyapürével és tartármártással",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott burgonya",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pizzaiola szelet vegyes körettel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Vaslapos csirkecombfilé kreol raguval",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Római köményes csirkecsík rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Cukkinis csirkemell tésztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rakott zöldbab",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Bajor fasírt szezámos bundában vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Grillezett csirkemellszelet bazsalikomos paradicsomsalátával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Lecsós sertéskaraj rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csípős-savanyú ragu rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Tandori csirkemell tésztával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "05.18-05.22. 2020-21.doc",
+    "year": 2020,
+    "month": 5,
+    "day": 18,
+    "week": 21,
+    "id": "1WfoYUFfTFEhBbaeKDghuXeLUroF4Oevp",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sertéspörkölt tarhonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sajttal-sonkával töltött pulykamell párolt répával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Cukkinis csirkemell rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sajtos zöldséges rakott rizses hús",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Szezámos rántott pulykamell uborkasalátával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Barbecue csirkemell chilis burgonyapürével",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rakott burgonya",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sajtos-húsos ropogós párolt zöldséggel és rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csőben sült brokkolis csirke",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Mustáros sertéskaraj durum tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sült csirkecomb párolt káposztával és új burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Vaslapos jércecsíkok főtt rizzsel, ezersziget mártással",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Berlini töltött pulykamell rántva párolt baconos ceruzababbal",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Párizsi csirkemell steak burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Sonkás-sajtos paradicsomos penne",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "07.06-07.10. 2020-28.doc",
+    "year": 2020,
+    "month": 7,
+    "day": 6,
+    "week": 28,
+    "id": "1iRXfKAP1kr7vPdBMT6vCfCyW_CzYgbYf",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rántott csirkecomb petrezselymes burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Bácskai rizses hús",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Grillezett csirkemell csípős pennével",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Falusi sertéskaraj nokedlivel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csirkecombpaprikás túrós csuszával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Tejszínes-kapros csirkemell rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rántott sajt vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Zöldségbundás csirkemell forgatott burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Barbecue csirkeszárny steak burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Vaslapos csirkecomb párolt zöldséggel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Baconkrémmel töltött pulykamell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Rakott sonkás tészta",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Görög fasírt salátával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sajtbundás csirkemell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Rántott cukkini párolt répával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "06.29.-07.03. 2020-27.doc",
+    "year": 2020,
+    "month": 6,
+    "day": 29,
+    "week": 27,
+    "id": "12dh253b2af_wHOv_70GRC-WjZZ9ZvZX7",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sertéscombpaprikás tarhonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sonkával töltött pulykamell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Zöldborsós csirkemell rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Thai zöldséges ragu rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Lasagna",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Baconbe tekert pulykamellfilé steak burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sokmagvas csirkecombcsíkocskák burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Bakonyi sertéskaraj tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csőben sült karfiol",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Füstölt sajtkrémmel töltött pulykamell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sült csirkecomb párolt káposztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Grillezett csirkemell párolt zöldséggel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Bazsalikomos fasírtgolyócskák joghurtos vitaminsalátával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Lecsós csirkecombfilé főtt burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Barbecue csirkemell jázmin rizzsel és salátával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "06.22-06.26. 2020-26.doc",
+    "year": 2020,
+    "month": 6,
+    "day": 22,
+    "week": 26,
+    "id": "1jlxY-jHSEbtwLKJOVtxfTas7DEhyqqT8",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Almás kacsamájjal töltött szelet vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rántott sajt tartármártással és burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Indiai csirkemell főtt rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Kentucky csirkeszárny steak burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rántott csirkecombfilé petrezselymes burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Rakott burgonya",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Mexikói csülkös bab",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Snidlinges-sajtos krémmel töltött pulykamell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Brokkolis-tejfölös csirkemell tésztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sokmagvas ropogós sertéskaraj vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Bolognai spagetti",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Natúr pulykamellszelet tejszínes gombával és burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Barbecue csirkecombfilé forgatott burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Gyros tokány bulgurral",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Rántott cukkini joghurtos salátával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "07.27.-07.31. 2020-31.doc",
+    "year": 2020,
+    "month": 7,
+    "day": 27,
+    "week": 31,
+    "id": "1qaE1UNu_D7lhZQBJMxkXDudscW0oq9Hz",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Mézes sült csirkecomb káposztás csuszával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Baconba tekert csirkemell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Cukkini sajtos bundában sült rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Csirkecombfilé bécsiesen burgonyasalátával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Prágai borda vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Barbecue csirkemell grill zöldségekkel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sonkával töltött sajt rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Pulykapaprikás fűszeres nokedlivel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csirkemell piccata paradicsomos-pesztós rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Wok zöldséges pulykamell rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Milánói csirkemell spagettivel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Mexikói chilis bab",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Kacsamájjal töltött pulykamell petrezselymes burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Kemencés jércecombfilé lecsós burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Görög csirke bulgurral és tzatzikivel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "06.08-06.12. 2020-24.doc",
+    "year": 2020,
+    "month": 6,
+    "day": 8,
+    "week": 24,
+    "id": "13-q2pvfZcQQw9Pij6lInJlq7_FtMla-N",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": []
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Szezámmagos csirkecsíkok rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Borsos tokány rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Cukkinis csirkemell tésztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "B",
+            "text": "Rakott burgonya",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Görögsaláta fetasajttal és pirított csirkecombbal",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Dubarry pulykamell burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott kelkáposzta",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Natúr csirkemell almafőzelékkel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Burgonyás tészta",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sajtbundás csirkemell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Rántott gomba salátával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "04.19.-04.23. 2021-16.doc",
+    "year": 2021,
+    "month": 4,
+    "day": 19,
+    "week": 16,
+    "id": "1XWILuayqPW7bJefiJXejI0gJ32XZOlNN",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Magyaros rizseshús csemegeuborka tzatzikivel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Újhagymás csirkemellragu bulgurral",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Sonkával töltött csirkemell rántva burgonyával és vegyes zöldséggel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Magos kabátban forgatott csirkemell párolt ceruzababbal",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Mexikói sertéskaraj főtt rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Sült csirkecombfilé párolt káposztával és hagymás burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Milánói spagetti",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Pirított csibemáj főtt burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Barbecue csirkemell majonézes zöldborsó salátával és rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Csirkecombfilé rántva sajtmártással és rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Jércemell steak burgonyanudlival",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Zeusz fetás sertéskaraj tejfölös sopszka salátával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sajtbundás csirkemell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Buffalo csirkeszárnyak chilis rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Vaslapos sertéskaraj paprikás burgonyával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "02.01.-02.05. 2021-5.doc",
+    "year": 2021,
+    "month": 2,
+    "day": 1,
+    "week": 5,
+    "id": "1h9ecoR4_oVyIwdZkfUuaBjwcRsO7v3DZ",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sertésborda cheddar sajtos mártással",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sonkakrémmel töltött csirkemell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Tüzes csirkemell basmati rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Dijoni mustáros petrezselymes pulykaragu tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Túrós csusza szalonnapörccel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Kemencés csirkemell tormamártással, hagymás burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Korianderes keleti csirkemell árpagyönggyel és rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Milánói sertésborda",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Fokhagymás csibemáj forgatott burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Trappista sajt rántva burgonyával és salátával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Pikáns-tejfölös sertéskaraj durum tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Indonéz csirke főtt rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Veronai fussilli",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Baconba göngyölt csirkemell sajttal töltve vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Zöldségbundás pulykamell tejszínes párolt zöldséggel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "01.04.-01.08. 2021-1.doc",
+    "year": 2021,
+    "month": 1,
+    "day": 4,
+    "week": 1,
+    "id": "1nG0a4OeD2u_eHOUUp9LeLD253r6OA-Ao",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rakott zöldséges pulykacomb",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sajtkrémmel töltött csirkemell rántva burgonyával és párolt répával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Ázsiai csirke rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Borsos tokány árpagyönggyel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott burgonya",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Mustáros sertéskaraj rántva steak burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rántott sajt tartár mártással és burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott erdélyi káposzta",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Ananászos csirkemell főtt rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Baconba göngyölt csirkemell sajttal töltve vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Pulykamell Orly-módra zöldséges rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pesztós csirkemell penne tésztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sertéscsülök pezsgős káposztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Vaslapos hagymás-kukoricás csirkeragu",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Indonéz rizs hússal zöldséggel és jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "03.16.-03.19. 2021-11.doc",
+    "year": 2021,
+    "month": 3,
+    "day": 16,
+    "week": 11,
+    "id": "1HbiuGebCP_t-jPXu5DFMc79EX8ntWH-u",
+    "days": [
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rakott zöldséges rizses hús",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csirkemellcsík rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Barbecue pulykamell steak burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Juhtúróval töltött csirkemell forgatott burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Boszorkány ragu tarhonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pulykamell tavaszi zöldségágyon mozzarellával pirítva",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sült sertéstarja párolt káposztával és burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Milánói makaróni",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Grillezett csirkemell mustáros-tejfölös öntettel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Brokkolival töltött csirkemell rántva burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sajtos-húsos ropogós vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Kemencés pulykamell tejszínes zöldkörettel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "02.15.-02.19. 2021-7.doc",
+    "year": 2021,
+    "month": 2,
+    "day": 15,
+    "week": 7,
+    "id": "1zVBbCVimfT2qxocrQKByejfPM5U-45W_",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Pulykamell rántva burgonyával és párolt bébirépával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csirkepaprikás tarhonyával és csemegeuborkával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Genovai csirkemell durum tésztával és reszelt sajttal",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Mozzarellával töltött csirkemell rántva tejszínes zöldkörettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Alföldi tejfölös pulykaragu tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Stefánia vagdalt francia salátával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Magyaros csibemáj vaslapos burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rántott trappista sajt fokhagymás burgonyapürével és tartármártással",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csirkés-zöldséges paiella",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Baconbe tekert csirkemell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott burgonya",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Wok zöldséges jércemell jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Chilis aprópecsenye rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Párizsi bundás pulykamell párolt zöldséggel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Natúr csirkemell paradicsomos bulgurral és párolt brokkolival",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "04.06.-04.09. 2021-14.doc",
+    "year": 2021,
+    "month": 4,
+    "day": 6,
+    "week": 14,
+    "id": "1r0GyKtMpg9SU96glTWuuoovAlgAGQ3Y9",
+    "days": [
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Baconos sertéstokány spagettivel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sokmagvas csirkemellcsík rántva hagymás burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "TOM-YAM csirke jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rántott sajt burgonyapürével és tartármártással",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sonkával töltött csirkemell rántva párolt zöldséggel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csípős-savanyú ragu rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Pusztapörkölt tarhonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott brokkoli",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Barbecue csirkecombfilé hagymás-paprikás burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Tejfölös-kapros sertésborda forgatott burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Túrós csusza szalonnapörccel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Grillezett csirkemell cheddar sajtmártással rizi-bizivel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "03.29.-04.01. 2021-13.doc",
+    "year": 2021,
+    "month": 3,
+    "day": 29,
+    "week": 13,
+    "id": "1Kzss09zivyBX6USOcq9DpVWLZjF6wXUf",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Prágai sertéscomb steak burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Zsályás-fokhagymás pulykaragu tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Vaslapos csirkemell rizzsel és párolt zöldborsóval",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Gyulai sertéskaraj vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Tejszínes-gombás-húsos tészta",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Jércefilé újhagymás párolt zöldséggel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Fűszeres csibemáj főtt burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Medvehagymás sajttal töltött pulykamell párolt káposztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Mexikói csirkemell bulgurral",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rakott húsos zöldséges rizs",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Vörösboros pulykapörkölt burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pesztós gombaragu makarónival",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "03.22.-03.26. 2021-12.doc",
+    "year": 2021,
+    "month": 3,
+    "day": 22,
+    "week": 12,
+    "id": "1Sv0cUR3C6jKLqo16zEYGS-UHasSwqDKN",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Csibemájjal töltött csirkemell burgonyával és bébirépával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Gombás sertéscomb párolt zöldséges rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Genovai csirkemell csavart durum tésztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sertéscombpörkölt nokedlivel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott burgonya",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Bolognai spagetti",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Paradicsomos húsgombóc",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rántott trappista sajt majonézes burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Thai kókusztejes csirkemell rizstésztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Egészben sült köményes sertéskaraj",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Medvehagymás fasírtgolyó tejfölös burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Mexikói húsos chilis bab",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Csirkecombfilé roston vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Temesvári sertéscomb metélt tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pleskavica hagymás bulgurral",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "04.12.-04.16. 2021-15.doc",
+    "year": 2021,
+    "month": 4,
+    "day": 12,
+    "week": 15,
+    "id": "1U7ZHBQLP1L0wB0oNIdD_RoYt8G4Q4ywg",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sertéscomb pirított hagymával és burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott zöldséges csirkemell",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Tüzes csirkemellragu borsós rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Pikáns sertéskaraj burgonya nudlival",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Tavaszi zöldséges csirkemell bulgurral",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Genovai ragu makarónival",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Gyros tokány jázmin rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Ropogós sertéskaraj lecsós burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Lasagna",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rántott csirkemell burgonyával és párolt bébirépával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Juhtúróval töltött pulykamell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Indonéz rizses hús",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rántott sajt sokmagvas bundában burgonyával és izlandi salátával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sertéspaprikás tésztával és csemegeuborkával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pulykamell pirított gombával és párolt rizzsel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "01.11.-01.15. 2021-2.doc",
+    "year": 2021,
+    "month": 1,
+    "day": 11,
+    "week": 2,
+    "id": "12NR-7iVCFqD5om1bHywGULGwqTuBflCY",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Genovai csirkemell makarónival",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Pulykamell rántva hagymás burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Tejszínes-zöldborsós sertéskaraj jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Chilis-barbecue csirkeszárny burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Gyros hús rizzsel tzatzikivel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Kemencés csirkemell tejszínes bébirépával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Dubarry csirkemell burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sonkával töltött pulykamell rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Vegyes zöldséges pulykacomb tésztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Trappista sajt rántva petrezselymes burgonyával és salátával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Székelykáposzta",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Wok zöldséges jércemell rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Szegedi rizses hús",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Juhtúróval töltött csirkemell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csirkecombfilé párolt zöldséggel és főtt burgonyával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "03.08.-03.12. 2021-10.doc",
+    "year": 2021,
+    "month": 3,
+    "day": 8,
+    "week": 10,
+    "id": "1EbGMYmZC_lUTnazrEtljUV46gWAPWHcU",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Gombás-sonkás sertéscomb paprikás rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Almával töltött csirkemell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Tejszínes-zöldséges pulykamell tésztával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Berlini sertéskaraj párolt rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Magyaros csibemáj főtt burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Sajtos-sonkás sertéskaraj paradicsomos bulgurral",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Aszalt szilvával töltött pulykamell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Chilis aprópecsenye",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Hentes tokány párolt rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rántott sajt szezámos bundában tartármártással és burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott erdélyi káposzta",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Indiai csirkemell basmati rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Borsos tokány steak burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sonkakrémmel töltött csirkemell vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pesztós pulykamellcsíkocskák tésztával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "03.01.-03.05. 2021-9.doc",
+    "year": 2021,
+    "month": 3,
+    "day": 1,
+    "week": 9,
+    "id": "1A5Eb2NL5KQRzySNXDOn9VjwHnBh6piMg",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rántott sertésborda cheddar sajtmártással és bulgurral",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott zöldséges csirkemell",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Vaslapos csirkemell párolt zöldséggel és burgonyapürével",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Paprikás sertéscomb tarhonyával és káposztasalátával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Bazsalikomos pulykaragu durum tésztával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Sokmagvas rántott sajt tartárral és petrezselymes burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Thai csirkemellcsíkok szezámos bundában párolt zöldkörettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Bolognai spagetti reszelt sajttal",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Kapros túróval töltött csirkemell tört burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Füstölt sajttal töltött pulykamell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Paprikás krumpli kolbásszal és virslivel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pirított gombás pulykamell jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Székelykáposzta tejföllel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Kentucky csirkeszárnyak zöldséges rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Brokkolis-tejszínes csirkemell tésztával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "02.08.-02.12. 2021-6.doc",
+    "year": 2021,
+    "month": 2,
+    "day": 8,
+    "week": 6,
+    "id": "1mUDdOFeY2lslMX1X-W_gRog_-uQAClDS",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Borsos tokány durum tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Velővel töltött csirkemell rántva burgonya rösztivel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Paradicsomos pulykaragu burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Tárkonyos csirkecomb főtt rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Egészben sült sertéscomb hagymás burgonyával és csemegeuborkával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Rántott sajt burgonyasalátával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Kapros sertéscomb tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csabai töltött karaj burgonyalángossal",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pulykamellfilé pirított gombával és főtt burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Szezámos csirkecsík rántva mézes-chilis rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Hagymás-brokkolis sertéskaraj burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Cajuni fűszeres jércecombfilé ceruzababbal",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sajtban forgatott kemencés csirkemell rizi-bizivel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sertéskaraj rántva burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Marhapörkölt főtt burgonyával",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "01.25.-01.29. 2021-4.doc",
+    "year": 2021,
+    "month": 1,
+    "day": 25,
+    "week": 4,
+    "id": "17ncO8P841Yijjx8TCZcCZ3lJP6Q5ZCHI",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Csirkemellpaprikás durum tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sajttal-sonkával töltött pulykamell rántva kemencés burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Csípős-savanyú csirkemell basmati rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Rántott sajt tartármártással és burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott burgonya",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Barbecue csirkemell rizzsel és ceruzababbal",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Fokhagymás aprópecsenye rántva párolt bulguros rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Csülökpörkölt burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pesztós penne jércemellcsíkocskákkal",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Füstölt sajttal töltött pulykamell rántva tejszínes bébirépával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott karfiol",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pizzaiola szelet vegyes párolt zöldségekkel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Tárkonyos pulykaragu tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Citromos sertéskaraj jázmin rizzsel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pármai spagetti",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "02.22.-02.26. 2021-8.doc",
+    "year": 2021,
+    "month": 2,
+    "day": 22,
+    "week": 8,
+    "id": "1YDkqcfmUbX79gOxPzWube0J8HVDan0dG",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Tejszínes-mustáros csirkemell kagylótésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Baconkrémmel töltött pulykamell rántva vegyes körettel",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "TOM-YAM csirkemell jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Kijevi pulykamell rántva párolt borsóval, bébirépával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Rakott karfiol",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Kemencés csirkemell zöldségfasírttal",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Bakonyi gombás sertéscomb grillezett kukoricalepénnyel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Lasagna",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Pizzaiola szelet steak burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sertéskaraj vadasmártással és durum tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Firenzei spagetti",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Kapros csirkemell rizi-bizivel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Pleskavica ajvárral",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Dubarry csirkemell burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Vaslapos csirkecombfilé tejszínes zöldkörettel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "01.18.-01.22. 2021-3.doc",
+    "year": 2021,
+    "month": 1,
+    "day": 18,
+    "week": 3,
+    "id": "1FtbpiDtyFz9VnJS4Vpv443vAkyVUKk_-",
+    "days": [
+      {
+        "day": "HÉTFŐ",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Dijoni mustáros sertéskaraj tésztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Sokmagvas csirkecsíkok rántva burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Tejszínes-gombás pulykacomb jázmin rizzsel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "KEDD",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Velővel töltött pulykamell rántva hagymás burgonyával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Mexikói húsos chilis bab",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Brokkolis csirkemell árpagyönggyel",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "SZERDA",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sült csirkecomb steak burgonyával és párolt káposztával",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Lasagna",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Magyaros csibemáj forgatott burgonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Csirkecombfilé rántva lila hagymás burgonyapürével",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Bolognai spagetti mozzarellával",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Temesvári sertésborda pirított tarhonyával",
+            "gm": false
+          }
+        ]
+      },
+      {
+        "day": "PÉNTEK",
+        "options": [
+          {
+            "letter": "A",
+            "text": "Sajtbundás csirkemell burgonyával és párolt kínai kellel",
+            "gm": false
+          },
+          {
+            "letter": "B",
+            "text": "Paradicsomos húsgombóc",
+            "gm": false
+          },
+          {
+            "letter": "C",
+            "text": "Grillezett pulykacsíkok vaslapos zöldséggel",
+            "gm": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "01.02.-01.04. 2019-1.doc",
+    "year": 2019,
+    "month": 1,
+    "day": 2,
+    "week": 1,
+    "id": "1Nuw4TFyBrASSFbjAySuD5KHHba-TBady",
+    "days": [
+      {
+        "day": "SZERDA",
+        "options": []
+      },
+      {
+        "day": "CSÜTÖRTÖK",
+        "options": []
+      },
+      {
+        "day": "PÉNTEK",
+        "options": []
+      }
+    ]
+  }
+]

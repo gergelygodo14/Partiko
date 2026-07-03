@@ -51,3 +51,6 @@ next-env.d.ts
 # local preview tooling
 /dev.bat
 /.claude/launch.json
+
+# one-off script debug output
+/scripts/generated-menus-preview.json
