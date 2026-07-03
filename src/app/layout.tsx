@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Pacifico } from "next/font/google";
 import UpdateNotifier from "@/components/UpdateNotifier";
 import BottomNav from "@/components/BottomNav";
 import "./globals.css";
@@ -12,6 +12,12 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const pacifico = Pacifico({
+  variable: "--font-pacifico",
+  weight: "400",
   subsets: ["latin"],
 });
 
@@ -28,7 +34,7 @@ export default function RootLayout({
   return (
     <html
       lang="hu"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${pacifico.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-neutral-50">
         <header className="bg-black sticky top-0 z-10">
@@ -41,14 +47,12 @@ export default function RootLayout({
               priority
               className="h-9 w-auto justify-self-start"
             />
-            <Image
-              src="/logo-text-yellow.png"
-              alt="Partiko"
-              width={1061}
-              height={510}
-              priority
-              className="h-11 w-auto"
-            />
+            <span
+              className="text-yellow-400 text-3xl leading-none"
+              style={{ fontFamily: "var(--font-pacifico)" }}
+            >
+              Partiko
+            </span>
             <div aria-hidden="true" />
           </div>
         </header>
