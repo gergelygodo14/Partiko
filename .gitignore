@@ -54,3 +54,6 @@ next-env.d.ts
 
 # one-off script debug output
 /scripts/generated-menus-preview.json
+
+.vercel
+.env*
