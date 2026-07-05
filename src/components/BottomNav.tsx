@@ -51,11 +51,27 @@ function IconCalendar() {
   );
 }
 
+function IconCart() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.8" className="w-6 h-6">
+      <path
+        d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 8H6"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="9.5" cy="20.5" r="1.5" fill="currentColor" />
+      <circle cx="17.5" cy="20.5" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}
+
 const navItems = [
   { href: "/", label: "Rögzítés", Icon: IconPencil },
   { href: "/alapanyagok", label: "Alapanyagok", Icon: IconList },
   { href: "/osszesites", label: "Összesítő", Icon: IconChart },
   { href: "/heti-menu", label: "Heti menü", Icon: IconCalendar },
+  { href: "/rendelesek", label: "Rendelések", Icon: IconCart },
 ];
 
 export default function BottomNav() {
@@ -66,7 +82,7 @@ export default function BottomNav() {
       className="fixed bottom-0 left-0 right-0 z-40 bg-black pb-[env(safe-area-inset-bottom)]"
       aria-label="Fő navigáció"
     >
-      <div className="max-w-3xl mx-auto grid grid-cols-4">
+      <div className="max-w-3xl mx-auto grid grid-cols-5">
         {navItems.map(({ href, label, Icon }) => {
           const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
           return (

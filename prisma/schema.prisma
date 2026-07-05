@@ -42,9 +42,45 @@ model BillingPeriod {
 }
 
 model WeeklyMenu {
-  id        String   @id @default(cuid())
-  weekStart DateTime @unique
-  days      Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String    @id @default(cuid())
+  weekStart   DateTime  @unique
+  days        Json
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Customer {
+  id          String   @id @default(cuid())
+  storeName   String
+  companyName String
+  createdAt   DateTime @default(now())
+  orders      Order[]
+
+  @@index([storeName, companyName])
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  customerId String
+  customer   Customer    @relation(fields: [customerId], references: [id])
+  weekStart  DateTime
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  lines      OrderLine[]
+
+  @@unique([customerId, weekStart])
+}
+
+model OrderLine {
+  id       String @id @default(cuid())
+  orderId  String
+  order    Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  dayIndex Int
+  letter   String
+  quantity Int
+
+  @@unique([orderId, dayIndex, letter])
+  @@index([orderId])
 }

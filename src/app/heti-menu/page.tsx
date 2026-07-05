@@ -14,8 +14,11 @@ function formatDate(dateStr: string) {
 export default function WeeklyMenuPage() {
   const [weekStart, setWeekStart] = useState(mondayOf(todayStr()));
   const [days, setDays] = useState<MenuDay[]>(emptyWeek());
+  const [published, setPublished] = useState(false);
+  const [publishedAt, setPublishedAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [publishing, setPublishing] = useState(false);
   const [savedMessage, setSavedMessage] = useState(false);
 
   const load = useCallback(async (week: string) => {
@@ -23,6 +26,8 @@ export default function WeeklyMenuPage() {
     const res = await fetch(`/api/weekly-menu?week=${week}`);
     const data = await res.json();
     setDays(data.days);
+    setPublished(data.published);
+    setPublishedAt(data.publishedAt);
     setLoading(false);
   }, []);
 
@@ -62,6 +67,30 @@ export default function WeeklyMenuPage() {
       window.location.href = `/api/weekly-menu/generate?week=${weekStart}`;
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function setPublishState(next: boolean) {
+    setPublishing(true);
+    try {
+      if (next) {
+        // Save current edits first so publishing can't expose stale content.
+        await fetch("/api/weekly-menu", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ weekStart, days }),
+        });
+      }
+      const res = await fetch("/api/weekly-menu/publish", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ weekStart, published: next }),
+      });
+      const data = await res.json();
+      setPublished(data.published);
+      setPublishedAt(data.publishedAt);
+    } finally {
+      setPublishing(false);
     }
   }
 
@@ -142,6 +171,34 @@ export default function WeeklyMenuPage() {
           ))}
         </div>
       )}
+
+      <div className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm flex items-center justify-between gap-3 flex-wrap">
+        <div className="text-sm">
+          {published ? (
+            <span className="text-green-700 font-semibold">
+              Közzétéve ✓{" "}
+              {publishedAt && (
+                <span className="text-neutral-400 font-normal">
+                  ({new Date(publishedAt).toLocaleString("hu-HU")})
+                </span>
+              )}
+            </span>
+          ) : (
+            <span className="text-neutral-500">Még nincs közzétéve az ügyfeleknek</span>
+          )}
+        </div>
+        <button
+          onClick={() => setPublishState(!published)}
+          disabled={publishing || loading}
+          className={`px-5 py-3 rounded-xl font-semibold text-base disabled:opacity-50 ${
+            published
+              ? "border border-neutral-300 active:bg-neutral-100"
+              : "bg-yellow-400 text-black active:bg-yellow-500"
+          }`}
+        >
+          {published ? "Visszavonás" : "Közzététel"}
+        </button>
+      </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
         <button

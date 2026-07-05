@@ -19,6 +19,8 @@ export const GET = withApiErrorHandling(async (request: NextRequest) => {
   return NextResponse.json({
     weekStart: week,
     days: (menu?.days as MenuDay[] | undefined) ?? emptyWeek(),
+    published: menu?.published ?? false,
+    publishedAt: menu?.publishedAt ?? null,
   });
 });
 
@@ -45,5 +47,10 @@ export const PUT = withApiErrorHandling(async (request: NextRequest) => {
     create: { weekStart: parseDay(week), days },
   });
 
-  return NextResponse.json({ weekStart: week, days: menu.days });
+  return NextResponse.json({
+    weekStart: week,
+    days: menu.days,
+    published: menu.published,
+    publishedAt: menu.publishedAt,
+  });
 });
