@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { parseDay } from "@/lib/dates";
 import { emptyOrderWeek, orderLinesToDaysGrid, type OrderDayQuantities } from "@/lib/orders";
+import type { MenuDay } from "@/lib/weeklyMenu";
 
 export type CustomerOrderRow = {
   customerId: string;
@@ -83,4 +84,25 @@ export async function getOrdersForDay(weekStart: string, dayIndex: number): Prom
   );
 
   return { totals, byCustomer };
+}
+
+export type DishNames = { a: string; b: string; c: string };
+
+// Falls back to plain "A"/"B"/"C" labels if the week has no menu entered yet
+// (or no dish text for a letter) - keeps the daily kitchen sheet legible
+// rather than showing a blank column header.
+export async function getDishNamesForDay(
+  weekStart: string,
+  dayIndex: number | null
+): Promise<DishNames | null> {
+  if (dayIndex === null) return null;
+  const menu = await prisma.weeklyMenu.findUnique({ where: { weekStart: parseDay(weekStart) } });
+  const day = (menu?.days as MenuDay[] | undefined)?.[dayIndex];
+  if (!day) return null;
+  return { a: day.a || "A", b: day.b || "B", c: day.c || "C" };
+}
+
+export async function getWeekTotalMeals(weekStart: string): Promise<number> {
+  const { dayTotals } = await getOrdersSummary(weekStart);
+  return dayTotals.reduce((sum, d) => sum + d.a + d.b + d.c, 0);
 }

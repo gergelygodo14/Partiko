@@ -1,27 +1,33 @@
 import ExcelJS from "exceljs";
 import type { OrderDayQuantities } from "@/lib/orders";
-import type { CustomerDayOrderRow } from "@/lib/ordersSummary";
+import type { DishNames } from "@/lib/ordersSummary";
+
+export type KitchenReportRow = { storeName: string } & OrderDayQuantities;
+
+const MAX_SHEET_NAME_LENGTH = 31;
 
 export async function generateOrdersXlsx(
   date: string,
+  dayName: string,
+  dishNames: DishNames | null,
   totals: OrderDayQuantities,
-  byCustomer: CustomerDayOrderRow[]
+  byCustomer: KitchenReportRow[]
 ): Promise<Buffer> {
   const workbook = new ExcelJS.Workbook();
-  const sheet = workbook.addWorksheet(`Rendelések ${date}`);
+  const sheetName = `KAJA ${dayName || date}`.slice(0, MAX_SHEET_NAME_LENGTH);
+  const sheet = workbook.addWorksheet(sheetName);
+
   sheet.columns = [
     { header: "Üzlet", key: "storeName", width: 24 },
-    { header: "Cégnév", key: "companyName", width: 24 },
-    { header: "A", key: "a", width: 8 },
-    { header: "B", key: "b", width: 8 },
-    { header: "C", key: "c", width: 8 },
+    { header: dishNames?.a ?? "A", key: "a", width: 18 },
+    { header: dishNames?.b ?? "B", key: "b", width: 18 },
+    { header: dishNames?.c ?? "C", key: "c", width: 18 },
     { header: "Összesen", key: "total", width: 10 },
   ];
 
   byCustomer.forEach((row) => {
     sheet.addRow({
       storeName: row.storeName,
-      companyName: row.companyName,
       a: row.a,
       b: row.b,
       c: row.c,
@@ -31,7 +37,6 @@ export async function generateOrdersXlsx(
 
   sheet.addRow({
     storeName: "Összesen",
-    companyName: "",
     a: totals.a,
     b: totals.b,
     c: totals.c,

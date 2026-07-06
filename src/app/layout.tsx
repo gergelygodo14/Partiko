@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Geist, Geist_Mono, Pacifico } from "next/font/google";
+import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import UpdateNotifier from "@/components/UpdateNotifier";
 import BottomNav from "@/components/BottomNav";
+import LogoutButton from "@/components/LogoutButton";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,9 +16,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const pacifico = Pacifico({
-  variable: "--font-pacifico",
-  weight: "400",
+const poppins = Poppins({
+  variable: "--font-poppins",
+  weight: "800",
   subsets: ["latin"],
 });
 
@@ -34,7 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="hu"
-      className={`${geistSans.variable} ${geistMono.variable} ${pacifico.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-neutral-50">
         <header className="bg-black sticky top-0 z-10">
@@ -48,12 +49,12 @@ export default function RootLayout({
               className="h-9 w-auto justify-self-start"
             />
             <span
-              className="text-yellow-400 text-3xl leading-none"
-              style={{ fontFamily: "var(--font-pacifico)" }}
+              className="text-yellow-400 text-2xl leading-none tracking-tight"
+              style={{ fontFamily: "var(--font-poppins)" }}
             >
               Partiko
             </span>
-            <div aria-hidden="true" />
+            <LogoutButton />
           </div>
         </header>
         <main className="flex-1 max-w-3xl w-full mx-auto px-4 py-6 pb-28">

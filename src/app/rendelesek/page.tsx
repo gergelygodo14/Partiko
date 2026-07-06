@@ -1,27 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { addDaysStr } from "@/lib/dates";
-import { DAY_NAMES } from "@/lib/weeklyMenu";
-import type { OrderDayQuantities, OrderLetter } from "@/lib/orders";
+import { useEffect, useState } from "react";
+import type { OrderDayQuantities } from "@/lib/orders";
 
 type CustomerRow = {
   customerId: string;
   storeName: string;
   companyName: string;
-  days: OrderDayQuantities[];
-};
+} & OrderDayQuantities;
 
 type Summary = {
-  weekStart: string;
-  dayTotals: OrderDayQuantities[];
+  date: string;
+  dishNames: { a: string; b: string; c: string } | null;
+  dayTotals: OrderDayQuantities;
   byCustomer: CustomerRow[];
+  weekTotalMeals: number;
+  weekTotalValue: number;
 };
-
-const LETTERS = ["a", "b", "c"] as const;
-const dayLetterColumns = DAY_NAMES.flatMap((name, dayIndex) =>
-  LETTERS.map((letter) => ({ name, dayIndex, letter }))
-);
 
 function formatDate(dateStr: string) {
   return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString("hu-HU", {
@@ -34,29 +29,19 @@ export default function OrdersPage() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const load = useCallback(async (week?: string) => {
-    setLoading(true);
-    const res = await fetch(`/api/orders/summary${week ? `?week=${week}` : ""}`);
-    const data: Summary = await res.json();
-    setSummary(data);
-    setLoading(false);
+  useEffect(() => {
+    (async () => {
+      const res = await fetch("/api/orders/summary");
+      setSummary(await res.json());
+      setLoading(false);
+    })();
   }, []);
 
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  if (loading && !summary) {
+  if (loading || !summary) {
     return <p className="text-neutral-500">Betöltés...</p>;
   }
-  if (!summary) return null;
 
-  const { weekStart } = summary;
-  const weekEnd = addDaysStr(weekStart, 4);
-  const grandTotals = summary.dayTotals.reduce(
-    (acc, d) => ({ a: acc.a + d.a, b: acc.b + d.b, c: acc.c + d.c }),
-    { a: 0, b: 0, c: 0 }
-  );
+  const dayGrandTotal = summary.dayTotals.a + summary.dayTotals.b + summary.dayTotals.c;
 
   return (
     <div className="space-y-8">
@@ -73,110 +58,61 @@ export default function OrdersPage() {
         </p>
       </section>
 
-      <div className="flex items-center justify-between gap-2">
-        <button
-          onClick={() => load(addDaysStr(weekStart, -7))}
-          className="px-4 py-3 rounded-xl border border-neutral-300 active:bg-neutral-100"
-          aria-label="Előző hét"
-        >
-          ←
-        </button>
-        <div className="font-semibold text-center">
-          {formatDate(weekStart)} – {formatDate(weekEnd)}
-        </div>
-        <button
-          onClick={() => load(addDaysStr(weekStart, 7))}
-          className="px-4 py-3 rounded-xl border border-neutral-300 active:bg-neutral-100"
-          aria-label="Következő hét"
-        >
-          →
-        </button>
-      </div>
-
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Napi összesítés</h2>
-        <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm">
-          <table className="w-full text-sm">
-            <thead className="bg-neutral-100 text-neutral-600">
-              <tr>
-                <th className="text-left px-3 py-3">Nap</th>
-                <th className="text-right px-3 py-3">A</th>
-                <th className="text-right px-3 py-3">B</th>
-                <th className="text-right px-3 py-3">C</th>
-              </tr>
-            </thead>
-            <tbody>
-              {DAY_NAMES.map((name, i) => (
-                <tr key={name} className="border-t border-neutral-100">
-                  <td className="px-3 py-3">{name}</td>
-                  <td className="px-3 py-3 text-right">{summary.dayTotals[i].a}</td>
-                  <td className="px-3 py-3 text-right">{summary.dayTotals[i].b}</td>
-                  <td className="px-3 py-3 text-right">{summary.dayTotals[i].c}</td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr className="border-t border-neutral-300 font-semibold">
-                <td className="px-3 py-3">Összesen</td>
-                <td className="px-3 py-3 text-right">{grandTotals.a}</td>
-                <td className="px-3 py-3 text-right">{grandTotals.b}</td>
-                <td className="px-3 py-3 text-right">{grandTotals.c}</td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Üzletek szerint</h2>
+        <h2 className="text-lg font-semibold">
+          Napi összesítés{" "}
+          <span className="text-neutral-400 font-normal text-sm">({formatDate(summary.date)})</span>
+        </h2>
         {summary.byCustomer.length === 0 ? (
-          <p className="text-neutral-500">Nincs leadott rendelés ezen a héten.</p>
+          <p className="text-neutral-500">Nincs leadott rendelés erre a napra.</p>
         ) : (
           <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-neutral-100 text-neutral-600">
                 <tr>
-                  <th className="text-left px-3 py-3" rowSpan={2}>
-                    Üzlet
-                  </th>
-                  {DAY_NAMES.map((name) => (
-                    <th key={name} className="text-center px-2 py-2 border-l border-neutral-200" colSpan={3}>
-                      {name}
-                    </th>
-                  ))}
-                </tr>
-                <tr>
-                  {dayLetterColumns.map(({ dayIndex, letter }) => (
-                    <th
-                      key={`${dayIndex}-${letter}`}
-                      className="text-right px-2 py-1 text-xs font-normal"
-                    >
-                      {letter.toUpperCase()}
-                    </th>
-                  ))}
+                  <th className="text-left px-3 py-3">Üzlet</th>
+                  <th className="text-right px-3 py-3">{summary.dishNames?.a ?? "A"}</th>
+                  <th className="text-right px-3 py-3">{summary.dishNames?.b ?? "B"}</th>
+                  <th className="text-right px-3 py-3">{summary.dishNames?.c ?? "C"}</th>
+                  <th className="text-right px-3 py-3">Összesen</th>
                 </tr>
               </thead>
               <tbody>
                 {summary.byCustomer.map((c) => (
                   <tr key={c.customerId} className="border-t border-neutral-100">
-                    <td className="px-3 py-3">
-                      <div className="font-medium">{c.storeName}</div>
-                      <div className="text-xs text-neutral-400">{c.companyName}</div>
-                    </td>
-                    {dayLetterColumns.map(({ dayIndex, letter }) => {
-                      const value = c.days[dayIndex][letter as OrderLetter];
-                      return (
-                        <td key={`${c.customerId}-${dayIndex}-${letter}`} className="text-right px-2 py-3">
-                          {value || ""}
-                        </td>
-                      );
-                    })}
+                    <td className="px-3 py-3">{c.storeName}</td>
+                    <td className="px-3 py-3 text-right">{c.a || ""}</td>
+                    <td className="px-3 py-3 text-right">{c.b || ""}</td>
+                    <td className="px-3 py-3 text-right">{c.c || ""}</td>
+                    <td className="px-3 py-3 text-right font-medium">{c.a + c.b + c.c}</td>
                   </tr>
                 ))}
               </tbody>
+              <tfoot>
+                <tr className="border-t border-neutral-300 font-semibold">
+                  <td className="px-3 py-3">Összesen</td>
+                  <td className="px-3 py-3 text-right">{summary.dayTotals.a}</td>
+                  <td className="px-3 py-3 text-right">{summary.dayTotals.b}</td>
+                  <td className="px-3 py-3 text-right">{summary.dayTotals.c}</td>
+                  <td className="px-3 py-3 text-right">{dayGrandTotal}</td>
+                </tr>
+              </tfoot>
             </table>
           </div>
         )}
+      </section>
+
+      <section className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm space-y-1">
+        <h2 className="text-lg font-semibold">Heti összesítés</h2>
+        <p className="text-neutral-600">
+          Ezen a héten összesen{" "}
+          <span className="font-semibold">{summary.weekTotalMeals.toLocaleString("hu-HU")}</span> kaja
+          lett megrendelve.
+        </p>
+        <p className="text-neutral-600">
+          Összeg:{" "}
+          <span className="font-semibold">{summary.weekTotalValue.toLocaleString("hu-HU")} Ft</span>
+        </p>
       </section>
     </div>
   );

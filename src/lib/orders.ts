@@ -2,6 +2,9 @@ export type OrderDayQuantities = { a: number; b: number; c: number };
 export type OrderLetter = "a" | "b" | "c";
 export type OrderLineInput = { dayIndex: number; letter: string; quantity: number };
 
+// One meal (any A/B/C dish) always costs the same flat price.
+export const MEAL_PRICE_FT = 1200;
+
 export function emptyOrderWeek(): OrderDayQuantities[] {
   return Array.from({ length: 5 }, () => ({ a: 0, b: 0, c: 0 }));
 }

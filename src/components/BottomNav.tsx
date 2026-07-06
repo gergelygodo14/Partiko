@@ -77,6 +77,8 @@ const navItems = [
 export default function BottomNav() {
   const pathname = usePathname();
 
+  if (pathname === "/bejelentkezes") return null;
+
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-40 bg-black pb-[env(safe-area-inset-bottom)]"

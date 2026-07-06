@@ -21,6 +21,13 @@ function todayStr() {
   return new Date().toISOString().slice(0, 10);
 }
 
+function formatShort(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString("hu-HU", {
+    month: "2-digit",
+    day: "2-digit",
+  });
+}
+
 function weekLabel(dateStr: string) {
   const d = new Date(`${dateStr}T00:00:00`);
   const day = d.getDay();
@@ -37,35 +44,39 @@ export default function DailyEntryPage() {
   const [date, setDate] = useState(todayStr());
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [entries, setEntries] = useState<Entry[]>([]);
+  const [openRange, setOpenRange] = useState<{ from: string; to: string } | null>(null);
   const [inputs, setInputs] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [lastClosedAt, setLastClosedAt] = useState<string | null>(null);
 
-  const loadEntries = useCallback(async (forDate: string) => {
-    const res = await fetch(`/api/entries?date=${forDate}`);
-    const data = await res.json();
-    setEntries(data);
+  const loadEntries = useCallback(async (from: string, to: string) => {
+    const res = await fetch(`/api/entries?from=${from}&to=${to}`);
+    setEntries(await res.json());
   }, []);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const res = await fetch("/api/ingredients");
-      setIngredients(await res.json());
-      const openRes = await fetch("/api/billing-periods/open");
-      const open = await openRes.json();
+      const [ingredientsRes, openRes] = await Promise.all([
+        fetch("/api/ingredients"),
+        fetch("/api/billing-periods/open"),
+      ]);
+      const [ingredientsData, open] = await Promise.all([
+        ingredientsRes.json(),
+        openRes.json(),
+      ]);
+      setIngredients(ingredientsData);
       setLastClosedAt(open.lastClosedAt);
-      await loadEntries(date);
+      setOpenRange({ from: open.from, to: open.to });
+      await loadEntries(open.from, open.to);
       setLoading(false);
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loadEntries]);
 
-  useEffect(() => {
-    loadEntries(date);
-  }, [date, loadEntries]);
-
+  // Open (unbilled) entries stay visible under each ingredient all week -
+  // regardless of which date the picker is on - so they can still be
+  // edited/removed right up until billing closes the period.
   const entriesByIngredient = useMemo(() => {
     const map = new Map<string, Entry[]>();
     const cutoff = lastClosedAt ? new Date(lastClosedAt).getTime() : null;
@@ -77,6 +88,10 @@ export default function DailyEntryPage() {
     }
     return map;
   }, [entries, lastClosedAt]);
+
+  async function reloadOpenEntries() {
+    if (openRange) await loadEntries(openRange.from, openRange.to);
+  }
 
   async function addEntry(ingredientId: string) {
     const raw = inputs[ingredientId];
@@ -91,7 +106,7 @@ export default function DailyEntryPage() {
         body: JSON.stringify({ ingredientId, date, quantity }),
       });
       setInputs((prev) => ({ ...prev, [ingredientId]: "" }));
-      await loadEntries(date);
+      await reloadOpenEntries();
     } finally {
       setSavingId(null);
     }
@@ -99,7 +114,7 @@ export default function DailyEntryPage() {
 
   async function removeEntry(id: string) {
     await fetch(`/api/entries/${id}`, { method: "DELETE" });
-    await loadEntries(date);
+    await reloadOpenEntries();
   }
 
   return (
@@ -133,8 +148,8 @@ export default function DailyEntryPage() {
       ) : (
         <ul className="space-y-3">
           {ingredients.map((ing) => {
-            const todays = entriesByIngredient.get(ing.id) ?? [];
-            const sum = todays.reduce((s, e) => s + e.quantity, 0);
+            const openEntries = entriesByIngredient.get(ing.id) ?? [];
+            const sum = openEntries.reduce((s, e) => s + e.quantity, 0);
             return (
               <li
                 key={ing.id}
@@ -175,13 +190,14 @@ export default function DailyEntryPage() {
                   </div>
                 </div>
 
-                {todays.length > 0 && (
+                {openEntries.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2 text-sm">
-                    {todays.map((e) => (
+                    {openEntries.map((e) => (
                       <span
                         key={e.id}
                         className="inline-flex items-center gap-1.5 bg-neutral-100 rounded-full pl-3 pr-1.5 py-1.5"
                       >
+                        <span className="text-neutral-400 text-xs">{formatShort(e.date)}</span>
                         {e.quantity.toLocaleString("hu-HU")}
                         <button
                           onClick={() => removeEntry(e.id)}

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getExportDay } from "@/lib/dates";
-import { getOrdersForDay } from "@/lib/ordersSummary";
+import { DAY_NAMES } from "@/lib/weeklyMenu";
+import { getDishNamesForDay, getOrdersForDay } from "@/lib/ordersSummary";
 import { generateOrdersXlsx } from "@/lib/generateOrdersXlsx";
 import { withApiErrorHandling } from "@/lib/apiRoute";
 
@@ -9,11 +10,16 @@ import { withApiErrorHandling } from "@/lib/apiRoute";
 // is downloaded fresh every morning for that day's kitchen printout.
 export const GET = withApiErrorHandling(async () => {
   const { date, weekStart, dayIndex } = getExportDay(new Date());
+  const dayName = dayIndex !== null ? DAY_NAMES[dayIndex] : "";
 
-  const { totals, byCustomer } =
-    dayIndex === null ? { totals: { a: 0, b: 0, c: 0 }, byCustomer: [] } : await getOrdersForDay(weekStart, dayIndex);
+  const [dishNames, dayResult] = await Promise.all([
+    getDishNamesForDay(weekStart, dayIndex),
+    dayIndex === null
+      ? Promise.resolve({ totals: { a: 0, b: 0, c: 0 }, byCustomer: [] })
+      : getOrdersForDay(weekStart, dayIndex),
+  ]);
 
-  const buffer = await generateOrdersXlsx(date, totals, byCustomer);
+  const buffer = await generateOrdersXlsx(date, dayName, dishNames, dayResult.totals, dayResult.byCustomer);
 
   return new NextResponse(new Uint8Array(buffer), {
     headers: {

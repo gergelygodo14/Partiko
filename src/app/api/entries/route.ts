@@ -1,18 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { dayRange, todayStr } from "@/lib/dates";
+import { dayRange, rangeBetween, todayStr } from "@/lib/dates";
 import { isValidDateStr } from "@/lib/validate";
 import { withApiErrorHandling } from "@/lib/apiRoute";
 
 export const GET = withApiErrorHandling(async (request: NextRequest) => {
-  const date = request.nextUrl.searchParams.get("date") ?? todayStr();
-  if (!isValidDateStr(date)) {
-    return NextResponse.json({ error: "Érvénytelen date" }, { status: 400 });
+  const from = request.nextUrl.searchParams.get("from");
+  const to = request.nextUrl.searchParams.get("to");
+
+  let range: { gte: Date; lt: Date };
+  if (from !== null || to !== null) {
+    if (!isValidDateStr(from) || !isValidDateStr(to)) {
+      return NextResponse.json({ error: "Érvénytelen from/to" }, { status: 400 });
+    }
+    range = rangeBetween(from, to);
+  } else {
+    const date = request.nextUrl.searchParams.get("date") ?? todayStr();
+    if (!isValidDateStr(date)) {
+      return NextResponse.json({ error: "Érvénytelen date" }, { status: 400 });
+    }
+    range = dayRange(date);
   }
-  const { gte, lt } = dayRange(date);
 
   const entries = await prisma.entry.findMany({
-    where: { date: { gte, lt } },
+    where: { date: range },
     include: { ingredient: true },
     orderBy: { createdAt: "asc" },
   });
