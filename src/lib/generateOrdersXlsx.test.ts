@@ -2,6 +2,8 @@ import ExcelJS from "exceljs";
 import { describe, expect, it } from "vitest";
 import { generateOrdersXlsx } from "@/lib/generateOrdersXlsx";
 
+const EMPTY_TOTALS = { a: 0, b: 0, c: 0, aXl: 0, bXl: 0, cXl: 0 };
+
 async function readBack(buffer: Buffer) {
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.load(buffer);
@@ -10,33 +12,35 @@ async function readBack(buffer: Buffer) {
 
 describe("generateOrdersXlsx", () => {
   it("names the sheet 'KAJA <nap>' and uses the date as a fallback when no day name is given", async () => {
-    const buffer = await generateOrdersXlsx("2026-07-06", "", null, { a: 0, b: 0, c: 0 }, []);
+    const buffer = await generateOrdersXlsx("2026-07-06", "", null, EMPTY_TOTALS, []);
     const workbook = await readBack(buffer);
     expect(workbook.getWorksheet("KAJA 2026-07-06")).toBeDefined();
   });
 
-  it("uses the real dish names as column headers", async () => {
+  it("puts the day name in the top-left header cell (not 'Üzlet'), and dish names as the other headers", async () => {
     const buffer = await generateOrdersXlsx(
       "2026-07-06",
       "HÉTFŐ",
       { a: "Csirkemell steak", b: "Mexikói ragu", c: "Toscan penne" },
-      { a: 0, b: 0, c: 0 },
+      EMPTY_TOTALS,
       []
     );
     const workbook = await readBack(buffer);
     const sheet = workbook.getWorksheet("KAJA HÉTFŐ")!;
     const header = sheet.getRow(1);
-    expect(header.getCell(1).value).toBe("Üzlet");
+    expect(header.getCell(1).value).toBe("HÉTFŐ");
     expect(header.getCell(2).value).toBe("Csirkemell steak");
     expect(header.getCell(3).value).toBe("Mexikói ragu");
     expect(header.getCell(4).value).toBe("Toscan penne");
     expect(header.getCell(5).value).toBe("Összesen");
+    expect(header.font?.bold).toBe(true);
   });
 
-  it("falls back to A/B/C headers when no dish names are available", async () => {
-    const buffer = await generateOrdersXlsx("2026-07-06", "HÉTFŐ", null, { a: 0, b: 0, c: 0 }, []);
+  it("falls back to the date when no day name is given, and to A/B/C when no dish names exist", async () => {
+    const buffer = await generateOrdersXlsx("2026-07-06", "", null, EMPTY_TOTALS, []);
     const workbook = await readBack(buffer);
-    const header = workbook.getWorksheet("KAJA HÉTFŐ")!.getRow(1);
+    const header = workbook.getWorksheet("KAJA 2026-07-06")!.getRow(1);
+    expect(header.getCell(1).value).toBe("2026-07-06");
     expect([header.getCell(2).value, header.getCell(3).value, header.getCell(4).value]).toEqual([
       "A",
       "B",
@@ -44,15 +48,15 @@ describe("generateOrdersXlsx", () => {
     ]);
   });
 
-  it("lists one row per store (no company column) with a row total, then a grand-total row", async () => {
+  it("lists one row per store (no company column) with a row total, then a bold grand-total row", async () => {
     const buffer = await generateOrdersXlsx(
       "2026-07-06",
       "HÉTFŐ",
       { a: "A", b: "B", c: "C" },
-      { a: 3, b: 5, c: 1 },
+      { a: 3, b: 5, c: 1, aXl: 0, bXl: 0, cXl: 0 },
       [
-        { storeName: "Alma Büfé", a: 2, b: 0, c: 1 },
-        { storeName: "Zöld Bolt", a: 1, b: 5, c: 0 },
+        { storeName: "Alma Büfé", a: 2, b: 0, c: 1, aXl: 0, bXl: 0, cXl: 0 },
+        { storeName: "Zöld Bolt", a: 1, b: 5, c: 0, aXl: 0, bXl: 0, cXl: 0 },
       ]
     );
     const workbook = await readBack(buffer);
@@ -70,12 +74,54 @@ describe("generateOrdersXlsx", () => {
     expect(sheet.getRow(4).getCell(2).value).toBe(3);
     expect(sheet.getRow(4).getCell(3).value).toBe(5);
     expect(sheet.getRow(4).getCell(5).value).toBe(9);
+    expect(sheet.getRow(4).font?.bold).toBe(true);
+  });
+
+  it("shows XL quantities alongside the normal count in the same cell, included in the row total", async () => {
+    const buffer = await generateOrdersXlsx(
+      "2026-07-06",
+      "HÉTFŐ",
+      { a: "A", b: "B", c: "C" },
+      { a: 3, b: 0, c: 1, aXl: 1, bXl: 2, cXl: 0 },
+      [{ storeName: "Alma Büfé", a: 2, b: 0, c: 1, aXl: 1, bXl: 0, cXl: 0 }]
+    );
+    const workbook = await readBack(buffer);
+    const sheet = workbook.getWorksheet("KAJA HÉTFŐ")!;
+
+    expect(sheet.getRow(2).getCell(2).value).toBe("2 (+1 XL)"); // a=2, aXl=1
+    expect(sheet.getRow(2).getCell(3).value).toBe(""); // b=0, bXl=0
+    expect(sheet.getRow(2).getCell(5).value).toBe(4); // row total: 2+1+0+0+1+0
+
+    expect(sheet.getRow(3).getCell(2).value).toBe("3 (+1 XL)"); // totals row a
+    expect(sheet.getRow(3).getCell(3).value).toBe("+2 XL"); // totals row b: 0 normal, 2 XL
   });
 
   it("still produces a valid, empty sheet when nothing was ordered", async () => {
-    const buffer = await generateOrdersXlsx("2026-07-05", "VASÁRNAP", null, { a: 0, b: 0, c: 0 }, []);
+    const buffer = await generateOrdersXlsx("2026-07-05", "VASÁRNAP", null, EMPTY_TOTALS, []);
     const workbook = await readBack(buffer);
     const sheet = workbook.getWorksheet("KAJA VASÁRNAP")!;
     expect(sheet.getRow(2).getCell(1).value).toBe("Összesen");
+  });
+
+  it("applies thick vertical / thin horizontal borders to every cell in the table", async () => {
+    const buffer = await generateOrdersXlsx(
+      "2026-07-06",
+      "HÉTFŐ",
+      { a: "A", b: "B", c: "C" },
+      EMPTY_TOTALS,
+      [{ storeName: "Alma Büfé", a: 1, b: 0, c: 0, aXl: 0, bXl: 0, cXl: 0 }]
+    );
+    const workbook = await readBack(buffer);
+    const sheet = workbook.getWorksheet("KAJA HÉTFŐ")!;
+
+    for (const rowNum of [1, 2, 3]) {
+      for (let col = 1; col <= 5; col++) {
+        const cell = sheet.getRow(rowNum).getCell(col);
+        expect(cell.border?.left?.style).toBe("medium");
+        expect(cell.border?.right?.style).toBe("medium");
+        expect(cell.border?.top?.style).toBe("thin");
+        expect(cell.border?.bottom?.style).toBe("thin");
+      }
+    }
   });
 });

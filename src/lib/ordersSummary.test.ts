@@ -22,10 +22,19 @@ beforeEach(() => {
   findUniqueWeeklyMenu.mockReset();
 });
 
-function line(customerId: string, storeName: string, letter: string, quantity: number) {
+const EMPTY_DAY = { a: 0, b: 0, c: 0, aXl: 0, bXl: 0, cXl: 0 };
+
+function line(
+  customerId: string,
+  storeName: string,
+  letter: string,
+  quantity: number,
+  isXl = false
+) {
   return {
     letter,
     quantity,
+    isXl,
     order: { customer: { id: customerId, storeName, companyName: `${storeName} Kft.` } },
   };
 }
@@ -40,11 +49,36 @@ describe("getOrdersForDay", () => {
 
     const result = await getOrdersForDay("2026-07-06", 0);
 
-    expect(result.totals).toEqual({ a: 2, b: 5, c: 1 });
+    expect(result.totals).toEqual({ ...EMPTY_DAY, a: 2, b: 5, c: 1 });
     expect(result.byCustomer).toEqual([
-      { customerId: "c2", storeName: "Alma Büfé", companyName: "Alma Büfé Kft.", a: 0, b: 5, c: 0 },
-      { customerId: "c1", storeName: "Zöld Bolt", companyName: "Zöld Bolt Kft.", a: 2, b: 0, c: 1 },
+      {
+        customerId: "c2",
+        storeName: "Alma Büfé",
+        companyName: "Alma Büfé Kft.",
+        ...EMPTY_DAY,
+        b: 5,
+      },
+      {
+        customerId: "c1",
+        storeName: "Zöld Bolt",
+        companyName: "Zöld Bolt Kft.",
+        ...EMPTY_DAY,
+        a: 2,
+        c: 1,
+      },
     ]);
+  });
+
+  it("keeps normal and XL quantities of the same letter separate", async () => {
+    findManyOrderLine.mockResolvedValue([
+      line("c1", "Zöld Bolt", "a", 2, false),
+      line("c1", "Zöld Bolt", "a", 1, true),
+    ]);
+
+    const result = await getOrdersForDay("2026-07-06", 0);
+
+    expect(result.totals).toEqual({ ...EMPTY_DAY, a: 2, aXl: 1 });
+    expect(result.byCustomer[0]).toMatchObject({ a: 2, aXl: 1 });
   });
 
   it("sorts stores alphabetically (Hungarian collation)", async () => {
@@ -63,7 +97,7 @@ describe("getOrdersForDay", () => {
 
     const result = await getOrdersForDay("2026-07-06", 2);
 
-    expect(result.totals).toEqual({ a: 0, b: 0, c: 0 });
+    expect(result.totals).toEqual(EMPTY_DAY);
     expect(result.byCustomer).toEqual([]);
   });
 });
@@ -101,18 +135,19 @@ describe("getDishNamesForDay", () => {
 });
 
 describe("getWeekTotalMeals", () => {
-  it("sums a+b+c across all orders and days in the week", async () => {
+  it("sums normal + XL quantities across all orders and days in the week", async () => {
     findManyOrder.mockResolvedValue([
       {
         customerId: "c1",
         customer: { storeName: "Alma", companyName: "Alma Kft." },
         lines: [
-          { dayIndex: 0, letter: "a", quantity: 2 },
-          { dayIndex: 4, letter: "c", quantity: 3 },
+          { dayIndex: 0, letter: "a", quantity: 2, isXl: false },
+          { dayIndex: 0, letter: "a", quantity: 1, isXl: true },
+          { dayIndex: 4, letter: "c", quantity: 3, isXl: false },
         ],
       },
     ]);
-    expect(await getWeekTotalMeals("2026-07-06")).toBe(5);
+    expect(await getWeekTotalMeals("2026-07-06")).toBe(6);
   });
 
   it("returns 0 when nothing was ordered", async () => {

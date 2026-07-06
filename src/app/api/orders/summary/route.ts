@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getExportDay } from "@/lib/dates";
-import { MEAL_PRICE_FT } from "@/lib/orders";
+import { emptyOrderWeek, MEAL_PRICE_FT } from "@/lib/orders";
 import { getDishNamesForDay, getOrdersForDay, getWeekTotalMeals } from "@/lib/ordersSummary";
 import { withApiErrorHandling } from "@/lib/apiRoute";
 
@@ -10,7 +10,7 @@ export const GET = withApiErrorHandling(async () => {
   const [dishNames, dayResult, weekTotalMeals] = await Promise.all([
     getDishNamesForDay(weekStart, dayIndex),
     dayIndex === null
-      ? Promise.resolve({ totals: { a: 0, b: 0, c: 0 }, byCustomer: [] })
+      ? Promise.resolve({ totals: emptyOrderWeek()[0], byCustomer: [] })
       : getOrdersForDay(weekStart, dayIndex),
     getWeekTotalMeals(weekStart),
   ]);

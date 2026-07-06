@@ -25,6 +25,17 @@ function formatDate(dateStr: string) {
   });
 }
 
+function formatCell(normal: number, xl: number): string {
+  if (normal === 0 && xl === 0) return "";
+  if (xl === 0) return String(normal);
+  if (normal === 0) return `+${xl} XL`;
+  return `${normal} (+${xl} XL)`;
+}
+
+function dishTotal(q: OrderDayQuantities) {
+  return q.a + q.aXl + q.b + q.bXl + q.c + q.cXl;
+}
+
 export default function OrdersPage() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,7 +52,7 @@ export default function OrdersPage() {
     return <p className="text-neutral-500">Betöltés...</p>;
   }
 
-  const dayGrandTotal = summary.dayTotals.a + summary.dayTotals.b + summary.dayTotals.c;
+  const dayGrandTotal = dishTotal(summary.dayTotals);
 
   return (
     <div className="space-y-8">
@@ -81,19 +92,25 @@ export default function OrdersPage() {
                 {summary.byCustomer.map((c) => (
                   <tr key={c.customerId} className="border-t border-neutral-100">
                     <td className="px-3 py-3">{c.storeName}</td>
-                    <td className="px-3 py-3 text-right">{c.a || ""}</td>
-                    <td className="px-3 py-3 text-right">{c.b || ""}</td>
-                    <td className="px-3 py-3 text-right">{c.c || ""}</td>
-                    <td className="px-3 py-3 text-right font-medium">{c.a + c.b + c.c}</td>
+                    <td className="px-3 py-3 text-right">{formatCell(c.a, c.aXl)}</td>
+                    <td className="px-3 py-3 text-right">{formatCell(c.b, c.bXl)}</td>
+                    <td className="px-3 py-3 text-right">{formatCell(c.c, c.cXl)}</td>
+                    <td className="px-3 py-3 text-right font-medium">{dishTotal(c)}</td>
                   </tr>
                 ))}
               </tbody>
               <tfoot>
                 <tr className="border-t border-neutral-300 font-semibold">
                   <td className="px-3 py-3">Összesen</td>
-                  <td className="px-3 py-3 text-right">{summary.dayTotals.a}</td>
-                  <td className="px-3 py-3 text-right">{summary.dayTotals.b}</td>
-                  <td className="px-3 py-3 text-right">{summary.dayTotals.c}</td>
+                  <td className="px-3 py-3 text-right">
+                    {formatCell(summary.dayTotals.a, summary.dayTotals.aXl)}
+                  </td>
+                  <td className="px-3 py-3 text-right">
+                    {formatCell(summary.dayTotals.b, summary.dayTotals.bXl)}
+                  </td>
+                  <td className="px-3 py-3 text-right">
+                    {formatCell(summary.dayTotals.c, summary.dayTotals.cXl)}
+                  </td>
                   <td className="px-3 py-3 text-right">{dayGrandTotal}</td>
                 </tr>
               </tfoot>

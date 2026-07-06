@@ -74,13 +74,14 @@ model Order {
 }
 
 model OrderLine {
-  id       String @id @default(cuid())
+  id       String  @id @default(cuid())
   orderId  String
-  order    Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order    Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   dayIndex Int
   letter   String
+  isXl     Boolean @default(false)
   quantity Int
 
-  @@unique([orderId, dayIndex, letter])
+  @@unique([orderId, dayIndex, letter, isXl])
   @@index([orderId])
 }

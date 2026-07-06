@@ -7,15 +7,11 @@ import {
   orderLinesToDaysGrid,
 } from "@/lib/orders";
 
+const EMPTY_DAY = { a: 0, b: 0, c: 0, aXl: 0, bXl: 0, cXl: 0 };
+
 describe("emptyOrderWeek", () => {
-  it("returns 5 zeroed days", () => {
-    expect(emptyOrderWeek()).toEqual([
-      { a: 0, b: 0, c: 0 },
-      { a: 0, b: 0, c: 0 },
-      { a: 0, b: 0, c: 0 },
-      { a: 0, b: 0, c: 0 },
-      { a: 0, b: 0, c: 0 },
-    ]);
+  it("returns 5 zeroed days (normal + XL fields)", () => {
+    expect(emptyOrderWeek()).toEqual([EMPTY_DAY, EMPTY_DAY, EMPTY_DAY, EMPTY_DAY, EMPTY_DAY]);
   });
 
   it("returns independent day objects", () => {
@@ -26,14 +22,24 @@ describe("emptyOrderWeek", () => {
 });
 
 describe("orderLinesToDaysGrid", () => {
-  it("places quantities at the right day/letter and zero-fills the rest", () => {
+  it("places normal quantities at the right day/letter and zero-fills the rest", () => {
     const grid = orderLinesToDaysGrid([
       { dayIndex: 0, letter: "a", quantity: 3 },
       { dayIndex: 4, letter: "c", quantity: 7 },
     ]);
-    expect(grid[0]).toEqual({ a: 3, b: 0, c: 0 });
-    expect(grid[4]).toEqual({ a: 0, b: 0, c: 7 });
-    expect(grid[1]).toEqual({ a: 0, b: 0, c: 0 });
+    expect(grid[0]).toEqual({ ...EMPTY_DAY, a: 3 });
+    expect(grid[4]).toEqual({ ...EMPTY_DAY, c: 7 });
+    expect(grid[1]).toEqual(EMPTY_DAY);
+  });
+
+  it("places XL quantities in the separate aXl/bXl/cXl fields, independent of the normal quantity", () => {
+    const grid = orderLinesToDaysGrid([
+      { dayIndex: 0, letter: "a", quantity: 2, isXl: false },
+      { dayIndex: 0, letter: "a", quantity: 1, isXl: true },
+      { dayIndex: 2, letter: "b", quantity: 3, isXl: true },
+    ]);
+    expect(grid[0]).toEqual({ ...EMPTY_DAY, a: 2, aXl: 1 });
+    expect(grid[2]).toEqual({ ...EMPTY_DAY, bXl: 3 });
   });
 
   it("ignores out-of-range day indexes and unknown letters", () => {
@@ -47,16 +53,29 @@ describe("orderLinesToDaysGrid", () => {
 });
 
 describe("daysGridToOrderLines", () => {
-  it("skips zero-quantity cells", () => {
+  it("skips zero-quantity cells (normal and XL)", () => {
     const days = orderLinesToDaysGrid([{ dayIndex: 2, letter: "b", quantity: 4 }]);
-    expect(daysGridToOrderLines(days)).toEqual([{ dayIndex: 2, letter: "b", quantity: 4 }]);
+    expect(daysGridToOrderLines(days)).toEqual([
+      { dayIndex: 2, letter: "b", quantity: 4, isXl: false },
+    ]);
+  });
+
+  it("emits separate lines for normal and XL quantities of the same letter", () => {
+    const days = orderLinesToDaysGrid([
+      { dayIndex: 0, letter: "a", quantity: 2, isXl: false },
+      { dayIndex: 0, letter: "a", quantity: 1, isXl: true },
+    ]);
+    expect(daysGridToOrderLines(days)).toEqual([
+      { dayIndex: 0, letter: "a", quantity: 2, isXl: false },
+      { dayIndex: 0, letter: "a", quantity: 1, isXl: true },
+    ]);
   });
 
   it("round-trips through orderLinesToDaysGrid", () => {
     const lines = [
-      { dayIndex: 0, letter: "a" as const, quantity: 1 },
-      { dayIndex: 0, letter: "b" as const, quantity: 2 },
-      { dayIndex: 3, letter: "c" as const, quantity: 9 },
+      { dayIndex: 0, letter: "a" as const, quantity: 1, isXl: false },
+      { dayIndex: 0, letter: "b" as const, quantity: 2, isXl: false },
+      { dayIndex: 3, letter: "c" as const, quantity: 9, isXl: true },
     ];
     expect(daysGridToOrderLines(orderLinesToDaysGrid(lines))).toEqual(lines);
   });
@@ -71,13 +90,14 @@ describe("isValidOrderDays", () => {
     expect(isValidOrderDays(emptyOrderWeek().slice(0, 4))).toBe(false);
   });
 
-  it("rejects negative or non-integer quantities", () => {
-    expect(isValidOrderDays([{ a: -1, b: 0, c: 0 }, ...emptyOrderWeek().slice(1)])).toBe(false);
-    expect(isValidOrderDays([{ a: 1.5, b: 0, c: 0 }, ...emptyOrderWeek().slice(1)])).toBe(false);
+  it("rejects negative or non-integer quantities, including XL fields", () => {
+    expect(isValidOrderDays([{ ...EMPTY_DAY, a: -1 }, ...emptyOrderWeek().slice(1)])).toBe(false);
+    expect(isValidOrderDays([{ ...EMPTY_DAY, a: 1.5 }, ...emptyOrderWeek().slice(1)])).toBe(false);
+    expect(isValidOrderDays([{ ...EMPTY_DAY, aXl: -1 }, ...emptyOrderWeek().slice(1)])).toBe(false);
   });
 
   it("rejects missing fields", () => {
-    expect(isValidOrderDays([{ a: 1, b: 0 }, ...emptyOrderWeek().slice(1)])).toBe(false);
+    expect(isValidOrderDays([{ a: 1, b: 0, c: 0 }, ...emptyOrderWeek().slice(1)])).toBe(false);
   });
 });
 
@@ -89,8 +109,8 @@ describe("applyLockedDays", () => {
       { dayIndex: 1, letter: "b", quantity: 2 },
     ]);
     const result = applyLockedDays(submitted, existing, [0]);
-    expect(result[0]).toEqual({ a: 5, b: 0, c: 0 });
-    expect(result[1]).toEqual({ a: 0, b: 2, c: 0 });
+    expect(result[0]).toEqual({ ...EMPTY_DAY, a: 5 });
+    expect(result[1]).toEqual({ ...EMPTY_DAY, b: 2 });
   });
 
   it("applies all submitted values when nothing is locked", () => {
