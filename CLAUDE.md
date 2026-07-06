@@ -2,7 +2,7 @@
 
 # Partiko
 
-Belső alapanyag-rendelés-nyilvántartó és heti menü szerkesztő a Partiko Kft. (gyorsétterem-alapanyag beszállító) számára. Kis, megbízható felhasználói kör (a család) használja telefonról — nincs autentikáció, ez tudatos döntés, nem hiányosság.
+Belső alapanyag-rendelés-nyilvántartó és heti menü szerkesztő a Partiko Kft. (gyorsétterem-alapanyag beszállító) számára. Kis, megbízható felhasználói kör (a család) használja telefonról. **2026-07-06-tól jelszavas belépés védi** (lásd "Belépés/autentikáció" szekció lent) — a korábbi "nincs autentikáció" döntés csak addig volt érvényes, amíg a rendelési adatok meg nem jelentek az appban.
 
 ## Tech stack
 
@@ -37,9 +37,18 @@ Belső alapanyag-rendelés-nyilvántartó és heti menü szerkesztő a Partiko K
   - `GET /api/public/menu?week=` — csak akkor adja vissza a `days`-t, ha `published: true` (independent recheck, nem csak az order-window válaszára hagyatkozva).
   - `POST /api/public/customers`, `GET /api/public/customers/[id]` — find-or-create ügyfél-azonosítás, nincs jelszó/session, a kliens csak a visszakapott `customerId`-t tárolja (localStorage a rendelő projektben).
   - `GET/PUT /api/public/orders` — a PUT elutasítja (409) az írást, ha a beküldött `weekStart` nem egyezik a jelenleg aktív héttel, vagy az nincs publikálva (véd egy nyitva felejtett, elavult tab ellen egy Thursday-10:00 váltás után).
-- **Owner-oldali összesítés (képernyőn)**: `GET /api/orders/summary` (`src/lib/ordersSummary.ts`) + `Rendelések` oldal (`src/app/rendelesek/page.tsx`) — heti nézet, napi összesítés + üzletenkénti bontás táblázattal, elő/hátre lapozható (`heti-menu` mintájára).
-- **`.xlsx` export mindig a KÖVETKEZŐ napra szól, nem hétre** (`GET /api/orders/export`, `getExportDay` — `src/lib/dates.ts`, `getOrdersForDay` — `src/lib/ordersSummary.ts`, `generateOrdersXlsx` — `src/lib/generateOrdersXlsx.ts`, `exceljs`): a konyha mindig a másnapi ételt főzi meg aznap (pl. vasárnap a hétfői menüt), ezért a letöltés gomb **nem vesz fel `week`/`date` paramétert** — mindig a holnapi (Budapest idő szerinti) napot exportálja, egyetlen munkalapon (`Rendelések <dátum>`), oszlopokban A/B/C, soronként egy-egy üzlet + alul "Összesen" sor. Ha a holnapi nap szombat/vasárnap (nincs menünap), üres, de érvényes fájlt ad vissza.
+- **Owner-oldali összesítés (képernyőn)**: `GET /api/orders/summary` (`src/lib/ordersSummary.ts`) + `Rendelések` oldal (`src/app/rendelesek/page.tsx`) — a KÖVETKEZŐ nap rendeléseit mutatja boltonként (ugyanaz a nap, mint amit a `.xlsx` export letölt, lásd lent), a tényleges étel nevekkel oszlopfejlécben (nem A/B/C), alul pedig egy "Heti összesítés" blokk: az adott hétre összesen hány kaja lett rendelve + az érték (`MEAL_PRICE_FT = 1200` Ft/kaja, `src/lib/orders.ts`). Nincs hét-navigáció, mindig az aktuális állapotot mutatja.
+- **`.xlsx` export mindig a KÖVETKEZŐ napra szól, nem hétre** (`GET /api/orders/export`, `getExportDay` — `src/lib/dates.ts`, `getOrdersForDay`/`getDishNamesForDay` — `src/lib/ordersSummary.ts`, `generateOrdersXlsx` — `src/lib/generateOrdersXlsx.ts`, `exceljs`): a konyha mindig a másnapi ételt főzi meg aznap (pl. vasárnap a hétfői menüt), ezért a letöltés gomb **nem vesz fel `week`/`date` paramétert**. A formátum a cég valódi, kézzel vezetett papír-táblázatát követi (lásd a Drive-on a `KÉSZÉTEL.xls` referenciát): egyetlen munkalap `KAJA <NAP>` néven, oszlopfejlécben a tényleges étel nevek (A/B/C helyett), soronként egy-egy üzlet **cégnév oszlop nélkül** + alul "Összesen" sor. Ha a holnapi nap szombat/vasárnap (nincs menünap), üres, de érvényes fájlt ad vissza.
 - **Különálló ügyfél-rendelő projekt**: `c:\Claude\partiko-rendeles` — saját Next.js app, **nincs saját adatbázis-kapcsolata**, minden adatot a fenti publikus API-n keresztül `fetch`-el (`NEXT_PUBLIC_PARTIKO_API_BASE` env változó adja meg a partiko backend URL-jét). Egyelőre csak helyben fut; a tervek szerint majd a testvér által készített `partiko-landing` weboldalba kerül be/lesz onnan linkelve.
+
+## Belépés/autentikáció (`src/proxy.ts`, `src/lib/auth.ts`)
+
+- Egyetlen, hardcoded admin fiók (`ADMIN_USERNAME`/`ADMIN_PASSWORD` env változók, jelenleg `godo`/`1412`) — nincs `User` tábla, nincs több felhasználó, ez tudatos egyszerűsítés (kis, megbízható kör, csak a tulajdonosok).
+- Munkamenet: `SESSION_SECRET`-tel HMAC-SHA256-tal aláírt, stateless cookie (`partiko_session`, 90 napig érvényes) — nincs DB-ben tárolt session, a token maga tartalmazza a lejáratot + aláírást (`createSessionToken`/`isValidSessionToken`).
+- **Next 16-ban a `middleware.ts` át lett nevezve `proxy.ts`-re** (deprecation, lásd `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md`) — a fájl `src/proxy.ts`, az exportált függvény neve `proxy`, nem `middleware`.
+- A `src/proxy.ts` mindent véd (oldalak + API route-ok), **kivéve**: `/bejelentkezes` (login oldal), `/api/auth/**` (login/logout), `/api/public/**` (ezt hívja kívülről a `partiko-rendeles` — ha ide is bekerülne az auth-check, elszállna az ügyfél-rendelés).
+- Bejelentkezés: `POST /api/auth/login` → cookie beállítása. Kijelentkezés: `POST /api/auth/logout` (a fejlécben lévő "Kilépés" gomb, `src/components/LogoutButton.tsx`, ami elrejti magát a `/bejelentkezes` oldalon).
+- Ha megváltoztatod a jelszót/usernevet, csak a Vercel env változót kell frissíteni (`vercel env` vagy a dashboard), nincs migráció/kód-módosítás.
 
 ## Nem-nyilvánvaló üzleti szabály: Rögzítés vs. Összesítő eltérő időalapja
 
@@ -49,6 +58,8 @@ Ez a legfontosabb, első ránézésre hibának tűnő, de **szándékos** viselk
 - Az **Összesítő oldal** (`src/app/osszesites/`) ezzel szemben a `entry.date` mező szerinti `from`/`to` tartományban összesít (`src/lib/summary.ts`) — tehát ha valaki visszamenőleg rögzít egy korábbi napra bejegyzést, az az Összesítőben a megfelelő dátumhoz kerül, a Rögzítés oldal futó számlálójában viszont a rögzítés (nem a bejegyzés napja) dönti el, hogy "új"-nak számít-e.
 
 Ha ezen a területen változtatsz, tudatosan válaszd ki melyik időalapot használod — ne keverd össze a kettőt "javításként".
+
+**2026-07-06 javítás**: a Rögzítés oldal korábban csak a dátumválasztóban kijelölt egyetlen napra (`date` param) kérte le a bejegyzéseket a `GET /api/entries`-től, ezért egy korábbi nap tételei "eltűntek" a lista alól, amint másik napra váltottál. Mostantól a teljes nyitott (le nem számlázott) időszakot kéri le (`from`/`to` param, `getOpenPeriod().from`-tól máig) — a `GET /api/entries` route mindkét formát támogatja (`date` VAGY `from`+`to`). A dátumválasztó továbbra is csak azt dönti el, melyik napra kerül egy ÚJ bejegyzés; a megjelenített lista (és a fenti createdAt-szűrés) az egész nyitott időszakra vonatkozik, minden chipen dátum-címkével.
 
 ## Egyéb szándékos, nem hiba jellegű döntés
 
@@ -73,7 +84,7 @@ Bemenet-validáció (`isValidDateStr`, `isValidMenuDay` a `src/lib/validate.ts`-
 
 ## Tesztelés
 
-- `npm test` — Vitest, csak DB-mentes logika (`src/lib/dates.test.ts`, `src/lib/validate.test.ts`, `src/lib/weeklyMenu.test.ts`, `src/lib/generateMenuDocx.test.ts`, `src/lib/summary.test.ts`, `src/lib/billing.test.ts`, `src/lib/orders.test.ts`, `src/lib/ordersSummary.test.ts`, `src/lib/generateOrdersXlsx.test.ts`, `src/lib/cors.test.ts` — a DB-t érintők `vi.mock("@/lib/db")`-vel, a `cors.test.ts` pedig `vi.stubEnv`-vel izolálja az `ALLOWED_ORIGINS`-t).
+- `npm test` — Vitest, csak DB-mentes logika (`src/lib/dates.test.ts`, `src/lib/validate.test.ts`, `src/lib/weeklyMenu.test.ts`, `src/lib/generateMenuDocx.test.ts`, `src/lib/summary.test.ts`, `src/lib/billing.test.ts`, `src/lib/orders.test.ts`, `src/lib/ordersSummary.test.ts`, `src/lib/generateOrdersXlsx.test.ts`, `src/lib/cors.test.ts`, `src/lib/auth.test.ts` — a DB-t érintők `vi.mock("@/lib/db")`-vel, a `cors.test.ts`/`auth.test.ts` pedig `vi.stubEnv`-vel izolálja az env változókat).
 - Helyi fejlesztéshez az `ALLOWED_ORIGINS` env változót a `.env.local`-ba érdemes tenni (pl. `http://localhost:3100` a `partiko-rendeles` dev szerveréhez) — ez **nem** kerül a megosztott `.env`-be, mert csak lokális CORS-teszteléshez kell.
 - `npm run build` — TypeScript + Next.js build ellenőrzés.
 - Amit **nem** fed le automatikus teszt (mert valós DB-t igényelne): API route-ok end-to-end viselkedése, `billing-periods` POST tényleges hatása, migrációk. Ezeket csak kézzel, a fent leírt öntisztogató módszerrel szabad ellenőrizni.
