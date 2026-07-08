@@ -15,15 +15,14 @@ export const POST = withCors(
   withApiErrorHandling(async (request: NextRequest) => {
     const body = await request.json();
     const storeName = typeof body.storeName === "string" ? body.storeName.trim() : "";
-    const companyName = typeof body.companyName === "string" ? body.companyName.trim() : "";
 
-    if (!isValidName(storeName) || !isValidName(companyName)) {
-      return NextResponse.json({ error: "Üzlet neve és cégnév kötelező" }, { status: 400 });
+    if (!isValidName(storeName)) {
+      return NextResponse.json({ error: "Megrendelő/bolt neve kötelező" }, { status: 400 });
     }
 
-    let customer = await prisma.customer.findFirst({ where: { storeName, companyName } });
+    let customer = await prisma.customer.findFirst({ where: { storeName } });
     if (!customer) {
-      customer = await prisma.customer.create({ data: { storeName, companyName } });
+      customer = await prisma.customer.create({ data: { storeName, companyName: "" } });
     }
 
     return NextResponse.json({

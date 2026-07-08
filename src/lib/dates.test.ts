@@ -150,22 +150,28 @@ describe("getExportDay", () => {
 });
 
 describe("getLockedDayIndexes", () => {
-  it("locks nothing on Monday", () => {
+  it("Monday morning: Monday is already locked (prepped Sunday)", () => {
     const active = { weekStart: "2026-06-29", isCurrentWeek: true };
     const now = budapestInstant("2026-06-29", 8, 2);
-    expect(getLockedDayIndexes(active, now)).toEqual([]);
+    expect(getLockedDayIndexes(active, now)).toEqual([0]);
   });
 
-  it("locks Monday and Tuesday by Wednesday", () => {
+  it("Monday afternoon (past 10:00): Tuesday locks too, in advance", () => {
     const active = { weekStart: "2026-06-29", isCurrentWeek: true };
-    const now = budapestInstant("2026-07-01", 12, 2);
+    const now = budapestInstant("2026-06-29", 12, 2);
     expect(getLockedDayIndexes(active, now)).toEqual([0, 1]);
   });
 
-  it("locks Monday-Wednesday just before the Thursday cutoff", () => {
+  it("Wednesday (past 10:00): Mon-Wed locked, Thursday locks too", () => {
+    const active = { weekStart: "2026-06-29", isCurrentWeek: true };
+    const now = budapestInstant("2026-07-01", 12, 2);
+    expect(getLockedDayIndexes(active, now)).toEqual([0, 1, 2, 3]);
+  });
+
+  it("Thursday just before the 10:00 cutoff: Mon-Thu locked, Friday still open", () => {
     const active = { weekStart: "2026-06-29", isCurrentWeek: true };
     const now = budapestInstant("2026-07-02", 9, 2);
-    expect(getLockedDayIndexes(active, now)).toEqual([0, 1, 2]);
+    expect(getLockedDayIndexes(active, now)).toEqual([0, 1, 2, 3]);
   });
 
   it("never locks days of a future (next) week", () => {

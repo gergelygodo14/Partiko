@@ -41,12 +41,25 @@ export async function generateOrdersXlsx(
   const sheet = workbook.addWorksheet(sheetName);
 
   sheet.columns = [
-    { header: dayName || date, key: "storeName", width: 24 },
-    { header: dishNames?.a ?? "A", key: "a", width: 20 },
-    { header: dishNames?.b ?? "B", key: "b", width: 20 },
-    { header: dishNames?.c ?? "C", key: "c", width: 20 },
-    { header: "Összesen", key: "total", width: 10 },
+    { header: dayName || date, key: "storeName", width: 22 },
+    { header: dishNames?.a ?? "A", key: "a", width: 38 },
+    { header: dishNames?.b ?? "B", key: "b", width: 38 },
+    { header: dishNames?.c ?? "C", key: "c", width: 38 },
+    { header: "Összesen", key: "total", width: 12 },
   ];
+
+  // A4 printout: dish names can be long, so let the header row wrap to two
+  // lines instead of getting cut off, and scale the sheet to one page wide.
+  sheet.getRow(1).height = 34;
+  sheet.getRow(1).alignment = { wrapText: true, vertical: "middle", horizontal: "center" };
+  sheet.pageSetup = {
+    paperSize: 9,
+    orientation: "landscape",
+    fitToPage: true,
+    fitToWidth: 1,
+    fitToHeight: 0,
+    margins: { left: 0.4, right: 0.4, top: 0.5, bottom: 0.5, header: 0.2, footer: 0.2 },
+  };
 
   byCustomer.forEach((row) => {
     sheet.addRow({

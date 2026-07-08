@@ -88,13 +88,17 @@ export function getActiveOrderWeek(now: Date): ActiveOrderWeek {
     : { weekStart: addDaysStr(currentWeekStart, 7), isCurrentWeek: false };
 }
 
-/** Weekday indexes (0=Mon..4=Fri) of the active week that already passed and
- *  must stay locked to edits. Always empty for next week (nothing passed yet). */
+/** Weekday indexes (0=Mon..4=Fri) of the active week that must stay locked to
+ *  edits: the kitchen preps each weekday's food the calendar day before at
+ *  ORDER_CUTOFF_HOUR, so today's meal is always already locked (it was
+ *  prepped yesterday), and tomorrow's locks too once today's cutoff passes.
+ *  Always empty for next week (nothing prepped yet). */
 export function getLockedDayIndexes(activeWeek: ActiveOrderWeek, now: Date): number[] {
   if (!activeWeek.isCurrentWeek) return [];
-  const { dateStr } = budapestDateAndHour(now);
-  const todayIndex = Math.min(mondayIndexOf(dateStr), 4);
-  return Array.from({ length: todayIndex }, (_, i) => i);
+  const { dateStr, hour } = budapestDateAndHour(now);
+  const todayIndex = mondayIndexOf(dateStr);
+  const lockedCount = hour >= ORDER_CUTOFF_HOUR ? todayIndex + 2 : todayIndex + 1;
+  return Array.from({ length: Math.min(lockedCount, 5) }, (_, i) => i);
 }
 
 export type ExportDay = {
