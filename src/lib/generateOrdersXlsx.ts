@@ -40,21 +40,24 @@ export async function generateOrdersXlsx(
   const sheetName = `KAJA ${dayName || date}`.slice(0, MAX_SHEET_NAME_LENGTH);
   const sheet = workbook.addWorksheet(sheetName);
 
+  const centered = { alignment: { horizontal: "center" as const } };
   sheet.columns = [
     { header: dayName || date, key: "storeName", width: 22 },
-    { header: dishNames?.a ?? "A", key: "a", width: 38 },
-    { header: dishNames?.b ?? "B", key: "b", width: 38 },
-    { header: dishNames?.c ?? "C", key: "c", width: 38 },
-    { header: "Összesen", key: "total", width: 12 },
+    { header: dishNames?.a ?? "A", key: "a", width: 38, style: centered },
+    { header: dishNames?.b ?? "B", key: "b", width: 38, style: centered },
+    { header: dishNames?.c ?? "C", key: "c", width: 38, style: centered },
+    { header: "Összesen", key: "total", width: 12, style: centered },
   ];
 
   // A4 printout: dish names can be long, so let the header row wrap to two
-  // lines instead of getting cut off, and scale the sheet to one page wide.
+  // lines instead of getting cut off. Portrait, not landscape - a full
+  // store list runs long (many rows), so it needs the page's height, not
+  // its width; fitToWidth still scales it down to one page wide.
   sheet.getRow(1).height = 34;
   sheet.getRow(1).alignment = { wrapText: true, vertical: "middle", horizontal: "center" };
   sheet.pageSetup = {
     paperSize: 9,
-    orientation: "landscape",
+    orientation: "portrait",
     fitToPage: true,
     fitToWidth: 1,
     fitToHeight: 0,
