@@ -9,6 +9,21 @@ type CustomerRow = {
   companyName: string;
 } & OrderDayQuantities;
 
+type NextWeekCustomerRow = {
+  customerId: string;
+  storeName: string;
+  days: number[];
+  total: number;
+};
+
+type NextWeekSummary = {
+  weekStart: string;
+  dayTotals: number[];
+  byCustomer: NextWeekCustomerRow[];
+  totalMeals: number;
+  totalValue: number;
+};
+
 type Summary = {
   date: string;
   dishNames: { a: string; b: string; c: string } | null;
@@ -16,7 +31,10 @@ type Summary = {
   byCustomer: CustomerRow[];
   weekTotalMeals: number;
   weekTotalValue: number;
+  nextWeek: NextWeekSummary | null;
 };
+
+const SHORT_DAY_NAMES = ["H", "K", "Sze", "Cs", "P"];
 
 function formatDate(dateStr: string) {
   return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString("hu-HU", {
@@ -131,6 +149,68 @@ export default function OrdersPage() {
           <span className="font-semibold">{summary.weekTotalValue.toLocaleString("hu-HU")} Ft</span>
         </p>
       </section>
+
+      {summary.nextWeek && (
+        <section className="border border-amber-300 bg-amber-50 rounded-2xl p-4 shadow-sm space-y-3">
+          <h2 className="text-lg font-semibold">
+            Jövő heti rendelések{" "}
+            <span className="text-neutral-400 font-normal text-sm">
+              (már beérkeztek, {formatDate(summary.nextWeek.weekStart)}-tól)
+            </span>
+          </h2>
+          {summary.nextWeek.byCustomer.length === 0 ? (
+            <p className="text-neutral-500">Még nincs leadott rendelés a jövő hétre.</p>
+          ) : (
+            <div className="border border-amber-200 bg-white rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-amber-100 text-neutral-600">
+                  <tr>
+                    <th className="text-left px-3 py-3">Üzlet</th>
+                    {SHORT_DAY_NAMES.map((name) => (
+                      <th key={name} className="text-right px-3 py-3">
+                        {name}
+                      </th>
+                    ))}
+                    <th className="text-right px-3 py-3">Összesen</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {summary.nextWeek.byCustomer.map((c) => (
+                    <tr key={c.customerId} className="border-t border-neutral-100">
+                      <td className="px-3 py-3">{c.storeName}</td>
+                      {c.days.map((d, i) => (
+                        <td key={i} className="px-3 py-3 text-right">
+                          {d || ""}
+                        </td>
+                      ))}
+                      <td className="px-3 py-3 text-right font-medium">{c.total}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr className="border-t border-neutral-300 font-semibold">
+                    <td className="px-3 py-3">Összesen</td>
+                    {summary.nextWeek.dayTotals.map((d, i) => (
+                      <td key={i} className="px-3 py-3 text-right">
+                        {d || ""}
+                      </td>
+                    ))}
+                    <td className="px-3 py-3 text-right">{summary.nextWeek.totalMeals}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          )}
+          <p className="text-neutral-600">
+            Eddig összesen:{" "}
+            <span className="font-semibold">{summary.nextWeek.totalMeals.toLocaleString("hu-HU")}</span>{" "}
+            kaja,{" "}
+            <span className="font-semibold">
+              {summary.nextWeek.totalValue.toLocaleString("hu-HU")} Ft
+            </span>
+          </p>
+        </section>
+      )}
     </div>
   );
 }
