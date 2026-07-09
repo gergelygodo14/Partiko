@@ -20,7 +20,11 @@ export const POST = withCors(
       return NextResponse.json({ error: "Megrendelő/bolt neve kötelező" }, { status: 400 });
     }
 
-    let customer = await prisma.customer.findFirst({ where: { storeName } });
+    // Case-insensitive match so "Norbi" and "norbi" resolve to the same
+    // customer - typed casing is still preserved as-is on first creation.
+    let customer = await prisma.customer.findFirst({
+      where: { storeName: { equals: storeName, mode: "insensitive" } },
+    });
     if (!customer) {
       customer = await prisma.customer.create({ data: { storeName, companyName: "" } });
     }
