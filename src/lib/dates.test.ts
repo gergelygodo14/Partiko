@@ -4,6 +4,7 @@ import {
   dayRange,
   getActiveOrderWeek,
   getExportDay,
+  getKitchenExportDay,
   getLockedDayIndexes,
   mondayOf,
   parseDay,
@@ -146,6 +147,46 @@ describe("getExportDay", () => {
   it("Saturday exports Sunday, which has no menu day", () => {
     const now = budapestInstant("2026-07-04", 8, 2);
     expect(getExportDay(now)).toEqual({ date: "2026-07-05", weekStart: "2026-06-29", dayIndex: null });
+  });
+});
+
+describe("getKitchenExportDay", () => {
+  it("matches getExportDay Monday-Wednesday (unaffected)", () => {
+    const now = budapestInstant("2026-07-01", 8, 2); // Wednesday
+    expect(getKitchenExportDay(now)).toEqual(getExportDay(now));
+  });
+
+  it("still exports Friday (this week) just before the Thursday 16:00 switch", () => {
+    const now = budapestInstant("2026-07-02", 15, 2); // Thursday 15:00
+    expect(getKitchenExportDay(now)).toEqual({
+      date: "2026-07-03",
+      weekStart: "2026-06-29",
+      dayIndex: 4,
+    });
+  });
+
+  it("switches to next Monday exactly at Thursday 16:00", () => {
+    const now = budapestInstant("2026-07-02", 16, 2);
+    expect(getKitchenExportDay(now)).toEqual({
+      date: "2026-07-06",
+      weekStart: "2026-07-06",
+      dayIndex: 0,
+    });
+  });
+
+  it("stays on next Monday through Friday/Saturday/Sunday", () => {
+    for (const [dateStr, hour] of [
+      ["2026-07-03", 8], // Friday
+      ["2026-07-04", 8], // Saturday
+      ["2026-07-05", 8], // Sunday
+    ] as const) {
+      const now = budapestInstant(dateStr, hour, 2);
+      expect(getKitchenExportDay(now)).toEqual({
+        date: "2026-07-06",
+        weekStart: "2026-07-06",
+        dayIndex: 0,
+      });
+    }
   });
 });
 

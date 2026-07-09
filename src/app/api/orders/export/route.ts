@@ -1,16 +1,17 @@
 import { NextResponse } from "next/server";
-import { getExportDay } from "@/lib/dates";
+import { getKitchenExportDay } from "@/lib/dates";
 import { DAY_NAMES } from "@/lib/weeklyMenu";
 import { emptyOrderWeek } from "@/lib/orders";
 import { getDishNamesForDay, getOrdersForDay } from "@/lib/ordersSummary";
 import { generateOrdersXlsx } from "@/lib/generateOrdersXlsx";
 import { withApiErrorHandling } from "@/lib/apiRoute";
 
-// Always the next calendar day's orders (the kitchen preps each weekday's
-// food the day before - see getExportDay) - no ?week/?date param, since this
-// is downloaded fresh every morning for that day's kitchen printout.
+// Normally the next calendar day's orders (the kitchen preps each weekday's
+// food the day before); from Thursday 16:00 onward it jumps to next Monday
+// instead - see getKitchenExportDay. No ?week/?date param, since this is
+// downloaded fresh throughout the day for that day's kitchen printout.
 export const GET = withApiErrorHandling(async () => {
-  const { date, weekStart, dayIndex } = getExportDay(new Date());
+  const { date, weekStart, dayIndex } = getKitchenExportDay(new Date());
   const dayName = dayIndex !== null ? DAY_NAMES[dayIndex] : "";
 
   const [dishNames, dayResult] = await Promise.all([

@@ -103,6 +103,24 @@ describe("generateOrdersXlsx", () => {
     expect(sheet.getRow(2).getCell(1).value).toBe("Összesen");
   });
 
+  it("pads blank, bordered rows below the totals row to fill an A4 page for handwriting", async () => {
+    const buffer = await generateOrdersXlsx(
+      "2026-07-06",
+      "HÉTFŐ",
+      { a: "A", b: "B", c: "C" },
+      { a: 1, b: 0, c: 0, aXl: 0, bXl: 0, cXl: 0 },
+      [{ storeName: "Alma Büfé", a: 1, b: 0, c: 0, aXl: 0, bXl: 0, cXl: 0 }]
+    );
+    const workbook = await readBack(buffer);
+    const sheet = workbook.getWorksheet("KAJA HÉTFŐ")!;
+
+    expect(sheet.rowCount).toBeGreaterThanOrEqual(40);
+    const padRow = sheet.getRow(sheet.rowCount);
+    expect(padRow.getCell(1).value).toBeFalsy();
+    expect(padRow.getCell(1).border?.left?.style).toBe("medium");
+    expect(padRow.getCell(1).border?.top?.style).toBe("thin");
+  });
+
   it("applies thick vertical / thin horizontal borders to every cell in the table", async () => {
     const buffer = await generateOrdersXlsx(
       "2026-07-06",

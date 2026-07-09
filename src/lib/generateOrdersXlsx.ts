@@ -6,6 +6,12 @@ export type KitchenReportRow = { storeName: string } & OrderDayQuantities;
 
 const MAX_SHEET_NAME_LENGTH = 31;
 
+// Approximate row count that fills an A4 portrait page at this sheet's
+// margins/row heights - padded with blank (but bordered) rows below the
+// totals row so the printed sheet has room for phoned-in orders to be
+// added by hand, rather than trailing off into blank paper.
+const MIN_PRINTABLE_ROWS = 40;
+
 function formatCell(normal: number, xl: number): string | number {
   if (normal === 0 && xl === 0) return "";
   if (xl === 0) return normal;
@@ -83,6 +89,10 @@ export async function generateOrdersXlsx(
   });
   sheet.getRow(1).font = { bold: true };
   sheet.getRow(sheet.rowCount).font = { bold: true };
+
+  while (sheet.rowCount < MIN_PRINTABLE_ROWS) {
+    sheet.addRow({});
+  }
 
   applyGridBorders(sheet, sheet.columns.length);
 

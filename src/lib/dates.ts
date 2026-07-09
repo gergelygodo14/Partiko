@@ -120,3 +120,26 @@ export function getExportDay(now: Date): ExportDay {
     dayIndex: weekday >= 1 && weekday <= 5 ? weekday - 1 : null,
   };
 }
+
+// Later than ORDER_CUTOFF_HOUR (10:00) on purpose: Friday's list (still
+// this week) needs to stay printable through the day even after ordering
+// for it has closed, so the kitchen download only jumps ahead to next
+// week's Monday once the owner says Friday's own list is settled.
+export const EXPORT_NEXT_WEEK_HOUR = 16; // Thursday 16:00
+
+// Like getExportDay, but from Thursday 16:00 through the rest of that
+// calendar week (Fri/Sat/Sun), the kitchen printout switches to next
+// Monday instead of lingering on this week's now-settled remainder.
+export function getKitchenExportDay(now: Date): ExportDay {
+  const { dateStr, hour } = budapestDateAndHour(now);
+  const dayIndex = mondayIndexOf(dateStr); // 0=Mon..6=Sun
+  const pastSwitch =
+    dayIndex > ORDER_CUTOFF_DAY_INDEX ||
+    (dayIndex === ORDER_CUTOFF_DAY_INDEX && hour >= EXPORT_NEXT_WEEK_HOUR);
+
+  if (pastSwitch) {
+    const nextWeekStart = addDaysStr(mondayOf(dateStr), 7);
+    return { date: nextWeekStart, weekStart: nextWeekStart, dayIndex: 0 };
+  }
+  return getExportDay(now);
+}
