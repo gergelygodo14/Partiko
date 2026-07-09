@@ -3,6 +3,9 @@
 // (menu-corpus.json, extracted from Drive .doc files), respecting:
 //  - no dish repeated within 14 days
 //  - no two options on the same day sharing a köret (side dish)
+//  - no two dishes sharing a named flavor/style (barbecue, grillezett, gyros, ...)
+//    within 3 days of each other, so a style repeats at most twice a week and
+//    only spaced out (e.g. Monday + Thursday), never on adjacent days
 //  - seasonal fit (a dish is only placed near the months it historically appeared in)
 // Run with --dry-run to preview without writing to the database.
 import "dotenv/config";
@@ -46,6 +49,51 @@ const KORET_KEYWORDS: [string, string][] = [
   ["árpagyö", "arpagyongy"],
 ];
 
+// Named flavor/style identities, e.g. "Barbecue csirkecomb" and "Barbecue
+// csirkemell" read as the same repeated dish to a customer even though the
+// cut of meat differs. Only distinctive, named styles are listed here —
+// generic cooking descriptors like "rántott"/"sült"/"sajtos"/"paprikás" are
+// deliberately excluded since they're too common to treat as a signature
+// flavor (constraining them would make the corpus infeasible).
+const STYLE_KEYWORDS: [string, string][] = [
+  ["barbecue", "barbecue"],
+  ["grillezett", "grillezett"],
+  ["gyros", "gyros"],
+  ["hawaii", "hawaii"],
+  ["kentucky", "kentucky"],
+  ["buffalo", "buffalo"],
+  ["mexikó", "mexikoi"],
+  ["indiai", "indiai"],
+  ["indonéz", "indonez"],
+  ["milánói", "milanoi"],
+  ["thai", "thai"],
+  ["genovai", "genovai"],
+  ["firenzei", "firenzei"],
+  ["veronai", "veronai"],
+  ["temesvári", "temesvari"],
+  ["bakonyi", "bakonyi"],
+  ["dubarry", "dubarry"],
+  ["kijevi", "kijevi"],
+  ["curry", "curry"],
+  ["pizzaiola", "pizzaiola"],
+  ["cajun", "cajun"],
+  ["csőben sült", "csoben-sult"],
+  ["egészben sült", "egeszben-sult"],
+  ["mézes", "mezes"],
+  ["tárkonyos", "tarkonyos"],
+  ["koriander", "koriander"],
+  ["vaslapos", "vaslapos"],
+  ["sokmagvas", "sokmagvas"],
+  ["rakott", "rakott"],
+  ["magyaros", "magyaros"],
+  ["párizsi", "parizsi"],
+  ["pleskavica", "pleskavica"],
+];
+
+// A style tag may repeat at most every this many days, so it lands at most
+// twice within a 5-day menu week and always spaced out (never adjacent days).
+const MIN_STYLE_GAP_DAYS = 3;
+
 function normalize(text: string): string {
   return text.normalize("NFD").toLowerCase();
 }
@@ -54,6 +102,15 @@ function koretTags(text: string): Set<string> {
   const norm = normalize(text);
   const tags = new Set<string>();
   for (const [needle, tag] of KORET_KEYWORDS) {
+    if (norm.includes(normalize(needle))) tags.add(tag);
+  }
+  return tags;
+}
+
+function styleTags(text: string): Set<string> {
+  const norm = normalize(text);
+  const tags = new Set<string>();
+  for (const [needle, tag] of STYLE_KEYWORDS) {
     if (norm.includes(normalize(needle))) tags.add(tag);
   }
   return tags;
@@ -91,6 +148,7 @@ async function main() {
     gm: boolean;
     months: Set<number>;
     korets: Set<string>;
+    styles: Set<string>;
   };
   const dishMap = new Map<string, Dish>();
   for (const w of weeks) {
@@ -99,7 +157,13 @@ async function main() {
         const key = o.text;
         let dish = dishMap.get(key);
         if (!dish) {
-          dish = { text: o.text, gm: o.gm, months: new Set(), korets: koretTags(o.text) };
+          dish = {
+            text: o.text,
+            gm: o.gm,
+            months: new Set(),
+            korets: koretTags(o.text),
+            styles: styleTags(o.text),
+          };
           dishMap.set(key, dish);
         }
         dish.months.add(w.month);
@@ -110,6 +174,7 @@ async function main() {
   console.log(`Loaded ${allDishes.length} unique historical dishes from ${weeks.length} weeks.`);
 
   const lastUsed = new Map<string, Date>(); // dish text -> last used date
+  const styleLastUsed = new Map<string, Date>(); // style tag -> last used date
   const totalUseCount = new Map<string, number>();
   for (const d of allDishes) totalUseCount.set(d.text, 0);
 
@@ -119,7 +184,12 @@ async function main() {
 
   const relaxationLog: string[] = [];
 
-  function pickCandidates(targetDate: Date, monthWindow: number, minGapDays: number): Dish[] {
+  function pickCandidates(
+    targetDate: Date,
+    monthWindow: number,
+    minGapDays: number,
+    enforceStyleGap: boolean
+  ): Dish[] {
     const targetMonth = targetDate.getUTCMonth() + 1;
     return allDishes.filter((dish) => {
       const monthOk = [...dish.months].some((m) => monthDist(m, targetMonth) <= monthWindow);
@@ -129,6 +199,14 @@ async function main() {
         const gap = (targetDate.getTime() - last.getTime()) / (1000 * 60 * 60 * 24);
         if (gap < minGapDays) return false;
       }
+      if (enforceStyleGap) {
+        for (const tag of dish.styles) {
+          const lastStyle = styleLastUsed.get(tag);
+          if (!lastStyle) continue;
+          const gap = (targetDate.getTime() - lastStyle.getTime()) / (1000 * 60 * 60 * 24);
+          if (gap < MIN_STYLE_GAP_DAYS) return false;
+        }
+      }
       return true;
     });
   }
@@ -136,16 +214,22 @@ async function main() {
   function chooseDay(targetDate: Date, dateLabel: string): { a: Dish; b: Dish; c: Dish } {
     let monthWindow = 1;
     let minGapDays = 15;
-    let candidates = pickCandidates(targetDate, monthWindow, minGapDays);
+    let enforceStyleGap = true;
+    let candidates = pickCandidates(targetDate, monthWindow, minGapDays, enforceStyleGap);
 
     while (candidates.length < 6 && monthWindow < 6) {
       monthWindow++;
-      candidates = pickCandidates(targetDate, monthWindow, minGapDays);
+      candidates = pickCandidates(targetDate, monthWindow, minGapDays, enforceStyleGap);
     }
     if (candidates.length < 6 && minGapDays > 7) {
       minGapDays = 7;
       relaxationLog.push(`${dateLabel}: relaxed min gap to 7 days (pool too small)`);
-      candidates = pickCandidates(targetDate, monthWindow, minGapDays);
+      candidates = pickCandidates(targetDate, monthWindow, minGapDays, enforceStyleGap);
+    }
+    if (candidates.length < 6 && enforceStyleGap) {
+      enforceStyleGap = false;
+      relaxationLog.push(`${dateLabel}: relaxed style-tag spacing (pool too small)`);
+      candidates = pickCandidates(targetDate, monthWindow, minGapDays, enforceStyleGap);
     }
     if (candidates.length < 3) {
       relaxationLog.push(`${dateLabel}: relaxed to full-year pool, no gap constraint`);
@@ -162,16 +246,22 @@ async function main() {
 
     const chosen: Dish[] = [];
     const usedKorets = new Set<string>();
+    const usedStylesToday = new Set<string>();
     for (const dish of candidates) {
       if (chosen.length === 3) break;
-      const clash = [...dish.korets].some((k) => usedKorets.has(k));
-      if (clash && dish.korets.size > 0) continue;
+      const koretClash = [...dish.korets].some((k) => usedKorets.has(k));
+      if (koretClash && dish.korets.size > 0) continue;
+      const styleClash = [...dish.styles].some((s) => usedStylesToday.has(s));
+      if (styleClash) continue;
       chosen.push(dish);
       for (const k of dish.korets) usedKorets.add(k);
+      for (const s of dish.styles) usedStylesToday.add(s);
     }
-    // fallback: if still short of 3 (all clash), fill ignoring köret constraint
+    // fallback: if still short of 3 (all clash), fill ignoring köret/style constraints
     if (chosen.length < 3) {
-      relaxationLog.push(`${dateLabel}: relaxed köret-uniqueness (not enough non-clashing options)`);
+      relaxationLog.push(
+        `${dateLabel}: relaxed köret/style same-day uniqueness (not enough non-clashing options)`
+      );
       for (const dish of candidates) {
         if (chosen.length === 3) break;
         if (!chosen.includes(dish)) chosen.push(dish);
@@ -181,6 +271,7 @@ async function main() {
     for (const dish of chosen) {
       lastUsed.set(dish.text, targetDate);
       totalUseCount.set(dish.text, totalUseCount.get(dish.text)! + 1);
+      for (const s of dish.styles) styleLastUsed.set(s, targetDate);
     }
 
     return { a: chosen[0], b: chosen[1], c: chosen[2] };
