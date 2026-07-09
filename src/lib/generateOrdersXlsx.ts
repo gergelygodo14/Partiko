@@ -79,6 +79,14 @@ export async function generateOrdersXlsx(
       total: row.a + row.aXl + row.b + row.bXl + row.c + row.cXl,
     });
   });
+  sheet.getRow(1).font = { bold: true };
+
+  // Blank, handwritable rows go between the orders and the totals row, so
+  // "Összesen" always sits at the bottom of the printed page rather than
+  // right under the last real order.
+  while (sheet.rowCount < MIN_PRINTABLE_ROWS - 1) {
+    sheet.addRow({});
+  }
 
   sheet.addRow({
     storeName: "Összesen",
@@ -87,14 +95,16 @@ export async function generateOrdersXlsx(
     c: formatCell(totals.c, totals.cXl),
     total: totals.a + totals.aXl + totals.b + totals.bXl + totals.c + totals.cXl,
   });
-  sheet.getRow(1).font = { bold: true };
-  sheet.getRow(sheet.rowCount).font = { bold: true };
-
-  while (sheet.rowCount < MIN_PRINTABLE_ROWS) {
-    sheet.addRow({});
-  }
+  const totalsRow = sheet.getRow(sheet.rowCount);
+  totalsRow.font = { bold: true };
 
   applyGridBorders(sheet, sheet.columns.length);
+
+  // Thick top border sets the totals row apart from the blank rows above it.
+  for (let c = 1; c <= sheet.columns.length; c++) {
+    const cell = totalsRow.getCell(c);
+    cell.border = { ...cell.border, top: { style: "thick" } };
+  }
 
   const buffer = await workbook.xlsx.writeBuffer();
   return Buffer.from(buffer);
