@@ -5,6 +5,7 @@ import type { DishNames } from "@/lib/ordersSummary";
 export type KitchenReportRow = { storeName: string } & OrderDayQuantities;
 
 const MAX_SHEET_NAME_LENGTH = 31;
+const FONT_SIZE = 14;
 
 // Approximate row count that fills an A4 portrait page at this sheet's
 // margins/row heights - padded with blank (but bordered) rows below the
@@ -46,27 +47,27 @@ export async function generateOrdersXlsx(
   const sheetName = `KAJA ${dayName || date}`.slice(0, MAX_SHEET_NAME_LENGTH);
   const sheet = workbook.addWorksheet(sheetName);
 
-  const centered = { alignment: { horizontal: "center" as const } };
+  const centered = { alignment: { horizontal: "center" as const }, font: { size: FONT_SIZE } };
+  const storeNameStyle = { font: { size: FONT_SIZE, bold: true } };
   sheet.columns = [
-    { header: dayName || date, key: "storeName", width: 22 },
-    { header: dishNames?.a ?? "A", key: "a", width: 38, style: centered },
-    { header: dishNames?.b ?? "B", key: "b", width: 38, style: centered },
-    { header: dishNames?.c ?? "C", key: "c", width: 38, style: centered },
-    { header: "Összesen", key: "total", width: 12, style: centered },
+    { header: dayName || date, key: "storeName", width: 16, style: storeNameStyle },
+    { header: dishNames?.a ?? "A", key: "a", width: 25, style: centered },
+    { header: dishNames?.b ?? "B", key: "b", width: 25, style: centered },
+    { header: dishNames?.c ?? "C", key: "c", width: 25, style: centered },
+    { header: "Összesen", key: "total", width: 9, style: centered },
   ];
 
-  // A4 printout: dish names can be long, so let the header row wrap to two
-  // lines instead of getting cut off. Portrait, not landscape - a full
-  // store list runs long (many rows), so it needs the page's height, not
-  // its width; fitToWidth still scales it down to one page wide.
-  sheet.getRow(1).height = 34;
+  // A4 printout: dish names can be long, so let the header row wrap instead
+  // of getting cut off - no fixed height, so Excel auto-sizes it to however
+  // many lines the wrapped text actually needs. Portrait, not landscape - a
+  // full store list runs long (many rows), so it needs the page's height.
+  // A fixed 100% scale (not fitToWidth) keeps the table at its natural,
+  // narrower size instead of Excel stretching it to fill the page width.
   sheet.getRow(1).alignment = { wrapText: true, vertical: "middle", horizontal: "center" };
   sheet.pageSetup = {
     paperSize: 9,
     orientation: "portrait",
-    fitToPage: true,
-    fitToWidth: 1,
-    fitToHeight: 0,
+    scale: 100,
     margins: { left: 0.4, right: 0.4, top: 0.5, bottom: 0.5, header: 0.2, footer: 0.2 },
   };
 
@@ -79,7 +80,7 @@ export async function generateOrdersXlsx(
       total: row.a + row.aXl + row.b + row.bXl + row.c + row.cXl,
     });
   });
-  sheet.getRow(1).font = { bold: true };
+  sheet.getRow(1).font = { bold: true, size: FONT_SIZE };
 
   // Blank, handwritable rows go between the orders and the totals row, so
   // "Összesen" always sits at the bottom of the printed page rather than
@@ -96,7 +97,7 @@ export async function generateOrdersXlsx(
     total: totals.a + totals.aXl + totals.b + totals.bXl + totals.c + totals.cXl,
   });
   const totalsRow = sheet.getRow(sheet.rowCount);
-  totalsRow.font = { bold: true };
+  totalsRow.font = { bold: true, size: FONT_SIZE };
 
   applyGridBorders(sheet, sheet.columns.length);
 

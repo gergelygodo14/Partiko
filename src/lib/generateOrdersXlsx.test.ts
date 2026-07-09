@@ -135,6 +135,27 @@ describe("generateOrdersXlsx", () => {
     }
   });
 
+  it("uses 14pt everywhere, bold store names, and a fixed 100% print scale (not stretched to fill the page width)", async () => {
+    const buffer = await generateOrdersXlsx(
+      "2026-07-06",
+      "HÉTFŐ",
+      { a: "A", b: "B", c: "C" },
+      { a: 1, b: 0, c: 0, aXl: 0, bXl: 0, cXl: 0 },
+      [{ storeName: "Alma Büfé", a: 1, b: 0, c: 0, aXl: 0, bXl: 0, cXl: 0 }]
+    );
+    const workbook = await readBack(buffer);
+    const sheet = workbook.getWorksheet("KAJA HÉTFŐ")!;
+
+    expect(sheet.getRow(1).getCell(1).font?.size).toBe(14);
+    expect(sheet.getRow(2).getCell(1).font?.size).toBe(14);
+    expect(sheet.getRow(2).getCell(1).font?.bold).toBe(true); // store name, bold
+    expect(sheet.getRow(2).getCell(2).font?.bold).toBeFalsy(); // dish quantity, not bold
+    expect(sheet.getRow(2).getCell(2).font?.size).toBe(14);
+
+    expect(sheet.pageSetup.scale).toBe(100);
+    expect(sheet.pageSetup.fitToPage).toBeFalsy();
+  });
+
   it("applies thick vertical / thin horizontal borders to every cell in the table", async () => {
     const buffer = await generateOrdersXlsx(
       "2026-07-06",
