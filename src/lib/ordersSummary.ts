@@ -22,6 +22,11 @@ export type OrdersSummary = {
   byCustomer: CustomerOrderRow[];
 };
 
+// Sums every quantity field (normal + XL, all letters) for one day's row.
+export function dayTotal(day: OrderDayQuantities): number {
+  return ORDER_QUANTITY_FIELDS.reduce((sum, field) => sum + day[field], 0);
+}
+
 export async function getOrdersSummary(weekStart: string): Promise<OrdersSummary> {
   const orders = await prisma.order.findMany({
     where: { weekStart: parseDay(weekStart) },
@@ -43,7 +48,13 @@ export async function getOrdersSummary(weekStart: string): Promise<OrdersSummary
       days,
     };
   });
-  byCustomer.sort((a, b) => a.storeName.localeCompare(b.storeName, "hu"));
+  // Biggest orderer first, not alphabetical - ties broken by name for a
+  // stable, predictable order.
+  byCustomer.sort((a, b) => {
+    const totalA = a.days.reduce((sum, day) => sum + dayTotal(day), 0);
+    const totalB = b.days.reduce((sum, day) => sum + dayTotal(day), 0);
+    return totalB - totalA || a.storeName.localeCompare(b.storeName, "hu");
+  });
 
   return { dayTotals, byCustomer };
 }
@@ -89,8 +100,10 @@ export async function getOrdersForDay(weekStart: string, dayIndex: number): Prom
     totals[field] += line.quantity;
   }
 
-  const byCustomer = Array.from(byCustomerMap.values()).sort((a, b) =>
-    a.storeName.localeCompare(b.storeName, "hu")
+  // Biggest orderer first, not alphabetical - ties broken by name for a
+  // stable, predictable order.
+  const byCustomer = Array.from(byCustomerMap.values()).sort(
+    (a, b) => dayTotal(b) - dayTotal(a) || a.storeName.localeCompare(b.storeName, "hu")
   );
 
   return { totals, byCustomer };

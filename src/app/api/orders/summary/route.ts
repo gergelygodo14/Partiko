@@ -1,12 +1,8 @@
 import { NextResponse } from "next/server";
 import { getActiveOrderWeek, getExportDay } from "@/lib/dates";
-import { emptyOrderWeek, MEAL_PRICE_FT, ORDER_QUANTITY_FIELDS, type OrderDayQuantities } from "@/lib/orders";
-import { getDishNamesForDay, getOrdersForDay, getOrdersSummary, getWeekTotalMeals } from "@/lib/ordersSummary";
+import { emptyOrderWeek, MEAL_PRICE_FT } from "@/lib/orders";
+import { dayTotal, getDishNamesForDay, getOrdersForDay, getOrdersSummary, getWeekTotalMeals } from "@/lib/ordersSummary";
 import { withApiErrorHandling } from "@/lib/apiRoute";
-
-function dayTotal(day: OrderDayQuantities): number {
-  return ORDER_QUANTITY_FIELDS.reduce((sum, field) => sum + day[field], 0);
-}
 
 export const GET = withApiErrorHandling(async () => {
   const now = new Date();

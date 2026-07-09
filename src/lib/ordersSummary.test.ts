@@ -12,7 +12,7 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
-const { getOrdersForDay, getDishNamesForDay, getWeekTotalMeals } = await import(
+const { getOrdersForDay, getOrdersSummary, getDishNamesForDay, getWeekTotalMeals } = await import(
   "@/lib/ordersSummary"
 );
 
@@ -81,7 +81,18 @@ describe("getOrdersForDay", () => {
     expect(result.byCustomer[0]).toMatchObject({ a: 2, aXl: 1 });
   });
 
-  it("sorts stores alphabetically (Hungarian collation)", async () => {
+  it("sorts by total order quantity, descending, not alphabetically", async () => {
+    findManyOrderLine.mockResolvedValue([
+      line("c1", "Alma Büfé", "a", 1),
+      line("c2", "Zöld Bolt", "b", 9),
+    ]);
+
+    const result = await getOrdersForDay("2026-07-06", 4);
+
+    expect(result.byCustomer.map((c) => c.storeName)).toEqual(["Zöld Bolt", "Alma Büfé"]);
+  });
+
+  it("breaks ties by store name (Hungarian collation) when quantities are equal", async () => {
     findManyOrderLine.mockResolvedValue([
       line("c2", "Őzike Büfé", "a", 1),
       line("c1", "Alma Büfé", "a", 1),
@@ -99,6 +110,30 @@ describe("getOrdersForDay", () => {
 
     expect(result.totals).toEqual(EMPTY_DAY);
     expect(result.byCustomer).toEqual([]);
+  });
+});
+
+describe("getOrdersSummary", () => {
+  it("sorts by total weekly order quantity, descending, not alphabetically", async () => {
+    findManyOrder.mockResolvedValue([
+      {
+        customerId: "c1",
+        customer: { storeName: "Alma Büfé", companyName: "Alma Kft." },
+        lines: [{ dayIndex: 0, letter: "a", quantity: 1, isXl: false }],
+      },
+      {
+        customerId: "c2",
+        customer: { storeName: "Zöld Bolt", companyName: "Zöld Kft." },
+        lines: [
+          { dayIndex: 0, letter: "b", quantity: 5, isXl: false },
+          { dayIndex: 4, letter: "c", quantity: 4, isXl: false },
+        ],
+      },
+    ]);
+
+    const result = await getOrdersSummary("2026-07-06");
+
+    expect(result.byCustomer.map((c) => c.storeName)).toEqual(["Zöld Bolt", "Alma Büfé"]);
   });
 });
 
