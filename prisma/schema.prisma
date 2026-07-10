@@ -85,3 +85,71 @@ model OrderLine {
   @@unique([orderId, dayIndex, letter, isXl])
   @@index([orderId])
 }
+
+enum Supplier {
+  SAJTFUTAR
+  BAROMFIUDVAR
+}
+
+enum ProductStatus {
+  PENDING
+  CONFIRMED
+}
+
+enum InvoiceStatus {
+  UPLOADED
+  PROCESSING
+  PROCESSED
+  FAILED
+}
+
+enum PriceSource {
+  EMAIL_PRICELIST
+  INVOICE_PHOTO
+  MANUAL
+}
+
+model Product {
+  id                String             @id @default(cuid())
+  name              String
+  unit              String?
+  status            ProductStatus      @default(PENDING)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  priceObservations PriceObservation[]
+
+  @@index([status])
+}
+
+model PriceObservation {
+  id           String      @id @default(cuid())
+  productId    String
+  product      Product     @relation(fields: [productId], references: [id])
+  supplier     Supplier
+  unitPrice    Int
+  unit         String?
+  observedDate DateTime
+  source       PriceSource
+  rawText      String?
+  invoiceId    String?
+  invoice      Invoice?    @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  createdAt    DateTime    @default(now())
+
+  @@index([productId, observedDate])
+  @@index([supplier, observedDate])
+}
+
+model Invoice {
+  id                String             @id @default(cuid())
+  supplier          Supplier
+  photoUrl          String
+  photoBlobPathname String?
+  status            InvoiceStatus      @default(UPLOADED)
+  uploadedAt        DateTime           @default(now())
+  processedAt       DateTime?
+  rawExtraction     Json?
+  summaryText       String?
+  errorMessage      String?
+  priceObservations PriceObservation[]
+  createdAt         DateTime           @default(now())
+}
