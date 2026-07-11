@@ -5,6 +5,7 @@ import {
   emptyOrderWeek,
   isValidOrderDays,
   orderLinesToDaysGrid,
+  orderValue,
 } from "@/lib/orders";
 
 const EMPTY_DAY = { a: 0, b: 0, c: 0, aXl: 0, bXl: 0, cXl: 0 };
@@ -117,5 +118,15 @@ describe("applyLockedDays", () => {
     const existing = emptyOrderWeek();
     const submitted = orderLinesToDaysGrid([{ dayIndex: 2, letter: "c", quantity: 3 }]);
     expect(applyLockedDays(submitted, existing, [])).toEqual(submitted);
+  });
+});
+
+describe("orderValue", () => {
+  it("prices normal portions at 1200 Ft and XL portions at 1500 Ft", () => {
+    expect(orderValue({ a: 2, b: 1, c: 0, aXl: 1, bXl: 0, cXl: 0 })).toBe(3 * 1200 + 1 * 1500);
+  });
+
+  it("returns 0 for an empty day", () => {
+    expect(orderValue(EMPTY_DAY)).toBe(0);
   });
 });

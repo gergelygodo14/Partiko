@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server";
 import { getActiveOrderWeek, getExportDay } from "@/lib/dates";
-import { emptyOrderWeek, MEAL_PRICE_FT } from "@/lib/orders";
-import { dayTotal, getDishNamesForDay, getOrdersForDay, getOrdersSummary, getWeekTotalMeals } from "@/lib/ordersSummary";
+import { emptyOrderWeek, orderValue } from "@/lib/orders";
+import {
+  dayTotal,
+  getDishNamesForDay,
+  getOrdersForDay,
+  getOrdersSummary,
+  getWeekTotalMeals,
+  getWeekTotalValue,
+} from "@/lib/ordersSummary";
 import { withApiErrorHandling } from "@/lib/apiRoute";
 
 export const GET = withApiErrorHandling(async () => {
@@ -9,12 +16,13 @@ export const GET = withApiErrorHandling(async () => {
   const { date, weekStart, dayIndex } = getExportDay(now);
   const activeWeek = getActiveOrderWeek(now);
 
-  const [dishNames, dayResult, weekTotalMeals] = await Promise.all([
+  const [dishNames, dayResult, weekTotalMeals, weekTotalValue] = await Promise.all([
     getDishNamesForDay(weekStart, dayIndex),
     dayIndex === null
       ? Promise.resolve({ totals: emptyOrderWeek()[0], byCustomer: [] })
       : getOrdersForDay(weekStart, dayIndex),
     getWeekTotalMeals(weekStart),
+    getWeekTotalValue(weekStart),
   ]);
 
   // Customers can already be ordering against next week (past the Thursday
@@ -25,6 +33,7 @@ export const GET = withApiErrorHandling(async () => {
   if (activeWeek.weekStart !== weekStart) {
     const { dayTotals, byCustomer } = await getOrdersSummary(activeWeek.weekStart);
     const totalMeals = dayTotals.reduce((sum, day) => sum + dayTotal(day), 0);
+    const totalValue = dayTotals.reduce((sum, day) => sum + orderValue(day), 0);
     nextWeek = {
       weekStart: activeWeek.weekStart,
       dayTotals: dayTotals.map(dayTotal),
@@ -33,9 +42,10 @@ export const GET = withApiErrorHandling(async () => {
         storeName: c.storeName,
         days: c.days.map(dayTotal),
         total: c.days.reduce((sum, day) => sum + dayTotal(day), 0),
+        value: c.days.reduce((sum, day) => sum + orderValue(day), 0),
       })),
       totalMeals,
-      totalValue: totalMeals * MEAL_PRICE_FT,
+      totalValue,
     };
   }
 
@@ -45,7 +55,7 @@ export const GET = withApiErrorHandling(async () => {
     dayTotals: dayResult.totals,
     byCustomer: dayResult.byCustomer,
     weekTotalMeals,
-    weekTotalValue: weekTotalMeals * MEAL_PRICE_FT,
+    weekTotalValue,
     nextWeek,
   });
 });

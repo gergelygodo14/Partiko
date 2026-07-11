@@ -14,6 +14,7 @@ type NextWeekCustomerRow = {
   storeName: string;
   days: number[];
   total: number;
+  value: number;
 };
 
 type NextWeekSummary = {
@@ -114,6 +115,7 @@ export default function OrdersPage() {
                         </th>
                       ))}
                       <th className="text-right px-3 py-3">Összesen</th>
+                      <th className="text-right px-3 py-3">Érték</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -126,6 +128,9 @@ export default function OrdersPage() {
                           </td>
                         ))}
                         <td className="px-3 py-3 text-right font-medium">{c.total}</td>
+                        <td className="px-3 py-3 text-right font-medium">
+                          {c.value.toLocaleString("hu-HU")} Ft
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -138,6 +143,9 @@ export default function OrdersPage() {
                         </td>
                       ))}
                       <td className="px-3 py-3 text-right">{nextWeek.totalMeals}</td>
+                      <td className="px-3 py-3 text-right">
+                        {nextWeek.totalValue.toLocaleString("hu-HU")} Ft
+                      </td>
                     </tr>
                   </tfoot>
                 </table>

@@ -3,6 +3,7 @@ import { parseDay } from "@/lib/dates";
 import {
   emptyOrderWeek,
   orderLinesToDaysGrid,
+  orderValue,
   quantityField,
   ORDER_QUANTITY_FIELDS,
   type OrderDayQuantities,
@@ -131,4 +132,9 @@ export async function getWeekTotalMeals(weekStart: string): Promise<number> {
     (sum, d) => sum + ORDER_QUANTITY_FIELDS.reduce((daySum, field) => daySum + d[field], 0),
     0
   );
+}
+
+export async function getWeekTotalValue(weekStart: string): Promise<number> {
+  const { dayTotals } = await getOrdersSummary(weekStart);
+  return dayTotals.reduce((sum, d) => sum + orderValue(d), 0);
 }

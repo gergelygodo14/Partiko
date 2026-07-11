@@ -12,9 +12,8 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
-const { getOrdersForDay, getOrdersSummary, getDishNamesForDay, getWeekTotalMeals } = await import(
-  "@/lib/ordersSummary"
-);
+const { getOrdersForDay, getOrdersSummary, getDishNamesForDay, getWeekTotalMeals, getWeekTotalValue } =
+  await import("@/lib/ordersSummary");
 
 beforeEach(() => {
   findManyOrderLine.mockReset();
@@ -188,5 +187,27 @@ describe("getWeekTotalMeals", () => {
   it("returns 0 when nothing was ordered", async () => {
     findManyOrder.mockResolvedValue([]);
     expect(await getWeekTotalMeals("2026-07-06")).toBe(0);
+  });
+});
+
+describe("getWeekTotalValue", () => {
+  it("prices normal portions at 1200 Ft and XL portions at 1500 Ft", async () => {
+    findManyOrder.mockResolvedValue([
+      {
+        customerId: "c1",
+        customer: { storeName: "Alma", companyName: "Alma Kft." },
+        lines: [
+          { dayIndex: 0, letter: "a", quantity: 2, isXl: false },
+          { dayIndex: 0, letter: "a", quantity: 1, isXl: true },
+          { dayIndex: 4, letter: "c", quantity: 3, isXl: false },
+        ],
+      },
+    ]);
+    expect(await getWeekTotalValue("2026-07-06")).toBe(5 * 1200 + 1 * 1500);
+  });
+
+  it("returns 0 when nothing was ordered", async () => {
+    findManyOrder.mockResolvedValue([]);
+    expect(await getWeekTotalValue("2026-07-06")).toBe(0);
   });
 });

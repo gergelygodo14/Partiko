@@ -9,10 +9,18 @@ export type OrderDayQuantities = {
 export type OrderLetter = "a" | "b" | "c";
 export type OrderLineInput = { dayIndex: number; letter: string; quantity: number; isXl?: boolean };
 
-// One meal (any A/B/C dish, XL or not) always costs the same flat price.
+// A normal-size A/B/C meal; an XL portion of the same dish costs more.
 export const MEAL_PRICE_FT = 1200;
+export const MEAL_PRICE_XL_FT = 1500;
 
 export const ORDER_QUANTITY_FIELDS = ["a", "b", "c", "aXl", "bXl", "cXl"] as const;
+
+// Ft value of one day's quantities, XL portions priced at MEAL_PRICE_XL_FT.
+export function orderValue(day: OrderDayQuantities): number {
+  const normal = day.a + day.b + day.c;
+  const xl = day.aXl + day.bXl + day.cXl;
+  return normal * MEAL_PRICE_FT + xl * MEAL_PRICE_XL_FT;
+}
 
 const FIELD_MAP: Record<OrderLetter, { normal: keyof OrderDayQuantities; xl: keyof OrderDayQuantities }> = {
   a: { normal: "a", xl: "aXl" },
