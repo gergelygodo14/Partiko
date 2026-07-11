@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { normalizeProductName } from "@/lib/productMatching";
 
 type Supplier = "SAJTFUTAR" | "BAROMFIUDVAR";
 
@@ -75,6 +76,7 @@ export default function SzamlakPage() {
   const [comparison, setComparison] = useState<PriceComparisonRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [mergeTarget, setMergeTarget] = useState<Record<string, string>>({});
+  const [mergeSearch, setMergeSearch] = useState<Record<string, string>>({});
 
   async function loadAll() {
     setLoading(true);
@@ -163,43 +165,77 @@ export default function SzamlakPage() {
         <section>
           <h2 className="text-lg font-semibold mb-3">Jóváhagyásra váró termékek</h2>
           <ul className="space-y-2">
-            {pendingProducts.map((p) => (
-              <li
-                key={p.id}
-                className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <span className="font-semibold text-base">{p.name}</span>
-                <div className="flex flex-wrap gap-2 items-center text-sm">
-                  <button
-                    onClick={() => confirmProduct(p.id)}
-                    className="px-4 py-2.5 rounded-xl bg-yellow-400 text-black font-semibold active:bg-yellow-500"
-                  >
-                    Új termékként jóváhagyás
-                  </button>
-                  <select
-                    value={mergeTarget[p.id] ?? ""}
-                    onChange={(e) =>
-                      setMergeTarget((m) => ({ ...m, [p.id]: e.target.value }))
-                    }
-                    className="border border-neutral-300 rounded-xl px-3 py-2.5"
-                  >
-                    <option value="">Összevonás ezzel...</option>
-                    {confirmedProducts.map((cp) => (
-                      <option key={cp.id} value={cp.id}>
-                        {cp.name}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={() => mergeProduct(p.id)}
-                    disabled={!mergeTarget[p.id]}
-                    className="px-4 py-2.5 rounded-xl border border-neutral-300 active:bg-neutral-100 disabled:opacity-40"
-                  >
-                    Összevonás
-                  </button>
-                </div>
-              </li>
-            ))}
+            {pendingProducts.map((p) => {
+              const search = (mergeSearch[p.id] ?? "").trim();
+              const selected = confirmedProducts.find((cp) => cp.id === mergeTarget[p.id]);
+              const matches = search
+                ? confirmedProducts.filter((cp) =>
+                    normalizeProductName(cp.name).includes(normalizeProductName(search))
+                  )
+                : [];
+
+              return (
+                <li
+                  key={p.id}
+                  className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm flex flex-col gap-3"
+                >
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <span className="font-semibold text-base">{p.name}</span>
+                    <button
+                      onClick={() => confirmProduct(p.id)}
+                      className="px-4 py-2.5 rounded-xl bg-yellow-400 text-black font-semibold active:bg-yellow-500 self-start"
+                    >
+                      Új termékként jóváhagyás
+                    </button>
+                  </div>
+                  <div className="flex flex-col gap-2 text-sm">
+                    <div className="flex flex-wrap gap-2 items-center">
+                      <input
+                        type="text"
+                        value={mergeSearch[p.id] ?? ""}
+                        onChange={(e) => {
+                          setMergeSearch((m) => ({ ...m, [p.id]: e.target.value }));
+                          setMergeTarget((m) => ({ ...m, [p.id]: "" }));
+                        }}
+                        placeholder="Termék keresése összevonáshoz..."
+                        className="border border-neutral-300 rounded-xl px-3 py-2.5 flex-1 min-w-[180px]"
+                      />
+                      <button
+                        onClick={() => mergeProduct(p.id)}
+                        disabled={!mergeTarget[p.id]}
+                        className="px-4 py-2.5 rounded-xl border border-neutral-300 active:bg-neutral-100 disabled:opacity-40"
+                      >
+                        Összevonás
+                      </button>
+                    </div>
+                    {selected && (
+                      <p className="text-xs text-neutral-500">Kiválasztva: {selected.name}</p>
+                    )}
+                    {search && !selected && (
+                      <ul className="border border-neutral-200 rounded-xl divide-y divide-neutral-200 max-h-56 overflow-y-auto">
+                        {matches.length === 0 ? (
+                          <li className="px-3 py-2 text-neutral-400">Nincs találat</li>
+                        ) : (
+                          matches.slice(0, 20).map((cp) => (
+                            <li key={cp.id}>
+                              <button
+                                onClick={() => {
+                                  setMergeTarget((m) => ({ ...m, [p.id]: cp.id }));
+                                  setMergeSearch((m) => ({ ...m, [p.id]: cp.name }));
+                                }}
+                                className="w-full text-left px-3 py-2 active:bg-neutral-100"
+                              >
+                                {cp.name}
+                              </button>
+                            </li>
+                          ))
+                        )}
+                      </ul>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </section>
       )}
