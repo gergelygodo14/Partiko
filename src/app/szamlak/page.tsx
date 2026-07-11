@@ -147,11 +147,10 @@ export default function SzamlakPage() {
             </select>
           </div>
           <label className="bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500 cursor-pointer">
-            {uploading ? "Feltöltés..." : "Számla fotózása"}
+            {uploading ? "Feltöltés..." : "Számla feltöltése"}
             <input
               type="file"
               accept="image/*"
-              capture="environment"
               onChange={handleUpload}
               disabled={uploading}
               className="hidden"
