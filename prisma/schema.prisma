@@ -153,3 +153,11 @@ model Invoice {
   priceObservations PriceObservation[]
   createdAt         DateTime           @default(now())
 }
+
+model PriceListImportRun {
+  id             String   @id @default(cuid())
+  emailMessageId String   @unique
+  supplier       Supplier
+  productCount   Int
+  importedAt     DateTime @default(now())
+}
