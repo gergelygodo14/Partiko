@@ -68,8 +68,27 @@ function TrendIndicator({ trend }: { trend: SupplierPricePoint["trend"] }) {
   return null;
 }
 
+type ComparisonFilter = "changed" | "both" | "all";
+
+const COMPARISON_FILTER_OPTIONS: { value: ComparisonFilter; label: string }[] = [
+  { value: "changed", label: "Árváltozás" },
+  { value: "both", label: "Mindkét beszállítónál" },
+  { value: "all", label: "Összes" },
+];
+
+function hasBothSuppliers(row: PriceComparisonRow): boolean {
+  return Object.keys(row.bySupplier).length >= 2;
+}
+
+function hasPriceChange(row: PriceComparisonRow): boolean {
+  return Object.values(row.bySupplier).some(
+    (point) => point?.trend === "up" || point?.trend === "down"
+  );
+}
+
 export default function SzamlakPage() {
   const [supplier, setSupplier] = useState<Supplier>("BAROMFIUDVAR");
+  const [comparisonFilter, setComparisonFilter] = useState<ComparisonFilter>("changed");
   const [uploading, setUploading] = useState(false);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [pendingProducts, setPendingProducts] = useState<Product[]>([]);
@@ -247,48 +266,81 @@ export default function SzamlakPage() {
         ) : comparison.length === 0 ? (
           <p className="text-neutral-500">Még nincs jóváhagyott termék árelőzménye.</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr className="text-left text-xs text-neutral-500">
-                  <th className="py-2 pr-3">Termék</th>
-                  <th className="py-2 pr-3">Sajtfutár</th>
-                  <th className="py-2 pr-3">Baromfiudvar</th>
-                  <th className="py-2 pr-3">Olcsóbb</th>
-                </tr>
-              </thead>
-              <tbody>
-                {comparison.map((row) => (
-                  <tr key={row.productId} className="border-t border-neutral-200">
-                    <td className="py-2 pr-3 font-medium">{row.productName}</td>
-                    <td className="py-2 pr-3">
-                      {row.bySupplier.SAJTFUTAR ? (
-                        <>
-                          {row.bySupplier.SAJTFUTAR.price.toLocaleString("hu-HU")} Ft{" "}
-                          <TrendIndicator trend={row.bySupplier.SAJTFUTAR.trend} />
-                        </>
-                      ) : (
-                        "–"
-                      )}
-                    </td>
-                    <td className="py-2 pr-3">
-                      {row.bySupplier.BAROMFIUDVAR ? (
-                        <>
-                          {row.bySupplier.BAROMFIUDVAR.price.toLocaleString("hu-HU")} Ft{" "}
-                          <TrendIndicator trend={row.bySupplier.BAROMFIUDVAR.trend} />
-                        </>
-                      ) : (
-                        "–"
-                      )}
-                    </td>
-                    <td className="py-2 pr-3">
-                      {row.cheaperSupplier ? SUPPLIER_LABEL[row.cheaperSupplier] : "–"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <>
+            <div className="flex flex-wrap gap-2 mb-3 text-sm">
+              {COMPARISON_FILTER_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setComparisonFilter(opt.value)}
+                  className={
+                    comparisonFilter === opt.value
+                      ? "px-3 py-1.5 rounded-full bg-yellow-400 text-black font-semibold"
+                      : "px-3 py-1.5 rounded-full border border-neutral-300 text-neutral-600 active:bg-neutral-100"
+                  }
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            {(() => {
+              const filteredComparison = comparison.filter((row) => {
+                if (comparisonFilter === "both") return hasBothSuppliers(row);
+                if (comparisonFilter === "changed") return hasPriceChange(row);
+                return true;
+              });
+
+              if (filteredComparison.length === 0) {
+                return (
+                  <p className="text-neutral-500">Nincs a szűrésnek megfelelő termék.</p>
+                );
+              }
+
+              return (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm border-collapse">
+                    <thead>
+                      <tr className="text-left text-xs text-neutral-500">
+                        <th className="py-2 pr-3">Termék</th>
+                        <th className="py-2 pr-3">Sajtfutár</th>
+                        <th className="py-2 pr-3">Baromfiudvar</th>
+                        <th className="py-2 pr-3">Olcsóbb</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredComparison.map((row) => (
+                        <tr key={row.productId} className="border-t border-neutral-200">
+                          <td className="py-2 pr-3 font-medium">{row.productName}</td>
+                          <td className="py-2 pr-3">
+                            {row.bySupplier.SAJTFUTAR ? (
+                              <>
+                                {row.bySupplier.SAJTFUTAR.price.toLocaleString("hu-HU")} Ft{" "}
+                                <TrendIndicator trend={row.bySupplier.SAJTFUTAR.trend} />
+                              </>
+                            ) : (
+                              "–"
+                            )}
+                          </td>
+                          <td className="py-2 pr-3">
+                            {row.bySupplier.BAROMFIUDVAR ? (
+                              <>
+                                {row.bySupplier.BAROMFIUDVAR.price.toLocaleString("hu-HU")} Ft{" "}
+                                <TrendIndicator trend={row.bySupplier.BAROMFIUDVAR.trend} />
+                              </>
+                            ) : (
+                              "–"
+                            )}
+                          </td>
+                          <td className="py-2 pr-3">
+                            {row.cheaperSupplier ? SUPPLIER_LABEL[row.cheaperSupplier] : "–"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            })()}
+          </>
         )}
       </section>
 
