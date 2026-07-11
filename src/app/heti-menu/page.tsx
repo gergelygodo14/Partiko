@@ -20,6 +20,7 @@ export default function WeeklyMenuPage() {
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [savedMessage, setSavedMessage] = useState(false);
+  const [suggestingKey, setSuggestingKey] = useState<string | null>(null);
 
   const load = useCallback(async (week: string) => {
     setLoading(true);
@@ -39,6 +40,25 @@ export default function WeeklyMenuPage() {
     setDays((prev) =>
       prev.map((d, i) => (i === dayIndex ? { ...d, ...patch } : d))
     );
+  }
+
+  async function suggestDish(dayIndex: number, letter: "a" | "b" | "c") {
+    const key = `${dayIndex}-${letter}`;
+    setSuggestingKey(key);
+    try {
+      const avoidDishes = days.flatMap((d) => [d.a, d.b, d.c]);
+      const res = await fetch("/api/weekly-menu/suggest-dish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ avoidDishes }),
+      });
+      const data = await res.json();
+      if (typeof data.dish === "string") {
+        updateDay(dayIndex, { [letter]: data.dish } as Partial<MenuDay>);
+      }
+    } finally {
+      setSuggestingKey(null);
+    }
   }
 
   async function save() {
@@ -153,6 +173,15 @@ export default function WeeklyMenuPage() {
                     placeholder="étel neve"
                     className="flex-1 border border-neutral-300 rounded-xl px-3 py-2.5 text-base"
                   />
+                  <button
+                    type="button"
+                    onClick={() => suggestDish(i, letter)}
+                    disabled={suggestingKey === `${i}-${letter}`}
+                    title="AI ötlet erre a fogásra"
+                    className="shrink-0 px-2.5 py-2.5 rounded-xl border border-neutral-300 text-xs font-semibold active:bg-neutral-100 disabled:opacity-50"
+                  >
+                    {suggestingKey === `${i}-${letter}` ? "…" : "AI"}
+                  </button>
                   <label className="flex items-center gap-1.5 text-sm text-neutral-600 shrink-0">
                     <input
                       type="checkbox"
