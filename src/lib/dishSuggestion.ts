@@ -24,21 +24,31 @@ export function sampleExamples(count: number, pool: string[] = REAL_DISH_EXAMPLE
   return sample;
 }
 
-export function buildSuggestionPrompt(examples: string[], avoidDishes: string[]): string {
+export function buildSuggestionPrompt(
+  examples: string[],
+  avoidDishes: string[],
+  sameDayDishes: string[] = []
+): string {
   const avoidText = avoidDishes.map((d) => d.trim()).filter(Boolean).join(", ") || "nincs";
+  const sameDayText = sameDayDishes.map((d) => d.trim()).filter(Boolean).join(", ") || "nincs";
   return (
     "Egy magyarországi gyorsétteremhez (Partiko, csirke-alapú házias ételek) kell egy ÚJ heti menü " +
     "fogás ötlet, ugyanabban a stílusban, mint az alábbi valós, korábban használt fogásnevek:\n\n" +
     examples.join("\n") +
     `\n\nEzen a héten már szerepel (ne javasolj ehhez nagyon hasonlót vagy ugyanazt): ${avoidText}\n\n` +
+    `Ugyanerre a napra a másik két fogás már el van döntve: ${sameDayText}\n\n` +
+    "Nézd meg ennek a két fogásnak a körítését/alapját (pl. rizs, burgonya, tészta), és NE adj hozzájuk " +
+    "hasonló köretűt. Ha pl. már van egy rizses és egy burgonyás/krumplis fogás, akkor inkább tésztaalapú " +
+    "ételt vagy egytálételt javasolj (pl. rakott karfiol, chilis bab, túrós csusza), hogy a napi három " +
+    "fogás köret szerint is változatos legyen, ne ismétlődjön.\n\n" +
     "Írj egyetlen ÚJ, még nem használt fogásnevet, pontosan olyan stílusban (rövid, tömör, magyar, a fő " +
     "alapanyaggal és köret/elkészítési móddal), mint a példák. Csak a fogás nevét add vissza, semmi mást."
   );
 }
 
-export async function suggestDish(avoidDishes: string[]): Promise<string> {
+export async function suggestDish(avoidDishes: string[], sameDayDishes: string[] = []): Promise<string> {
   const examples = sampleExamples(SAMPLE_SIZE);
-  const prompt = buildSuggestionPrompt(examples, avoidDishes);
+  const prompt = buildSuggestionPrompt(examples, avoidDishes, sameDayDishes);
 
   const response = await anthropic.messages.create({
     model: MODEL,

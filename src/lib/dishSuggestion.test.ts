@@ -44,4 +44,20 @@ describe("buildSuggestionPrompt", () => {
     const prompt = buildSuggestionPrompt(["Példa étel"], ["", "  ", "Valódi étel"]);
     expect(prompt).toContain("már szerepel (ne javasolj ehhez nagyon hasonlót vagy ugyanazt): Valódi étel");
   });
+
+  it("lists the same day's other two dishes when given", () => {
+    const prompt = buildSuggestionPrompt(
+      ["Példa étel"],
+      [],
+      ["Csirkemell rizzsel", "Sertéskaraj hasábburgonyával"]
+    );
+    expect(prompt).toContain(
+      "Ugyanerre a napra a másik két fogás már el van döntve: Csirkemell rizzsel, Sertéskaraj hasábburgonyával"
+    );
+  });
+
+  it("falls back to 'nincs' when there are no same-day dishes yet", () => {
+    const prompt = buildSuggestionPrompt(["Példa étel"], []);
+    expect(prompt).toContain("Ugyanerre a napra a másik két fogás már el van döntve: nincs");
+  });
 });

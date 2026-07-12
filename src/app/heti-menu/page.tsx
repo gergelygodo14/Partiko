@@ -47,10 +47,12 @@ export default function WeeklyMenuPage() {
     setSuggestingKey(key);
     try {
       const avoidDishes = days.flatMap((d) => [d.a, d.b, d.c]);
+      const otherLetters = (["a", "b", "c"] as const).filter((l) => l !== letter);
+      const sameDayDishes = otherLetters.map((l) => days[dayIndex][l]);
       const res = await fetch("/api/weekly-menu/suggest-dish", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ avoidDishes }),
+        body: JSON.stringify({ avoidDishes, sameDayDishes }),
       });
       const data = await res.json();
       if (typeof data.dish === "string") {
