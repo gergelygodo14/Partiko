@@ -3,6 +3,7 @@ import {
   applyLockedDays,
   daysGridToOrderLines,
   emptyOrderWeek,
+  formatCell,
   isValidOrderDays,
   orderLinesToDaysGrid,
   orderValue,
@@ -128,5 +129,23 @@ describe("orderValue", () => {
 
   it("returns 0 for an empty day", () => {
     expect(orderValue(EMPTY_DAY)).toBe(0);
+  });
+});
+
+describe("formatCell", () => {
+  it("returns an empty string when both are zero", () => {
+    expect(formatCell(0, 0)).toBe("");
+  });
+
+  it("returns the bare number when there's no XL", () => {
+    expect(formatCell(3, 0)).toBe("3");
+  });
+
+  it("returns just the XL amount when there's no normal quantity", () => {
+    expect(formatCell(0, 2)).toBe("+2 XL");
+  });
+
+  it("combines both when there's a mix", () => {
+    expect(formatCell(3, 2)).toBe("3 (+2 XL)");
   });
 });

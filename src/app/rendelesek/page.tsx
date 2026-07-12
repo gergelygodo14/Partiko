@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { OrderDayQuantities } from "@/lib/orders";
+import { formatCell, type OrderDayQuantities } from "@/lib/orders";
 
 type CustomerRow = {
   customerId: string;
@@ -46,13 +46,6 @@ function formatDate(dateStr: string) {
     month: "2-digit",
     day: "2-digit",
   });
-}
-
-function formatCell(normal: number, xl: number): string {
-  if (normal === 0 && xl === 0) return "";
-  if (xl === 0) return String(normal);
-  if (normal === 0) return `+${xl} XL`;
-  return `${normal} (+${xl} XL)`;
 }
 
 function dishTotal(q: OrderDayQuantities) {

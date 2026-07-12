@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { getActiveOrderWeek, getLockedDayIndexes, mondayOf, parseDay } from "@/lib/dates";
+import { addDaysStr, getActiveOrderWeek, getLockedDayIndexes, mondayOf, parseDay } from "@/lib/dates";
 import { isValidDateStr } from "@/lib/validate";
 import {
   applyLockedDays,
@@ -10,6 +10,8 @@ import {
   orderLinesToDaysGrid,
   type OrderDayQuantities,
 } from "@/lib/orders";
+import { buildOrderNotificationText } from "@/lib/orderNotification";
+import { sendTelegramMessage } from "@/lib/telegram";
 import { withApiErrorHandling } from "@/lib/apiRoute";
 import { corsPreflight, withCors } from "@/lib/cors";
 
@@ -80,11 +82,13 @@ export const PUT = withCors(
     const lockedDayIndexes = getLockedDayIndexes(activeWeek, now);
     const weekStartDate = parseDay(week);
 
+    let isNewOrder = false;
     const finalDays = await prisma.$transaction(async (tx) => {
       const existingOrder = await tx.order.findUnique({
         where: { customerId_weekStart: { customerId, weekStart: weekStartDate } },
         include: { lines: true },
       });
+      isNewOrder = !existingOrder;
       const existingDays = existingOrder
         ? orderLinesToDaysGrid(existingOrder.lines)
         : emptyOrderWeek();
@@ -106,6 +110,30 @@ export const PUT = withCors(
 
       return merged;
     });
+
+    // Best-effort - a Telegram/notification failure must never fail the
+    // customer's order submission.
+    try {
+      const customer = await prisma.customer.findUnique({
+        where: { id: customerId },
+        select: { storeName: true },
+      });
+      if (customer) {
+        const text = buildOrderNotificationText({
+          storeName: customer.storeName,
+          weekStart: week,
+          weekEnd: addDaysStr(week, 4),
+          days: finalDays,
+          isNew: isNewOrder,
+        });
+        const result = await sendTelegramMessage(text);
+        if (!result.ok) {
+          console.error("Telegram order notification failed:", result.error);
+        }
+      }
+    } catch (e) {
+      console.error("Telegram order notification failed:", e);
+    }
 
     return NextResponse.json({ weekStart: week, days: finalDays });
   })

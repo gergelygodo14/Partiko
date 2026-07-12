@@ -33,6 +33,15 @@ export function quantityField(letter: OrderLetter, isXl: boolean): keyof OrderDa
   return isXl ? mapping.xl : mapping.normal;
 }
 
+// Renders one normal+XL quantity pair for display, e.g. "2 (+1 XL)", "+1 XL"
+// (normal-only is just the bare number), or "" when both are zero.
+export function formatCell(normal: number, xl: number): string {
+  if (normal === 0 && xl === 0) return "";
+  if (xl === 0) return String(normal);
+  if (normal === 0) return `+${xl} XL`;
+  return `${normal} (+${xl} XL)`;
+}
+
 export function emptyOrderWeek(): OrderDayQuantities[] {
   return Array.from({ length: 5 }, () => ({ a: 0, b: 0, c: 0, aXl: 0, bXl: 0, cXl: 0 }));
 }
