@@ -28,6 +28,8 @@ function formatShort(dateStr: string) {
   });
 }
 
+const VISIBLE_ENTRY_COUNT = 3;
+
 function weekLabel(dateStr: string) {
   const d = new Date(`${dateStr}T00:00:00`);
   const day = d.getDay();
@@ -49,6 +51,7 @@ export default function DailyEntryPage() {
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [lastClosedAt, setLastClosedAt] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const loadEntries = useCallback(async (from: string, to: string) => {
     const res = await fetch(`/api/entries?from=${from}&to=${to}`);
@@ -192,7 +195,10 @@ export default function DailyEntryPage() {
 
                 {openEntries.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2 text-sm">
-                    {openEntries.map((e) => (
+                    {(expanded[ing.id]
+                      ? openEntries
+                      : openEntries.slice(-VISIBLE_ENTRY_COUNT)
+                    ).map((e) => (
                       <span
                         key={e.id}
                         className="inline-flex items-center gap-1.5 bg-neutral-100 rounded-full pl-3 pr-1.5 py-1.5"
@@ -208,6 +214,21 @@ export default function DailyEntryPage() {
                         </button>
                       </span>
                     ))}
+                    {openEntries.length > VISIBLE_ENTRY_COUNT && (
+                      <button
+                        onClick={() =>
+                          setExpanded((prev) => ({ ...prev, [ing.id]: !prev[ing.id] }))
+                        }
+                        className="inline-flex items-center gap-1 bg-neutral-100 active:bg-neutral-200 rounded-full px-3 py-1.5 text-neutral-600"
+                        aria-label={expanded[ing.id] ? "Összecsukás" : "Összes tétel mutatása"}
+                      >
+                        {expanded[ing.id] ? (
+                          "▲"
+                        ) : (
+                          <>+{openEntries.length - VISIBLE_ENTRY_COUNT} ▼</>
+                        )}
+                      </button>
+                    )}
                     <span className="text-neutral-500 flex items-center">
                       = {sum.toLocaleString("hu-HU")} {ing.unit}
                     </span>
