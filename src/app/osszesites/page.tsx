@@ -135,7 +135,9 @@ function OpenPeriodSection() {
           Nyitott időszak (nem számlázott)
           {range && (
             <span className="text-sm font-normal text-neutral-500 ml-2">
-              {formatDate(range.from)} – {formatDate(range.to)}
+              {range.from > range.to
+                ? "minden mai tétel le van számlázva"
+                : `${formatDate(range.from)} – ${formatDate(range.to)}`}
             </span>
           )}
         </h2>

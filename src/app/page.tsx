@@ -71,8 +71,14 @@ export default function DailyEntryPage() {
       ]);
       setIngredients(ingredientsData);
       setLastClosedAt(open.lastClosedAt);
-      setOpenRange({ from: open.from, to: open.to });
-      await loadEntries(open.from, open.to);
+      // `open.from` can land after `open.to` when a billing period was
+      // closed earlier today (intentional for the Összesítő summary, which
+      // must not re-include a day that's already inside a closed period) -
+      // but this page still needs to show/record entries added today after
+      // that close, so widen the fetch range here to never exclude today.
+      const from = open.from > open.to ? open.to : open.from;
+      setOpenRange({ from, to: open.to });
+      await loadEntries(from, open.to);
       setLoading(false);
     })();
   }, [loadEntries]);

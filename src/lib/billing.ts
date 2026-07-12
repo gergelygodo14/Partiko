@@ -10,13 +10,16 @@ export async function getOpenPeriod(): Promise<{
   const last = await prisma.billingPeriod.findFirst({ orderBy: { to: "desc" } });
 
   if (last) {
-    const from = addDaysStr(toDayStr(last.to), 1);
+    // Deliberately NOT capped at `to`: this range feeds the Összesítő "Nyitott
+    // időszak" billing summary, which must never re-include a day that's
+    // already inside a closed BillingPeriod. If the period was closed today
+    // (last.to === today), `from` (tomorrow) ends up after `to` (today) on
+    // purpose - rangeBetween() then yields an empty (not inverted-but-buggy)
+    // query, correctly showing nothing open yet until tomorrow. Consumers
+    // that need today's just-created entries regardless (the Rögzítés page)
+    // must widen this range themselves rather than have it capped here.
     return {
-      // A same-day close (last.to === today) would otherwise push `from` to
-      // tomorrow, producing an inverted from>to range that makes every entry
-      // dated today invisible/unrecordable until midnight - cap it so
-      // today's entries (created after the close) stay recordable right away.
-      from: from > to ? to : from,
+      from: addDaysStr(toDayStr(last.to), 1),
       to,
       lastClosedAt: last.closedAt.toISOString(),
     };

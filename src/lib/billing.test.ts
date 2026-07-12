@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { todayStr } from "@/lib/dates";
+import { addDaysStr, todayStr } from "@/lib/dates";
 
 const findFirst = vi.fn();
 const aggregate = vi.fn();
@@ -55,7 +55,10 @@ describe("getOpenPeriod", () => {
     expect(period.lastClosedAt).toBeNull();
   });
 
-  it("caps `from` at today when the last period was closed the same day (would otherwise invert the range)", async () => {
+  it("lets `from` land after `to` when the last period was closed today - nothing is open yet", async () => {
+    // Intentional: today is already inside the just-closed period, so the
+    // open range must NOT include it too, or the Összesítő summary would
+    // double-count today's (already billed) entries as still unbilled.
     findFirst.mockResolvedValue({
       to: new Date(`${todayStr()}T00:00:00.000Z`),
       closedAt: new Date(),
@@ -63,7 +66,7 @@ describe("getOpenPeriod", () => {
 
     const period = await getOpenPeriod();
 
-    expect(period.from).toBe(todayStr());
+    expect(period.from).toBe(addDaysStr(todayStr(), 1));
     expect(period.to).toBe(todayStr());
   });
 });
