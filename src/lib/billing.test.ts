@@ -54,4 +54,16 @@ describe("getOpenPeriod", () => {
     expect(period.to).toBe(todayStr());
     expect(period.lastClosedAt).toBeNull();
   });
+
+  it("caps `from` at today when the last period was closed the same day (would otherwise invert the range)", async () => {
+    findFirst.mockResolvedValue({
+      to: new Date(`${todayStr()}T00:00:00.000Z`),
+      closedAt: new Date(),
+    });
+
+    const period = await getOpenPeriod();
+
+    expect(period.from).toBe(todayStr());
+    expect(period.to).toBe(todayStr());
+  });
 });

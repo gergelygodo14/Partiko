@@ -10,8 +10,13 @@ export async function getOpenPeriod(): Promise<{
   const last = await prisma.billingPeriod.findFirst({ orderBy: { to: "desc" } });
 
   if (last) {
+    const from = addDaysStr(toDayStr(last.to), 1);
     return {
-      from: addDaysStr(toDayStr(last.to), 1),
+      // A same-day close (last.to === today) would otherwise push `from` to
+      // tomorrow, producing an inverted from>to range that makes every entry
+      // dated today invisible/unrecordable until midnight - cap it so
+      // today's entries (created after the close) stay recordable right away.
+      from: from > to ? to : from,
       to,
       lastClosedAt: last.closedAt.toISOString(),
     };
