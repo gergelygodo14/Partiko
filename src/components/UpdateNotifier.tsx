@@ -37,7 +37,7 @@ export default function UpdateNotifier() {
   return (
     <button
       onClick={() => window.location.reload()}
-      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-neutral-900 text-white text-sm px-4 py-3 rounded-full shadow-lg flex items-center gap-2"
+      className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-50 bg-neutral-900 text-white text-sm px-4 py-3 rounded-full shadow-lg border-4 border-yellow-400 flex items-center gap-2"
     >
       Új verzió érhető el – kattints a frissítéshez
     </button>
