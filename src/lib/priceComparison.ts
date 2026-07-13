@@ -5,6 +5,7 @@ export type SupplierPricePoint = {
   price: number;
   date: string;
   trend: "up" | "down" | "same" | null;
+  previousPrice: number | null;
 };
 
 export type ProductPriceComparisonRow = {
@@ -46,6 +47,7 @@ export async function getPriceComparison(): Promise<ProductPriceComparisonRow[]>
         price: latest.unitPrice,
         date: latest.observedDate.toISOString().slice(0, 10),
         trend,
+        previousPrice: previous ? previous.unitPrice : null,
       };
     }
 

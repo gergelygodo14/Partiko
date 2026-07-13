@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { normalizeProductName } from "@/lib/productMatching";
 
 type Supplier = "SAJTFUTAR" | "BAROMFIUDVAR";
@@ -31,6 +31,7 @@ type SupplierPricePoint = {
   price: number;
   date: string;
   trend: "up" | "down" | "same" | null;
+  previousPrice: number | null;
 };
 
 type PriceComparisonRow = {
@@ -61,11 +62,54 @@ async function compressImage(file: File): Promise<Blob> {
   });
 }
 
-function TrendIndicator({ trend }: { trend: SupplierPricePoint["trend"] }) {
-  if (trend === "up") return <span className="text-red-600">▲</span>;
-  if (trend === "down") return <span className="text-green-600">▼</span>;
+function TrendIndicator({ point }: { point: SupplierPricePoint }) {
+  const { trend, price, previousPrice } = point;
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleOutside(e: MouseEvent | TouchEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleOutside);
+    document.addEventListener("touchstart", handleOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleOutside);
+      document.removeEventListener("touchstart", handleOutside);
+    };
+  }, [open]);
+
   if (trend === "same") return <span className="text-neutral-400">–</span>;
-  return null;
+  if (trend !== "up" && trend !== "down") return null;
+  if (previousPrice === null) {
+    return <span className={trend === "up" ? "text-red-600" : "text-green-600"}>{trend === "up" ? "▲" : "▼"}</span>;
+  }
+
+  const delta = price - previousPrice;
+  const deltaPercent = previousPrice !== 0 ? (delta / previousPrice) * 100 : 0;
+  const sign = delta > 0 ? "+" : "";
+  const label = `${sign}${delta.toLocaleString("hu-HU")} Ft (${sign}${deltaPercent.toFixed(1)}%)`;
+
+  return (
+    <span ref={ref} className="relative inline-block group">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className={`${trend === "up" ? "text-red-600" : "text-green-600"} cursor-pointer`}
+        aria-label={label}
+      >
+        {trend === "up" ? "▲" : "▼"}
+      </button>
+      <span
+        className={`absolute z-10 left-1/2 -translate-x-1/2 bottom-full mb-1 whitespace-nowrap rounded-lg bg-neutral-900 text-white text-xs px-2 py-1 shadow-lg pointer-events-none ${
+          open ? "block" : "hidden group-hover:block"
+        }`}
+      >
+        {label}
+      </span>
+    </span>
+  );
 }
 
 type ComparisonFilter = "changed" | "both" | "all";
@@ -314,7 +358,7 @@ export default function SzamlakPage() {
                             {row.bySupplier.SAJTFUTAR ? (
                               <>
                                 {row.bySupplier.SAJTFUTAR.price.toLocaleString("hu-HU")} Ft{" "}
-                                <TrendIndicator trend={row.bySupplier.SAJTFUTAR.trend} />
+                                <TrendIndicator point={row.bySupplier.SAJTFUTAR} />
                               </>
                             ) : (
                               "–"
@@ -324,7 +368,7 @@ export default function SzamlakPage() {
                             {row.bySupplier.BAROMFIUDVAR ? (
                               <>
                                 {row.bySupplier.BAROMFIUDVAR.price.toLocaleString("hu-HU")} Ft{" "}
-                                <TrendIndicator trend={row.bySupplier.BAROMFIUDVAR.trend} />
+                                <TrendIndicator point={row.bySupplier.BAROMFIUDVAR} />
                               </>
                             ) : (
                               "–"
