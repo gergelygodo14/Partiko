@@ -161,3 +161,12 @@ model PriceListImportRun {
   productCount   Int
   importedAt     DateTime @default(now())
 }
+
+// Catalog of real, previously-used dish names (seeded from the Drive
+// menülisták corpus) that the weekly-menu "AI" suggestion button picks
+// from - it never invents a name, only selects an existing one.
+model Dish {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+}

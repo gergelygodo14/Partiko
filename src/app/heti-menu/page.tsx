@@ -52,7 +52,7 @@ export default function WeeklyMenuPage() {
       const res = await fetch("/api/weekly-menu/suggest-dish", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ avoidDishes, sameDayDishes }),
+        body: JSON.stringify({ weekStart, avoidDishes, sameDayDishes }),
       });
       const data = await res.json();
       if (typeof data.dish === "string") {

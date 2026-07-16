@@ -1,63 +1,78 @@
-import { describe, expect, it } from "vitest";
-import { buildSuggestionPrompt, sampleExamples } from "@/lib/dishSuggestion";
+import { describe, expect, it, vi } from "vitest";
 
-describe("sampleExamples", () => {
-  const pool = ["Étel A", "Étel B", "Étel C", "Étel D", "Étel E"];
+vi.mock("@/lib/db", () => ({
+  prisma: {
+    dish: { findMany: vi.fn() },
+    weeklyMenu: { findMany: vi.fn() },
+  },
+}));
 
-  it("returns the requested number of items when enough are available", () => {
-    expect(sampleExamples(3, pool)).toHaveLength(3);
-  });
+const { buildCandidatePool, buildPickPrompt, normalizeDishName } = await import(
+  "@/lib/dishSuggestion"
+);
 
-  it("returns unique items (no repeats within one sample)", () => {
-    const sample = sampleExamples(5, pool);
-    expect(new Set(sample).size).toBe(5);
-  });
-
-  it("caps at the pool size when count exceeds it", () => {
-    expect(sampleExamples(10, pool)).toHaveLength(pool.length);
-  });
-
-  it("only draws from the given pool", () => {
-    const sample = sampleExamples(3, pool);
-    for (const item of sample) expect(pool).toContain(item);
+describe("normalizeDishName", () => {
+  it("trims and lowercases for comparison", () => {
+    expect(normalizeDishName("  Csirkemell Rizzsel  ")).toBe("csirkemell rizzsel");
   });
 });
 
-describe("buildSuggestionPrompt", () => {
-  it("includes every example dish", () => {
-    const prompt = buildSuggestionPrompt(["Csirkemell rizzsel", "Sertéskaraj tésztával"], []);
-    expect(prompt).toContain("Csirkemell rizzsel");
-    expect(prompt).toContain("Sertéskaraj tésztával");
+describe("buildCandidatePool", () => {
+  const pool = ["Csirkemell rizzsel", "Sertéskaraj tésztával", "Rakott karfiol", "Túrós csusza"];
+
+  it("removes exact matches from the exclude list", () => {
+    expect(buildCandidatePool(pool, ["Sertéskaraj tésztával"])).toEqual([
+      "Csirkemell rizzsel",
+      "Rakott karfiol",
+      "Túrós csusza",
+    ]);
   });
 
-  it("lists the dishes to avoid when given", () => {
-    const prompt = buildSuggestionPrompt(["Példa étel"], ["Grillezett csirkemell", "Rakott burgonya"]);
-    expect(prompt).toContain("Grillezett csirkemell, Rakott burgonya");
+  it("matches case- and whitespace-insensitively", () => {
+    expect(buildCandidatePool(pool, ["  csirkemell RIZZSEL  "])).toEqual([
+      "Sertéskaraj tésztával",
+      "Rakott karfiol",
+      "Túrós csusza",
+    ]);
   });
 
-  it("falls back to 'nincs' when there is nothing to avoid", () => {
-    const prompt = buildSuggestionPrompt(["Példa étel"], []);
-    expect(prompt).toContain("nincs");
+  it("returns the full pool when nothing is excluded", () => {
+    expect(buildCandidatePool(pool, [])).toEqual(pool);
   });
 
-  it("ignores blank entries in the avoid list", () => {
-    const prompt = buildSuggestionPrompt(["Példa étel"], ["", "  ", "Valódi étel"]);
-    expect(prompt).toContain("már szerepel (ne javasolj ehhez nagyon hasonlót vagy ugyanazt): Valódi étel");
+  it("ignores blank exclude entries", () => {
+    expect(buildCandidatePool(pool, ["", "   "])).toEqual(pool);
   });
 
-  it("lists the same day's other two dishes when given", () => {
-    const prompt = buildSuggestionPrompt(
-      ["Példa étel"],
-      [],
-      ["Csirkemell rizzsel", "Sertéskaraj hasábburgonyával"]
+  it("can exclude everything, leaving an empty pool", () => {
+    expect(buildCandidatePool(pool, pool)).toEqual([]);
+  });
+});
+
+describe("buildPickPrompt", () => {
+  it("lists every candidate with its index", () => {
+    const prompt = buildPickPrompt(["Csirkemell rizzsel", "Rakott karfiol"], []);
+    expect(prompt).toContain("0: Csirkemell rizzsel");
+    expect(prompt).toContain("1: Rakott karfiol");
+  });
+
+  it("instructs the model to only pick from the list", () => {
+    const prompt = buildPickPrompt(["Csirkemell rizzsel"], []);
+    expect(prompt).toContain("Kizárólag a fenti listából választhatsz");
+  });
+
+  it("includes the same day's other two dishes when given", () => {
+    const prompt = buildPickPrompt(
+      ["Csirkemell rizzsel"],
+      ["Sertéskaraj hasábburgonyával", "Rántott sajt rizzsel"]
     );
     expect(prompt).toContain(
-      "Ugyanerre a napra a másik két fogás már el van döntve: Csirkemell rizzsel, Sertéskaraj hasábburgonyával"
+      "Ugyanerre a napra a másik két fogás már el van döntve: Sertéskaraj hasábburgonyával, Rántott sajt rizzsel"
     );
   });
 
   it("falls back to 'nincs' when there are no same-day dishes yet", () => {
-    const prompt = buildSuggestionPrompt(["Példa étel"], []);
+    const prompt = buildPickPrompt(["Csirkemell rizzsel"], []);
     expect(prompt).toContain("Ugyanerre a napra a másik két fogás már el van döntve: nincs");
   });
 });
