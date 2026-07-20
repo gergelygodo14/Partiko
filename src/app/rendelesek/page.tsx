@@ -33,13 +33,15 @@ type WeekSummary = {
 };
 
 type Summary = {
-  day: DaySummary;
+  weekDays: DaySummary[];
+  defaultDayIndex: number;
   week: WeekSummary;
 };
 
 type View = "week" | "day";
 
 const SHORT_DAY_NAMES = ["H", "K", "Sze", "Cs", "P"];
+const FULL_DAY_NAMES = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek"];
 
 function formatDate(dateStr: string) {
   return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString("hu-HU", {
@@ -56,31 +58,62 @@ export default function OrdersPage() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<View>("week");
+  const [dayIndex, setDayIndex] = useState<number | null>(null);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     (async () => {
       const res = await fetch("/api/orders/summary");
-      setSummary(await res.json());
+      const data: Summary = await res.json();
+      setSummary(data);
+      setDayIndex(data.defaultDayIndex);
       setLoading(false);
     })();
   }, []);
 
-  if (loading || !summary) {
+  // A plain <a href> to a downloadable attachment navigates the whole
+  // standalone (home-screen) PWA away to a black QuickLook-style screen on
+  // iOS, with no way back except force-quitting the app. Fetching the file
+  // as a blob and clicking a throwaway object-URL link keeps the app's own
+  // page in place underneath.
+  async function downloadTomorrowOrders() {
+    setDownloading(true);
+    try {
+      const res = await fetch("/api/orders/export");
+      const blob = await res.blob();
+      const disposition = res.headers.get("Content-Disposition") ?? "";
+      const filename = disposition.match(/filename="([^"]+)"/)?.[1] ?? "rendelesek.xlsx";
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } finally {
+      setDownloading(false);
+    }
+  }
+
+  if (loading || !summary || dayIndex === null) {
     return <p className="text-neutral-500">Betöltés...</p>;
   }
 
-  const { day, week } = summary;
+  const { weekDays, week } = summary;
+  const day = weekDays[dayIndex];
   const dayGrandTotal = dishTotal(day.dayTotals);
 
   return (
     <div className="space-y-8">
       <section className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm space-y-3">
-        <a
-          href="/api/orders/export"
-          className="block text-center bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500"
+        <button
+          onClick={downloadTomorrowOrders}
+          disabled={downloading}
+          className="block w-full text-center bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500 disabled:opacity-50"
         >
-          Holnapi rendelések letöltése (.xlsx)
-        </a>
+          {downloading ? "Letöltés…" : "Holnapi rendelések letöltése (.xlsx)"}
+        </button>
         <p className="text-xs text-neutral-500 text-center">
           Mindig a következő napra (amit ma főzünk) tartalmazza a rendeléseket — nincs hét- vagy
           dátumválasztás, minden nap ugyanez a gomb tölti le a friss listát.
@@ -106,7 +139,7 @@ export default function OrdersPage() {
               : "border border-neutral-300 active:bg-neutral-100"
           }`}
         >
-          Holnapi összesítés
+          Napi bontás
         </button>
       </div>
 
@@ -186,9 +219,25 @@ export default function OrdersPage() {
         </>
       ) : (
         <>
+          <div className="flex gap-1.5">
+            {FULL_DAY_NAMES.map((name, i) => (
+              <button
+                key={name}
+                onClick={() => setDayIndex(i)}
+                className={`flex-1 px-1 py-2.5 rounded-xl font-semibold text-sm ${
+                  dayIndex === i
+                    ? "bg-yellow-400 text-black"
+                    : "border border-neutral-300 active:bg-neutral-100"
+                }`}
+              >
+                {SHORT_DAY_NAMES[i]}
+              </button>
+            ))}
+          </div>
+
           <section className="space-y-3">
             <h2 className="text-lg font-semibold">
-              Napi összesítés{" "}
+              {FULL_DAY_NAMES[dayIndex]}{" "}
               <span className="text-neutral-400 font-normal text-sm">({formatDate(day.date)})</span>
             </h2>
             {day.byCustomer.length === 0 ? (

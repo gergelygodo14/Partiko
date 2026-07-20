@@ -12,8 +12,15 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
-const { getOrdersForDay, getOrdersSummary, getDishNamesForDay, getWeekTotalMeals, getWeekTotalValue } =
-  await import("@/lib/ordersSummary");
+const {
+  getOrdersForDay,
+  getOrdersByDayForWeek,
+  getOrdersSummary,
+  getDishNamesForDay,
+  getDishNamesForWeek,
+  getWeekTotalMeals,
+  getWeekTotalValue,
+} = await import("@/lib/ordersSummary");
 
 beforeEach(() => {
   findManyOrderLine.mockReset();
@@ -112,6 +119,48 @@ describe("getOrdersForDay", () => {
   });
 });
 
+function dayLine(
+  dayIndex: number,
+  customerId: string,
+  storeName: string,
+  letter: string,
+  quantity: number,
+  isXl = false
+) {
+  return { dayIndex, ...line(customerId, storeName, letter, quantity, isXl) };
+}
+
+describe("getOrdersByDayForWeek", () => {
+  it("buckets quantities per weekday and per customer within that day", async () => {
+    findManyOrderLine.mockResolvedValue([
+      dayLine(0, "c1", "Zöld Bolt", "a", 2),
+      dayLine(4, "c1", "Zöld Bolt", "c", 1),
+      dayLine(0, "c2", "Alma Büfé", "b", 5),
+    ]);
+
+    const result = await getOrdersByDayForWeek("2026-07-06");
+
+    expect(result).toHaveLength(5);
+    expect(result[0].totals).toEqual({ ...EMPTY_DAY, a: 2, b: 5 });
+    expect(result[0].byCustomer.map((c) => c.storeName)).toEqual(["Alma Büfé", "Zöld Bolt"]);
+    expect(result[4].totals).toEqual({ ...EMPTY_DAY, c: 1 });
+    expect(result[1].totals).toEqual(EMPTY_DAY);
+    expect(result[1].byCustomer).toEqual([]);
+  });
+
+  it("returns 5 empty days when nothing was ordered all week", async () => {
+    findManyOrderLine.mockResolvedValue([]);
+
+    const result = await getOrdersByDayForWeek("2026-07-06");
+
+    expect(result).toHaveLength(5);
+    result.forEach((day) => {
+      expect(day.totals).toEqual(EMPTY_DAY);
+      expect(day.byCustomer).toEqual([]);
+    });
+  });
+});
+
 describe("getOrdersSummary", () => {
   it("sorts by total weekly order quantity, descending, not alphabetically", async () => {
     findManyOrder.mockResolvedValue([
@@ -165,6 +214,27 @@ describe("getDishNamesForDay", () => {
       days: [{ a: "", aGM: false, b: "Valami", bGM: false, c: "", cGM: false }],
     });
     expect(await getDishNamesForDay("2026-07-06", 0)).toEqual({ a: "A", b: "Valami", c: "C" });
+  });
+});
+
+describe("getDishNamesForWeek", () => {
+  it("returns 5 null entries when no menu exists for that week", async () => {
+    findUniqueWeeklyMenu.mockResolvedValue(null);
+    expect(await getDishNamesForWeek("2026-07-06")).toEqual([null, null, null, null, null]);
+    expect(findUniqueWeeklyMenu).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns dish names for each weekday, falling back to A/B/C for blanks", async () => {
+    findUniqueWeeklyMenu.mockResolvedValue({
+      days: [
+        { a: "Csirkemell steak", aGM: false, b: "Mexikói ragu", bGM: false, c: "Toscan penne", cGM: false },
+        { a: "", aGM: false, b: "Valami", bGM: false, c: "", cGM: false },
+      ],
+    });
+    const result = await getDishNamesForWeek("2026-07-06");
+    expect(result[0]).toEqual({ a: "Csirkemell steak", b: "Mexikói ragu", c: "Toscan penne" });
+    expect(result[1]).toEqual({ a: "A", b: "Valami", c: "C" });
+    expect(result[2]).toBeNull();
   });
 });
 

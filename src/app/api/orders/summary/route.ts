@@ -1,32 +1,44 @@
 import { NextResponse } from "next/server";
-import { getActiveOrderWeek, getExportDay } from "@/lib/dates";
-import { emptyOrderWeek, orderValue } from "@/lib/orders";
-import { dayTotal, getDishNamesForDay, getOrdersForDay, getOrdersSummary } from "@/lib/ordersSummary";
+import { addDaysStr, getActiveOrderWeek, getExportDay } from "@/lib/dates";
+import { orderValue } from "@/lib/orders";
+import {
+  dayTotal,
+  getDishNamesForWeek,
+  getOrdersByDayForWeek,
+  getOrdersSummary,
+} from "@/lib/ordersSummary";
 import { withApiErrorHandling } from "@/lib/apiRoute";
 
 export const GET = withApiErrorHandling(async () => {
   const now = new Date();
-  const { date, weekStart, dayIndex } = getExportDay(now);
   const activeWeek = getActiveOrderWeek(now);
+  const exportDay = getExportDay(now);
 
-  const [dishNames, dayResult, weekSummary] = await Promise.all([
-    getDishNamesForDay(weekStart, dayIndex),
-    dayIndex === null
-      ? Promise.resolve({ totals: emptyOrderWeek()[0], byCustomer: [] })
-      : getOrdersForDay(weekStart, dayIndex),
+  const [dishNamesForWeek, dayResults, weekSummary] = await Promise.all([
+    getDishNamesForWeek(activeWeek.weekStart),
+    getOrdersByDayForWeek(activeWeek.weekStart),
     getOrdersSummary(activeWeek.weekStart),
   ]);
 
   const totalMeals = weekSummary.dayTotals.reduce((sum, day) => sum + dayTotal(day), 0);
   const totalValue = weekSummary.dayTotals.reduce((sum, day) => sum + orderValue(day), 0);
 
+  // Pre-select tomorrow's day when it falls within the week being shown;
+  // otherwise (e.g. tomorrow already belongs to next week, past the
+  // Thursday-10:00 ordering cutoff) default to Monday.
+  const defaultDayIndex =
+    exportDay.weekStart === activeWeek.weekStart && exportDay.dayIndex !== null
+      ? exportDay.dayIndex
+      : 0;
+
   return NextResponse.json({
-    day: {
-      date,
-      dishNames,
-      dayTotals: dayResult.totals,
-      byCustomer: dayResult.byCustomer,
-    },
+    weekDays: dayResults.map((result, i) => ({
+      date: addDaysStr(activeWeek.weekStart, i),
+      dishNames: dishNamesForWeek[i],
+      dayTotals: result.totals,
+      byCustomer: result.byCustomer,
+    })),
+    defaultDayIndex,
     week: {
       weekStart: activeWeek.weekStart,
       dayTotals: weekSummary.dayTotals.map(dayTotal),

@@ -126,6 +126,61 @@ export async function getDishNamesForDay(
   return { a: day.a || "A", b: day.b || "B", c: day.c || "C" };
 }
 
+// Same fallback rule as getDishNamesForDay, for all 5 weekdays at once (one
+// query instead of five) - used by the day-picker breakdown on /rendelesek.
+export async function getDishNamesForWeek(weekStart: string): Promise<(DishNames | null)[]> {
+  const menu = await prisma.weeklyMenu.findUnique({ where: { weekStart: parseDay(weekStart) } });
+  const menuDays = menu?.days as MenuDay[] | undefined;
+  return Array.from({ length: 5 }, (_, i) => {
+    const day = menuDays?.[i];
+    if (!day) return null;
+    return { a: day.a || "A", b: day.b || "B", c: day.c || "C" };
+  });
+}
+
+// Same per-customer breakdown as getOrdersForDay, for all 5 weekdays at once
+// (one query instead of five) - used by the day-picker breakdown on
+// /rendelesek so switching days doesn't need a new request.
+export async function getOrdersByDayForWeek(weekStart: string): Promise<DayOrdersSummary[]> {
+  const lines = await prisma.orderLine.findMany({
+    where: { order: { weekStart: parseDay(weekStart) } },
+    include: { order: { include: { customer: true } } },
+  });
+
+  const totalsByDay: OrderDayQuantities[] = emptyOrderWeek();
+  const byCustomerMaps = Array.from({ length: 5 }, () => new Map<string, CustomerDayOrderRow>());
+
+  for (const line of lines) {
+    if (line.dayIndex < 0 || line.dayIndex > 4) continue;
+    const { customer } = line.order;
+    const field = quantityField(line.letter as OrderLetter, line.isXl);
+    const map = byCustomerMaps[line.dayIndex];
+    if (!map.has(customer.id)) {
+      map.set(customer.id, {
+        customerId: customer.id,
+        storeName: customer.storeName,
+        companyName: customer.companyName,
+        a: 0,
+        b: 0,
+        c: 0,
+        aXl: 0,
+        bXl: 0,
+        cXl: 0,
+      });
+    }
+    const row = map.get(customer.id)!;
+    row[field] += line.quantity;
+    totalsByDay[line.dayIndex][field] += line.quantity;
+  }
+
+  return totalsByDay.map((totals, i) => ({
+    totals,
+    byCustomer: Array.from(byCustomerMaps[i].values()).sort(
+      (a, b) => dayTotal(b) - dayTotal(a) || a.storeName.localeCompare(b.storeName, "hu")
+    ),
+  }));
+}
+
 export async function getWeekTotalMeals(weekStart: string): Promise<number> {
   const { dayTotals } = await getOrdersSummary(weekStart);
   return dayTotals.reduce(
