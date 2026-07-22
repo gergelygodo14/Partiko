@@ -154,6 +154,11 @@ model Invoice {
   processedAt       DateTime?
   rawExtraction     Json?
   summaryText       String?
+  // Just the short "what changed price" block (buildHighlightSummary),
+  // stored separately from summaryText so the /szamlak page can show the
+  // latest invoice's price-change highlight in its own block at the top of
+  // the page, without having to parse it back out of the full summary text.
+  highlightText     String?
   errorMessage      String?
   priceObservations PriceObservation[]
   createdAt         DateTime           @default(now())

@@ -216,6 +216,7 @@ describe("processInvoiceLineItems", () => {
     );
     expect(result.summaryText).toContain("Csirkemell ára drágább lett (1200 → 1350 Ft, Baromfiudvarnál)");
     expect(result.summaryText).toContain("Csirke mellfilé: 1200 → 1350 Ft");
+    expect(result.highlightText).toBe("📈 Csirkemell ára drágább lett (1200 → 1350 Ft, Baromfiudvarnál)");
   });
 
   it("creates a new pending product when nothing matches", async () => {
@@ -237,5 +238,6 @@ describe("processInvoiceLineItems", () => {
       })
     );
     expect(result.summaryText).toContain("Egzotikus fűszerkeverék: 500 Ft");
+    expect(result.highlightText).toBeNull();
   });
 });

@@ -169,7 +169,7 @@ export async function processInvoiceLineItems(
   invoiceId: string,
   supplier: Supplier,
   extraction: ExtractedInvoice
-): Promise<{ summaryText: string }> {
+): Promise<{ summaryText: string; highlightText: string | null }> {
   const observedDate = extraction.invoiceDate ? new Date(extraction.invoiceDate) : new Date();
   const confirmedProducts = await prisma.product.findMany({
     where: { status: ProductStatus.CONFIRMED },
@@ -237,5 +237,8 @@ export async function processInvoiceLineItems(
 
   const highlight = buildHighlightSummary(notes);
   const detail = formatPriceChangeSummary(notes);
-  return { summaryText: highlight ? `${highlight}\n\n${detail}` : detail };
+  return {
+    summaryText: highlight ? `${highlight}\n\n${detail}` : detail,
+    highlightText: highlight || null,
+  };
 }

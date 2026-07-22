@@ -17,6 +17,7 @@ type Invoice = {
   status: "UPLOADED" | "PROCESSING" | "PROCESSED" | "FAILED";
   uploadedAt: string;
   summaryText: string | null;
+  highlightText: string | null;
   errorMessage: string | null;
 };
 
@@ -239,8 +240,25 @@ export default function SzamlakPage() {
     bySupplier: row.bySupplier,
   }));
 
+  // Only the most recently uploaded invoice - the point is "did what I just
+  // photographed change price", not a resurfaced list of older changes the
+  // owner has already seen and acted on.
+  const latestInvoice = invoices[0];
+  const latestHighlight = latestInvoice?.highlightText;
+
   return (
     <div className="space-y-8">
+      {latestHighlight && (
+        <section className="border-2 border-yellow-400 bg-yellow-50 rounded-2xl p-4 shadow-sm space-y-1">
+          <h2 className="text-lg font-semibold">Árváltozás</h2>
+          <p className="text-xs text-neutral-500">
+            {SUPPLIER_LABEL[latestInvoice.supplier]} ·{" "}
+            {new Date(latestInvoice.uploadedAt).toLocaleDateString("hu-HU")}
+          </p>
+          <p className="text-sm whitespace-pre-line">{latestHighlight}</p>
+        </section>
+      )}
+
       <section>
         <h2 className="text-lg font-semibold mb-3">Számla feltöltése</h2>
         <div className="flex flex-wrap gap-3 items-end">

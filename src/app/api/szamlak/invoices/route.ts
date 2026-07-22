@@ -47,7 +47,7 @@ export const POST = withApiErrorHandling(async (request: NextRequest) => {
 
   try {
     const extraction = await extractInvoiceLineItems(blob.url);
-    const { summaryText } = await processInvoiceLineItems(invoice.id, supplier, extraction);
+    const { summaryText, highlightText } = await processInvoiceLineItems(invoice.id, supplier, extraction);
     const processed = await prisma.invoice.update({
       where: { id: invoice.id },
       data: {
@@ -55,6 +55,7 @@ export const POST = withApiErrorHandling(async (request: NextRequest) => {
         processedAt: new Date(),
         rawExtraction: extraction,
         summaryText,
+        highlightText,
       },
     });
     return NextResponse.json(processed, { status: 201 });
