@@ -25,6 +25,7 @@ type Product = {
   name: string;
   unit: string | null;
   status: "PENDING" | "CONFIRMED";
+  priceObservations: { supplier: Supplier; unitPrice: number; observedDate: string }[];
 };
 
 type SupplierPricePoint = {
@@ -120,6 +121,18 @@ const COMPARISON_FILTER_OPTIONS: { value: ComparisonFilter; label: string }[] = 
   { value: "all", label: "Összes" },
 ];
 
+// Shown under each merge-candidate's name so the user can tell visually
+// apart products with very similar wholesale-SKU names before merging into
+// one - the actual bug that prompted this: two differently-worded but
+// unrelated Baromfiudvar SKUs were merged together because their names
+// alone gave no way to tell them apart.
+function formatCandidatePrices(bySupplier: Partial<Record<Supplier, SupplierPricePoint>>): string {
+  const parts = (Object.entries(bySupplier) as [Supplier, SupplierPricePoint][]).map(
+    ([supplier, point]) => `${SUPPLIER_LABEL[supplier]} ${point.price.toLocaleString("hu-HU")} Ft`
+  );
+  return parts.length > 0 ? parts.join(" · ") : "Még nincs ár rögzítve";
+}
+
 function hasBothSuppliers(row: PriceComparisonRow): boolean {
   return Object.keys(row.bySupplier).length >= 2;
 }
@@ -193,7 +206,11 @@ export default function SzamlakPage() {
     await loadAll();
   }
 
-  const confirmedProducts = comparison.map((row) => ({ id: row.productId, name: row.productName }));
+  const confirmedProducts = comparison.map((row) => ({
+    id: row.productId,
+    name: row.productName,
+    bySupplier: row.bySupplier,
+  }));
 
   return (
     <div className="space-y-8">
@@ -243,7 +260,15 @@ export default function SzamlakPage() {
                   className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm flex flex-col gap-3"
                 >
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <span className="font-semibold text-base">{p.name}</span>
+                    <div>
+                      <span className="font-semibold text-base">{p.name}</span>
+                      {p.priceObservations[0] && (
+                        <p className="text-xs text-neutral-500">
+                          {SUPPLIER_LABEL[p.priceObservations[0].supplier]}{" "}
+                          {p.priceObservations[0].unitPrice.toLocaleString("hu-HU")} Ft
+                        </p>
+                      )}
+                    </div>
                     <button
                       onClick={() => confirmProduct(p.id)}
                       className="px-4 py-2.5 rounded-xl bg-yellow-400 text-black font-semibold active:bg-yellow-500 self-start"
@@ -272,7 +297,11 @@ export default function SzamlakPage() {
                       </button>
                     </div>
                     {selected && (
-                      <p className="text-xs text-neutral-500">Kiválasztva: {selected.name}</p>
+                      <p className="text-xs text-neutral-500">
+                        Kiválasztva: {selected.name}
+                        <br />
+                        {formatCandidatePrices(selected.bySupplier)}
+                      </p>
                     )}
                     {search && !selected && (
                       <ul className="border border-neutral-200 rounded-xl divide-y divide-neutral-200 max-h-56 overflow-y-auto">
@@ -288,7 +317,10 @@ export default function SzamlakPage() {
                                 }}
                                 className="w-full text-left px-3 py-2 active:bg-neutral-100"
                               >
-                                {cp.name}
+                                <div>{cp.name}</div>
+                                <div className="text-xs text-neutral-500">
+                                  {formatCandidatePrices(cp.bySupplier)}
+                                </div>
                               </button>
                             </li>
                           ))

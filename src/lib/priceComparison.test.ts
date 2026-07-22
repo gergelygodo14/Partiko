@@ -95,4 +95,19 @@ describe("getPriceComparison", () => {
     expect(row.bySupplier.BAROMFIUDVAR?.trend).toBe("same");
     expect(row.bySupplier.BAROMFIUDVAR?.previousPrice).toBe(1200);
   });
+
+  it("breaks same-day observedDate ties by createdAt, not by whichever row comes back first", async () => {
+    findMany.mockResolvedValue([]);
+    await getPriceComparison();
+
+    expect(findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        include: {
+          priceObservations: {
+            orderBy: [{ observedDate: "desc" }, { createdAt: "desc" }],
+          },
+        },
+      })
+    );
+  });
 });

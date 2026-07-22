@@ -16,6 +16,7 @@ export const GET = withApiErrorHandling(async (request: NextRequest) => {
   const products = await prisma.product.findMany({
     where: statusParam ? { status: statusParam } : undefined,
     orderBy: { createdAt: "desc" },
+    include: { priceObservations: { orderBy: { observedDate: "desc" }, take: 1 } },
   });
   return NextResponse.json(products);
 });

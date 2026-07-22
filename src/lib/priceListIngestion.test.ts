@@ -22,7 +22,7 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
-const { ingestPriceList } = await import("@/lib/priceListIngestion");
+const { ingestPriceList, buildPriceListNotificationText } = await import("@/lib/priceListIngestion");
 
 beforeEach(() => {
   importRunFindUnique.mockReset();
@@ -122,5 +122,19 @@ describe("ingestPriceList", () => {
 
     const observedDate = observationCreateMany.mock.calls[0][0].data[0].observedDate as Date;
     expect(observedDate.getTime()).toBeGreaterThan(Date.now() - 5000);
+  });
+});
+
+describe("buildPriceListNotificationText", () => {
+  it("names the supplier and product count", () => {
+    expect(buildPriceListNotificationText("BAROMFIUDVAR", 159)).toBe(
+      "🧾 Új Baromfiudvar árközlő feldolgozva: 159 termék."
+    );
+  });
+
+  it("uses the Hungarian label for Sajtfutár too", () => {
+    expect(buildPriceListNotificationText("SAJTFUTAR", 12)).toBe(
+      "🧾 Új Sajtfutár árközlő feldolgozva: 12 termék."
+    );
   });
 });

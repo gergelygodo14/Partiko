@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { withApiErrorHandling } from "@/lib/apiRoute";
 import { fetchPriceListEmails } from "@/lib/priceListEmailFetch";
 import { parsePriceListBuffer } from "@/lib/priceListParsing";
-import { ingestPriceList } from "@/lib/priceListIngestion";
+import { buildPriceListNotificationText, ingestPriceList } from "@/lib/priceListIngestion";
+import { sendTelegramMessage } from "@/lib/telegram";
 
 export const maxDuration = 60;
 
@@ -24,6 +25,18 @@ export const GET = withApiErrorHandling(async (request: NextRequest) => {
     const parsed = await parsePriceListBuffer(email.attachmentBuffer);
     const outcome = await ingestPriceList(email.emailMessageId, email.supplier, parsed);
     results.push({ supplier: email.supplier, emailMessageId: email.emailMessageId, ...outcome });
+
+    if (outcome.status === "imported") {
+      try {
+        const text = buildPriceListNotificationText(email.supplier, outcome.productCount);
+        const sent = await sendTelegramMessage(text);
+        if (!sent.ok) {
+          console.error("Telegram price-list notification failed:", sent.error);
+        }
+      } catch (e) {
+        console.error("Telegram price-list notification failed:", e);
+      }
+    }
   }
 
   return NextResponse.json({ checked: emails.length, results });

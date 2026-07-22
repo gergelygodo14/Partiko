@@ -8,6 +8,7 @@ const MODEL = "claude-sonnet-5";
 
 export type ExtractedLineItem = {
   name: string;
+  shortName: string;
   unit: string | null;
   quantity: number;
   unitPrice: number;
@@ -28,11 +29,12 @@ const LINE_ITEM_SCHEMA = {
         type: "object",
         properties: {
           name: { type: "string" },
+          shortName: { type: "string" },
           unit: { anyOf: [{ type: "string" }, { type: "null" }] },
           quantity: { type: "number" },
           unitPrice: { type: "number" },
         },
-        required: ["name", "unit", "quantity", "unitPrice"],
+        required: ["name", "shortName", "unit", "quantity", "unitPrice"],
         additionalProperties: false,
       },
     },
@@ -57,7 +59,7 @@ export async function extractInvoiceLineItems(imageUrl: string): Promise<Extract
           { type: "image", source: { type: "url", url: imageUrl } },
           {
             type: "text",
-            text: "Ez egy beszállítói számla fotója. Olvasd ki a tételsorokat (termék neve, mennyiségi egység, mennyiség, nettó egységár forintban) és a számla dátumát, ha szerepel rajta — a dátumot ISO 8601 formátumban add vissza (ÉÉÉÉ-HH-NN). Csak a megadott séma szerinti JSON-t add vissza.",
+            text: "Ez egy beszállítói számla fotója. Olvasd ki a tételsorokat (termék neve, mennyiségi egység, mennyiség, nettó egységár forintban) és a számla dátumát, ha szerepel rajta — a dátumot ISO 8601 formátumban add vissza (ÉÉÉÉ-HH-NN). Minden tételhez add meg a `shortName` mezőt is: egy rövid, köznyelvi magyar elnevezés (1-3 szó, pl. \"Csirkemell\", \"Tejföl\", \"Zsemlemorzsa\"), NEM a teljes, gyakran hosszú gyári/nagykereskedelmi terméknév (pl. \"FRISS CSIRKE MELLFILÉ FELEZETT FINOM CSIBE LÉDIG 12 KG/# HU1512EK\" helyett csak \"Csirkemell\") — ezt egy tömör árváltozás-összesítéshez használjuk. Csak a megadott séma szerinti JSON-t add vissza.",
           },
         ],
       },
@@ -77,6 +79,7 @@ type PriceObservationRecord = { supplier: Supplier; unitPrice: number };
 
 export type PriceChangeNote = {
   productName: string;
+  shortName: string;
   supplier: Supplier;
   newPrice: number;
   priorSamePrice: number | null;
@@ -86,6 +89,7 @@ export type PriceChangeNote = {
 
 export function buildPriceChangeNote(
   productName: string,
+  shortName: string,
   supplier: Supplier,
   newPrice: number,
   priorSameSupplier: PriceObservationRecord | null,
@@ -93,6 +97,7 @@ export function buildPriceChangeNote(
 ): PriceChangeNote {
   return {
     productName,
+    shortName,
     supplier,
     newPrice,
     priorSamePrice: priorSameSupplier?.unitPrice ?? null,
@@ -105,6 +110,27 @@ const SUPPLIER_LABEL_INESSIVE: Record<Supplier, string> = {
   SAJTFUTAR: "Sajtfutárnál",
   BAROMFIUDVAR: "Baromfiudvarnál",
 };
+
+// A short, prominent headline for the items that actually changed price,
+// meant to sit at the TOP of the summary - the detailed per-item list below
+// (formatPriceChangeSummary) buries changes among many unchanged lines on a
+// large invoice, which the user found too easy to miss.
+export function buildHighlightSummary(notes: PriceChangeNote[]): string {
+  const changed = notes.filter(
+    (note) => note.priorSamePrice !== null && note.priorSamePrice !== note.newPrice
+  );
+  if (changed.length === 0) return "";
+
+  const lines = changed.map((note) => {
+    const priorPrice = note.priorSamePrice as number;
+    const direction = note.newPrice > priorPrice ? "drágább" : "olcsóbb";
+    const arrow = note.newPrice > priorPrice ? "📈" : "📉";
+    const supplierLabel = SUPPLIER_LABEL_INESSIVE[note.supplier];
+    return `${arrow} ${note.shortName} ára ${direction} lett (${priorPrice} → ${note.newPrice} Ft, ${supplierLabel})`;
+  });
+
+  return lines.join("\n");
+}
 
 export function formatPriceChangeSummary(notes: PriceChangeNote[]): string {
   if (notes.length === 0) return "Nem sikerült egyetlen tételt sem feldolgozni.";
@@ -198,9 +224,18 @@ export async function processInvoiceLineItems(
     });
 
     notes.push(
-      buildPriceChangeNote(productName, supplier, unitPrice, priorSameSupplier, latestOtherSupplier)
+      buildPriceChangeNote(
+        productName,
+        item.shortName,
+        supplier,
+        unitPrice,
+        priorSameSupplier,
+        latestOtherSupplier
+      )
     );
   }
 
-  return { summaryText: formatPriceChangeSummary(notes) };
+  const highlight = buildHighlightSummary(notes);
+  const detail = formatPriceChangeSummary(notes);
+  return { summaryText: highlight ? `${highlight}\n\n${detail}` : detail };
 }

@@ -18,9 +18,8 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
-const { buildPriceChangeNote, formatPriceChangeSummary, processInvoiceLineItems } = await import(
-  "@/lib/invoiceProcessing"
-);
+const { buildPriceChangeNote, buildHighlightSummary, formatPriceChangeSummary, processInvoiceLineItems } =
+  await import("@/lib/invoiceProcessing");
 
 beforeEach(() => {
   findFirst.mockReset();
@@ -33,6 +32,7 @@ describe("buildPriceChangeNote", () => {
   it("carries through prior-same-supplier and other-supplier prices", () => {
     const note = buildPriceChangeNote(
       "Csirkemell",
+      "Csirkemell",
       "BAROMFIUDVAR",
       1350,
       { supplier: "BAROMFIUDVAR", unitPrice: 1200 },
@@ -40,6 +40,7 @@ describe("buildPriceChangeNote", () => {
     );
     expect(note).toEqual({
       productName: "Csirkemell",
+      shortName: "Csirkemell",
       supplier: "BAROMFIUDVAR",
       newPrice: 1350,
       priorSamePrice: 1200,
@@ -49,7 +50,7 @@ describe("buildPriceChangeNote", () => {
   });
 
   it("uses null fields when there is no prior history", () => {
-    const note = buildPriceChangeNote("Sertéskaraj", "SAJTFUTAR", 2000, null, null);
+    const note = buildPriceChangeNote("Sertéskaraj", "Sertéskaraj", "SAJTFUTAR", 2000, null, null);
     expect(note.priorSamePrice).toBeNull();
     expect(note.otherSupplierPrice).toBeNull();
     expect(note.otherSupplier).toBeNull();
@@ -60,6 +61,7 @@ describe("formatPriceChangeSummary", () => {
   it("reports a price increase with percentage and flags the cheaper supplier", () => {
     const summary = formatPriceChangeSummary([
       buildPriceChangeNote(
+        "Csirkemell",
         "Csirkemell",
         "BAROMFIUDVAR",
         1350,
@@ -77,6 +79,7 @@ describe("formatPriceChangeSummary", () => {
     const summary = formatPriceChangeSummary([
       buildPriceChangeNote(
         "Trappista sajt",
+        "Trappista sajt",
         "SAJTFUTAR",
         900,
         { supplier: "SAJTFUTAR", unitPrice: 1000 },
@@ -90,6 +93,7 @@ describe("formatPriceChangeSummary", () => {
   it("omits the delta when the price is unchanged from the same supplier", () => {
     const summary = formatPriceChangeSummary([
       buildPriceChangeNote(
+        "Sertéskaraj",
         "Sertéskaraj",
         "SAJTFUTAR",
         2000,
@@ -105,6 +109,7 @@ describe("formatPriceChangeSummary", () => {
     const summary = formatPriceChangeSummary([
       buildPriceChangeNote(
         "Csirkecomb",
+        "Csirkecomb",
         "BAROMFIUDVAR",
         1000,
         null,
@@ -119,6 +124,76 @@ describe("formatPriceChangeSummary", () => {
   });
 });
 
+describe("buildHighlightSummary", () => {
+  it("returns an empty string when nothing changed price", () => {
+    const notes = [
+      buildPriceChangeNote(
+        "Sertéskaraj",
+        "Sertéskaraj",
+        "SAJTFUTAR",
+        2000,
+        { supplier: "SAJTFUTAR", unitPrice: 2000 },
+        null
+      ),
+    ];
+    expect(buildHighlightSummary(notes)).toBe("");
+  });
+
+  it("uses the short name (not the full product name) and flags a price increase", () => {
+    const notes = [
+      buildPriceChangeNote(
+        "FRISS CSIRKE MELLFILÉ FELEZETT FINOM CSIBE LÉDIG 12 KG/# HU1512EK",
+        "Csirkemell",
+        "BAROMFIUDVAR",
+        1750,
+        { supplier: "BAROMFIUDVAR", unitPrice: 1690 },
+        null
+      ),
+    ];
+    const highlight = buildHighlightSummary(notes);
+    expect(highlight).toContain("Csirkemell ára drágább lett (1690 → 1750 Ft, Baromfiudvarnál)");
+    expect(highlight).not.toContain("FRISS CSIRKE MELLFILÉ");
+  });
+
+  it("flags a price decrease", () => {
+    const notes = [
+      buildPriceChangeNote(
+        "Tejföl 20% vödrös",
+        "Tejföl",
+        "BAROMFIUDVAR",
+        3299,
+        { supplier: "BAROMFIUDVAR", unitPrice: 4799 },
+        null
+      ),
+    ];
+    expect(buildHighlightSummary(notes)).toContain("Tejföl ára olcsóbb lett (4799 → 3299 Ft, Baromfiudvarnál)");
+  });
+
+  it("only includes items that actually changed price, skipping unchanged ones", () => {
+    const notes = [
+      buildPriceChangeNote(
+        "Csirkemell",
+        "Csirkemell",
+        "BAROMFIUDVAR",
+        1690,
+        { supplier: "BAROMFIUDVAR", unitPrice: 1690 },
+        null
+      ),
+      buildPriceChangeNote(
+        "Tejföl",
+        "Tejföl",
+        "BAROMFIUDVAR",
+        3299,
+        { supplier: "BAROMFIUDVAR", unitPrice: 4799 },
+        null
+      ),
+    ];
+    const highlight = buildHighlightSummary(notes);
+    expect(highlight).not.toContain("Csirkemell");
+    expect(highlight).toContain("Tejföl");
+  });
+});
+
 describe("processInvoiceLineItems", () => {
   it("matches an existing confirmed product and records the observation", async () => {
     findMany.mockResolvedValue([{ id: "prod-1", name: "Csirke mellfilé" }]);
@@ -128,7 +203,9 @@ describe("processInvoiceLineItems", () => {
 
     const result = await processInvoiceLineItems("inv-1", "BAROMFIUDVAR", {
       invoiceDate: "2026-07-10",
-      lineItems: [{ name: "Csirkemell filé", unit: "kg", quantity: 10, unitPrice: 1350.4 }],
+      lineItems: [
+        { name: "Csirkemell filé", shortName: "Csirkemell", unit: "kg", quantity: 10, unitPrice: 1350.4 },
+      ],
     });
 
     expect(productCreate).not.toHaveBeenCalled();
@@ -137,6 +214,7 @@ describe("processInvoiceLineItems", () => {
         data: expect.objectContaining({ productId: "prod-1", unitPrice: 1350, supplier: "BAROMFIUDVAR" }),
       })
     );
+    expect(result.summaryText).toContain("Csirkemell ára drágább lett (1200 → 1350 Ft, Baromfiudvarnál)");
     expect(result.summaryText).toContain("Csirke mellfilé: 1200 → 1350 Ft");
   });
 
@@ -148,7 +226,9 @@ describe("processInvoiceLineItems", () => {
 
     const result = await processInvoiceLineItems("inv-2", "SAJTFUTAR", {
       invoiceDate: null,
-      lineItems: [{ name: "Egzotikus fűszerkeverék", unit: null, quantity: 1, unitPrice: 500 }],
+      lineItems: [
+        { name: "Egzotikus fűszerkeverék", shortName: "Fűszerkeverék", unit: null, quantity: 1, unitPrice: 500 },
+      ],
     });
 
     expect(productCreate).toHaveBeenCalledWith(

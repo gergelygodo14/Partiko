@@ -4,11 +4,26 @@ import { useCallback, useEffect, useState } from "react";
 import { addDaysStr, mondayOf, todayStr } from "@/lib/dates";
 import { DAY_NAMES, emptyWeek, type MenuDay } from "@/lib/weeklyMenu";
 
+type DishLetter = "a" | "b" | "c";
+type Slot = { day: number; letter: DishLetter };
+
+// How long the letter badge must be held before a drag arms - long enough
+// that a normal tap or a scroll-starting touch doesn't accidentally pick up
+// a dish, short enough to still feel responsive.
+const LONG_PRESS_MS = 450;
+// If the finger moves more than this before the long-press timer fires,
+// treat it as a scroll attempt and cancel arming the drag.
+const MOVE_CANCEL_PX = 10;
+
 function formatDate(dateStr: string) {
   return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString("hu-HU", {
     month: "2-digit",
     day: "2-digit",
   });
+}
+
+function slotsEqual(a: Slot | null, b: Slot | null): boolean {
+  return !!a && !!b && a.day === b.day && a.letter === b.letter;
 }
 
 export default function WeeklyMenuPage() {
@@ -21,6 +36,9 @@ export default function WeeklyMenuPage() {
   const [publishing, setPublishing] = useState(false);
   const [savedMessage, setSavedMessage] = useState(false);
   const [suggestingKey, setSuggestingKey] = useState<string | null>(null);
+  const [dragSource, setDragSource] = useState<Slot | null>(null);
+  const [dragOverSlot, setDragOverSlot] = useState<Slot | null>(null);
+  const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
 
   const load = useCallback(async (week: string) => {
     setLoading(true);
@@ -40,6 +58,99 @@ export default function WeeklyMenuPage() {
     setDays((prev) =>
       prev.map((d, i) => (i === dayIndex ? { ...d, ...patch } : d))
     );
+  }
+
+  // Exchanges both the dish text and its GM flag between two slots - a
+  // "move" reads as swapping whatever already sits in the target spot back
+  // into the source, rather than overwriting/losing it.
+  function swapDishes(source: Slot, target: Slot) {
+    if (slotsEqual(source, target)) return;
+    setDays((prev) => {
+      const next = prev.map((d) => ({ ...d }));
+      const sourceGmKey = `${source.letter}GM` as const;
+      const targetGmKey = `${target.letter}GM` as const;
+      const sourceText = prev[source.day][source.letter];
+      const sourceGm = prev[source.day][sourceGmKey];
+      const targetText = prev[target.day][target.letter];
+      const targetGm = prev[target.day][targetGmKey];
+
+      if (source.day === target.day) {
+        const merged = { ...next[source.day] };
+        (merged as MenuDay)[source.letter] = targetText;
+        (merged as MenuDay)[sourceGmKey] = targetGm;
+        (merged as MenuDay)[target.letter] = sourceText;
+        (merged as MenuDay)[targetGmKey] = sourceGm;
+        next[source.day] = merged;
+      } else {
+        next[source.day] = { ...next[source.day], [source.letter]: targetText, [sourceGmKey]: targetGm };
+        next[target.day] = { ...next[target.day], [target.letter]: sourceText, [targetGmKey]: sourceGm };
+      }
+      return next;
+    });
+  }
+
+  // Long-press-to-drag for swapping two dishes on mobile: holding the
+  // letter badge for LONG_PRESS_MS arms the drag, then whichever day/letter
+  // row the finger is over on release becomes the swap target. Uses plain
+  // pointer events (no library) since this is a small, well-defined
+  // "swap two slots" gesture, not a general sortable list.
+  function handleLetterPointerDown(e: React.PointerEvent, day: number, letter: DishLetter) {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const source: Slot = { day, letter };
+    let armed = false;
+
+    const timer = setTimeout(() => {
+      armed = true;
+      setDragSource(source);
+      setDragPos({ x: startX, y: startY });
+    }, LONG_PRESS_MS);
+
+    function findSlot(x: number, y: number): Slot | null {
+      const el = document.elementFromPoint(x, y);
+      const slotEl = el instanceof Element ? el.closest<HTMLElement>("[data-slot-day]") : null;
+      if (!slotEl?.dataset.slotDay || !slotEl.dataset.slotLetter) return null;
+      return {
+        day: Number(slotEl.dataset.slotDay),
+        letter: slotEl.dataset.slotLetter as DishLetter,
+      };
+    }
+
+    function onMove(ev: PointerEvent) {
+      if (!armed) {
+        if (Math.hypot(ev.clientX - startX, ev.clientY - startY) > MOVE_CANCEL_PX) {
+          clearTimeout(timer);
+          cleanup();
+        }
+        return;
+      }
+      ev.preventDefault();
+      setDragPos({ x: ev.clientX, y: ev.clientY });
+      setDragOverSlot(findSlot(ev.clientX, ev.clientY));
+    }
+
+    function onUp(ev: PointerEvent) {
+      clearTimeout(timer);
+      if (armed) {
+        const target = findSlot(ev.clientX, ev.clientY);
+        if (target) swapDishes(source, target);
+        setDragSource(null);
+        setDragOverSlot(null);
+        setDragPos(null);
+      }
+      cleanup();
+    }
+
+    function cleanup() {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+    }
+
+    window.addEventListener("pointermove", onMove, { passive: false });
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onUp);
   }
 
   async function suggestDish(dayIndex: number, letter: "a" | "b" | "c") {
@@ -121,6 +232,15 @@ export default function WeeklyMenuPage() {
 
   return (
     <div className="space-y-6">
+      {dragSource && dragPos && (
+        <div
+          className="fixed z-50 pointer-events-none -translate-x-1/2 -translate-y-1/2 bg-neutral-900 text-white text-sm font-semibold px-3 py-2 rounded-xl shadow-lg max-w-[70vw] truncate"
+          style={{ left: dragPos.x, top: dragPos.y }}
+        >
+          {dragSource.letter.toUpperCase()}. {days[dragSource.day][dragSource.letter] || "(üres)"}
+        </div>
+      )}
+
       <div className="flex items-center justify-between gap-2">
         <button
           onClick={() => setWeekStart(addDaysStr(weekStart, -7))}
@@ -164,8 +284,23 @@ export default function WeeklyMenuPage() {
                 {name} <span className="text-neutral-400 font-normal text-sm">({formatDate(addDaysStr(weekStart, i))})</span>
               </div>
               {(["a", "b", "c"] as const).map((letter) => (
-                <div key={letter} className="flex items-center gap-2">
-                  <span className="font-semibold w-5 shrink-0">
+                <div
+                  key={letter}
+                  data-slot-day={i}
+                  data-slot-letter={letter}
+                  className={`flex items-center gap-2 rounded-xl transition-colors ${
+                    slotsEqual(dragOverSlot, { day: i, letter }) && !slotsEqual(dragSource, { day: i, letter })
+                      ? "bg-yellow-100 ring-2 ring-yellow-400"
+                      : ""
+                  }`}
+                >
+                  <span
+                    onPointerDown={(e) => handleLetterPointerDown(e, i, letter)}
+                    style={{ touchAction: "none" }}
+                    className={`font-semibold w-5 shrink-0 cursor-grab select-none rounded ${
+                      slotsEqual(dragSource, { day: i, letter }) ? "bg-yellow-400 text-black" : ""
+                    }`}
+                  >
                     {letter.toUpperCase()}.
                   </span>
                   <input

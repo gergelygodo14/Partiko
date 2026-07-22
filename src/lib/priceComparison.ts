@@ -19,7 +19,11 @@ export async function getPriceComparison(): Promise<ProductPriceComparisonRow[]>
   const products = await prisma.product.findMany({
     where: { status: "CONFIRMED" },
     include: {
-      priceObservations: { orderBy: { observedDate: "desc" } },
+      // Same-day observations happen (e.g. a manual invoice-photo upload and
+      // an emailed price-list landing on the same calendar date) - break
+      // ties by createdAt so the actually-most-recently-recorded price wins,
+      // not whichever row Postgres happens to return first.
+      priceObservations: { orderBy: [{ observedDate: "desc" }, { createdAt: "desc" }] },
     },
   });
 

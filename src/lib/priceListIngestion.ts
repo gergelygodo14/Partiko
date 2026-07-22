@@ -7,6 +7,17 @@ export type PriceListIngestResult =
   | { status: "already_processed"; productCount: number }
   | { status: "imported"; productCount: number };
 
+const SUPPLIER_LABEL: Record<Supplier, string> = {
+  SAJTFUTAR: "Sajtfutár",
+  BAROMFIUDVAR: "Baromfiudvar",
+};
+
+// Only called for a freshly-imported price list (not "already_processed")
+// so the owner gets a one-time confirmation per week, not a daily ping.
+export function buildPriceListNotificationText(supplier: Supplier, productCount: number): string {
+  return `🧾 Új ${SUPPLIER_LABEL[supplier]} árközlő feldolgozva: ${productCount} termék.`;
+}
+
 type ObservationInput = {
   productId: string;
   supplier: Supplier;
