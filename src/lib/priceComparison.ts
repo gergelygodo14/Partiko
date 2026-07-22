@@ -6,14 +6,41 @@ export type SupplierPricePoint = {
   date: string;
   trend: "up" | "down" | "same" | null;
   previousPrice: number | null;
+  // Set when `price` was computed by dividing a box/case price by the
+  // product's packSize - carries the original raw price+unit so the UI can
+  // show "5986 Ft/doboz alapján" instead of silently only showing the math.
+  normalizedFrom: { price: number; unit: string | null } | null;
 };
 
 export type ProductPriceComparisonRow = {
   productId: string;
   productName: string;
+  packSize: number | null;
   bySupplier: Partial<Record<Supplier, SupplierPricePoint>>;
   cheaperSupplier: Supplier | null;
 };
+
+const BOX_UNIT_WORDS = new Set(["doboz", "karton", "csomag"]);
+
+function isBoxUnit(unit: string | null): boolean {
+  return unit !== null && BOX_UNIT_WORDS.has(unit.trim().toLowerCase());
+}
+
+// When a product has a known packSize (pieces per box) and an observation's
+// unit is a box-style unit, converts the price to an effective per-piece
+// price so it's comparable against a supplier that prices the same product
+// per piece - e.g. one supplier invoices "1 doboz" at 5986 Ft while another
+// invoices "1 db" at 46 Ft; with packSize=150 both become ~40 Ft/db.
+function effectivePrice(
+  unitPrice: number,
+  unit: string | null,
+  packSize: number | null
+): { price: number; normalizedFrom: SupplierPricePoint["normalizedFrom"] } {
+  if (packSize && packSize > 0 && isBoxUnit(unit)) {
+    return { price: Math.round(unitPrice / packSize), normalizedFrom: { price: unitPrice, unit } };
+  }
+  return { price: unitPrice, normalizedFrom: null };
+}
 
 export async function getPriceComparison(): Promise<ProductPriceComparisonRow[]> {
   const products = await prisma.product.findMany({
@@ -38,20 +65,26 @@ export async function getPriceComparison(): Promise<ProductPriceComparisonRow[]>
     const bySupplier: ProductPriceComparisonRow["bySupplier"] = {};
     for (const [supplier, obsList] of grouped) {
       const [latest, previous] = obsList;
+      const latestEff = effectivePrice(latest.unitPrice, latest.unit, product.packSize);
+      const previousEff = previous
+        ? effectivePrice(previous.unitPrice, previous.unit, product.packSize)
+        : null;
+
       let trend: SupplierPricePoint["trend"] = null;
-      if (previous) {
+      if (previousEff) {
         trend =
-          latest.unitPrice > previous.unitPrice
+          latestEff.price > previousEff.price
             ? "up"
-            : latest.unitPrice < previous.unitPrice
+            : latestEff.price < previousEff.price
               ? "down"
               : "same";
       }
       bySupplier[supplier] = {
-        price: latest.unitPrice,
+        price: latestEff.price,
         date: latest.observedDate.toISOString().slice(0, 10),
         trend,
-        previousPrice: previous ? previous.unitPrice : null,
+        previousPrice: previousEff ? previousEff.price : null,
+        normalizedFrom: latestEff.normalizedFrom,
       };
     }
 
@@ -64,6 +97,7 @@ export async function getPriceComparison(): Promise<ProductPriceComparisonRow[]>
     return {
       productId: product.id,
       productName: product.name,
+      packSize: product.packSize,
       bySupplier,
       cheaperSupplier,
     };

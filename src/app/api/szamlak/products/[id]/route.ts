@@ -9,7 +9,7 @@ export const PATCH = withApiErrorHandling(async (
 ) => {
   const { id } = await ctx.params;
   const body = await request.json();
-  const { name, unit, status } = body;
+  const { name, unit, status, packSize } = body;
 
   if (name !== undefined && (typeof name !== "string" || !name)) {
     return NextResponse.json({ error: "Érvénytelen name" }, { status: 400 });
@@ -24,6 +24,13 @@ export const PATCH = withApiErrorHandling(async (
   ) {
     return NextResponse.json({ error: "Érvénytelen status" }, { status: 400 });
   }
+  if (
+    packSize !== undefined &&
+    packSize !== null &&
+    (typeof packSize !== "number" || !Number.isInteger(packSize) || packSize < 1)
+  ) {
+    return NextResponse.json({ error: "Érvénytelen packSize" }, { status: 400 });
+  }
 
   const product = await prisma.product.update({
     where: { id },
@@ -31,6 +38,7 @@ export const PATCH = withApiErrorHandling(async (
       ...(name !== undefined ? { name } : {}),
       ...(unit !== undefined ? { unit } : {}),
       ...(status !== undefined ? { status } : {}),
+      ...(packSize !== undefined ? { packSize } : {}),
     },
   });
   return NextResponse.json(product);

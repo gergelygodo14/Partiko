@@ -113,6 +113,11 @@ model Product {
   id                String             @id @default(cuid())
   name              String
   unit              String?
+  // Hány alap-egység (pl. db) van egy "doboz"/"karton"/"csomag" mértékegységben
+  // ennél a terméknél - ha be van állítva, az ilyen mértékegységű PriceObservation-ök
+  // ára ennyivel osztva jelenik meg az ár-összehasonlításban, hogy összevethető legyen
+  // egy másik beszállító darab-áras tételével.
+  packSize          Int?
   status            ProductStatus      @default(PENDING)
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt

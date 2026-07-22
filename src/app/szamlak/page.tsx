@@ -33,11 +33,13 @@ type SupplierPricePoint = {
   date: string;
   trend: "up" | "down" | "same" | null;
   previousPrice: number | null;
+  normalizedFrom: { price: number; unit: string | null } | null;
 };
 
 type PriceComparisonRow = {
   productId: string;
   productName: string;
+  packSize: number | null;
   bySupplier: Partial<Record<Supplier, SupplierPricePoint>>;
   cheaperSupplier: Supplier | null;
 };
@@ -110,6 +112,22 @@ function TrendIndicator({ point }: { point: SupplierPricePoint }) {
         {label}
       </span>
     </span>
+  );
+}
+
+// Shows the (possibly packSize-normalized) price plus, when it was computed
+// from a box/case price, a small note with the original figure - so the
+// division is never silent, even though it's applied automatically.
+function PriceCell({ point }: { point: SupplierPricePoint }) {
+  return (
+    <>
+      {point.price.toLocaleString("hu-HU")} Ft <TrendIndicator point={point} />
+      {point.normalizedFrom && (
+        <div className="text-xs text-neutral-400">
+          ({point.normalizedFrom.price.toLocaleString("hu-HU")} Ft/{point.normalizedFrom.unit} alapján)
+        </div>
+      )}
+    </>
   );
 }
 
@@ -202,6 +220,15 @@ export default function SzamlakPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ intoProductId }),
+    });
+    await loadAll();
+  }
+
+  async function updatePackSize(id: string, packSize: number | null) {
+    await fetch(`/api/szamlak/products/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ packSize }),
     });
     await loadAll();
   }
@@ -385,23 +412,38 @@ export default function SzamlakPage() {
                     <tbody>
                       {filteredComparison.map((row) => (
                         <tr key={row.productId} className="border-t border-neutral-200">
-                          <td className="py-2 pr-3 font-medium">{row.productName}</td>
+                          <td className="py-2 pr-3 font-medium">
+                            {row.productName}
+                            <div className="flex items-center gap-1.5 mt-1 font-normal text-xs text-neutral-500">
+                              <label htmlFor={`packsize-${row.productId}`}>Csomagméret (db/doboz):</label>
+                              <input
+                                id={`packsize-${row.productId}`}
+                                key={row.packSize ?? "empty"}
+                                type="number"
+                                min={1}
+                                step={1}
+                                defaultValue={row.packSize ?? ""}
+                                placeholder="—"
+                                onBlur={(e) => {
+                                  const raw = e.target.value.trim();
+                                  const next = raw ? Number(raw) : null;
+                                  if (next === row.packSize) return;
+                                  updatePackSize(row.productId, next);
+                                }}
+                                className="w-16 border border-neutral-300 rounded-lg px-1.5 py-0.5"
+                              />
+                            </div>
+                          </td>
                           <td className="py-2 pr-3">
                             {row.bySupplier.SAJTFUTAR ? (
-                              <>
-                                {row.bySupplier.SAJTFUTAR.price.toLocaleString("hu-HU")} Ft{" "}
-                                <TrendIndicator point={row.bySupplier.SAJTFUTAR} />
-                              </>
+                              <PriceCell point={row.bySupplier.SAJTFUTAR} />
                             ) : (
                               "–"
                             )}
                           </td>
                           <td className="py-2 pr-3">
                             {row.bySupplier.BAROMFIUDVAR ? (
-                              <>
-                                {row.bySupplier.BAROMFIUDVAR.price.toLocaleString("hu-HU")} Ft{" "}
-                                <TrendIndicator point={row.bySupplier.BAROMFIUDVAR} />
-                              </>
+                              <PriceCell point={row.bySupplier.BAROMFIUDVAR} />
                             ) : (
                               "–"
                             )}
