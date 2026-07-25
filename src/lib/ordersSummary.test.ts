@@ -20,6 +20,7 @@ const {
   getDishNamesForWeek,
   getWeekTotalMeals,
   getWeekTotalValue,
+  getMonthlyOrderSummary,
 } = await import("@/lib/ordersSummary");
 
 beforeEach(() => {
@@ -279,5 +280,91 @@ describe("getWeekTotalValue", () => {
   it("returns 0 when nothing was ordered", async () => {
     findManyOrder.mockResolvedValue([]);
     expect(await getWeekTotalValue("2026-07-06")).toBe(0);
+  });
+});
+
+describe("getMonthlyOrderSummary", () => {
+  it("sums quantities and Ft value per customer across a month, XL priced higher", async () => {
+    findManyOrder.mockResolvedValue([
+      {
+        customerId: "c1",
+        weekStart: new Date("2026-07-06T00:00:00.000Z"),
+        customer: { storeName: "Alma Büfé" },
+        lines: [
+          { dayIndex: 0, letter: "a", quantity: 2, isXl: false }, // 2026-07-06
+          { dayIndex: 0, letter: "a", quantity: 1, isXl: true }, // 2026-07-06
+        ],
+      },
+    ]);
+
+    const [row] = await getMonthlyOrderSummary("2026-07-01", "2026-07-31");
+
+    expect(row).toEqual({
+      customerId: "c1",
+      storeName: "Alma Büfé",
+      totalMeals: 3,
+      totalValue: 2 * 1200 + 1 * 1500,
+    });
+  });
+
+  it("excludes days that fall in a different month, even within a week that's mostly inside it", async () => {
+    findManyOrder.mockResolvedValue([
+      {
+        customerId: "c1",
+        weekStart: new Date("2026-07-27T00:00:00.000Z"), // Mon 07-27 .. Fri 07-31, but Sat/Sun would spill to Aug
+        customer: { storeName: "Alma Büfé" },
+        lines: [
+          { dayIndex: 4, letter: "a", quantity: 5, isXl: false }, // Fri 2026-07-31, inside July
+        ],
+      },
+      {
+        customerId: "c1",
+        weekStart: new Date("2026-08-03T00:00:00.000Z"), // next week, entirely in August
+        customer: { storeName: "Alma Büfé" },
+        lines: [{ dayIndex: 0, letter: "a", quantity: 9, isXl: false }],
+      },
+    ]);
+
+    const [row] = await getMonthlyOrderSummary("2026-07-01", "2026-07-31");
+
+    expect(row.totalMeals).toBe(5);
+    expect(row.totalValue).toBe(5 * 1200);
+  });
+
+  it("sorts by total value descending, ties broken by store name", async () => {
+    findManyOrder.mockResolvedValue([
+      {
+        customerId: "c1",
+        weekStart: new Date("2026-07-06T00:00:00.000Z"),
+        customer: { storeName: "Zöld Bolt" },
+        lines: [{ dayIndex: 0, letter: "a", quantity: 1, isXl: false }],
+      },
+      {
+        customerId: "c2",
+        weekStart: new Date("2026-07-06T00:00:00.000Z"),
+        customer: { storeName: "Alma Büfé" },
+        lines: [{ dayIndex: 0, letter: "a", quantity: 5, isXl: false }],
+      },
+    ]);
+
+    const rows = await getMonthlyOrderSummary("2026-07-01", "2026-07-31");
+
+    expect(rows.map((r) => r.storeName)).toEqual(["Alma Büfé", "Zöld Bolt"]);
+  });
+
+  it("queries every weekStart Monday that could overlap the month", async () => {
+    findManyOrder.mockResolvedValue([]);
+    await getMonthlyOrderSummary("2026-07-01", "2026-07-31");
+
+    const arg = findManyOrder.mock.calls[0][0];
+    const queriedWeeks = arg.where.weekStart.in.map((d) => d.toISOString().slice(0, 10));
+    // July 2026: 1st is a Wednesday, so the first relevant Monday is 2026-06-29;
+    // last Monday whose week can still touch July 31 is 2026-07-27.
+    expect(queriedWeeks).toEqual(["2026-06-29", "2026-07-06", "2026-07-13", "2026-07-20", "2026-07-27"]);
+  });
+
+  it("returns an empty array when nothing was ordered", async () => {
+    findManyOrder.mockResolvedValue([]);
+    expect(await getMonthlyOrderSummary("2026-07-01", "2026-07-31")).toEqual([]);
   });
 });

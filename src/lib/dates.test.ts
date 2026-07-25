@@ -1,12 +1,15 @@
 import { describe, expect, it } from "vitest";
 import {
   addDaysStr,
+  budapestTodayStr,
   dayRange,
   getActiveOrderWeek,
   getExportDay,
   getKitchenExportDay,
   getLockedDayIndexes,
   mondayOf,
+  monthEndOf,
+  monthStartOf,
   parseDay,
   rangeBetween,
   toDayStr,
@@ -77,6 +80,44 @@ describe("mondayOf", () => {
 
   it("finds the prior Monday for a Sunday", () => {
     expect(mondayOf("2026-07-05")).toBe("2026-06-29");
+  });
+});
+
+describe("budapestTodayStr", () => {
+  it("returns the Budapest wall-clock date, not the UTC one, near midnight CEST", () => {
+    // 2026-07-03 23:30 Budapest (CEST, +2) = 2026-07-03 21:30 UTC.
+    const instant = budapestInstant("2026-07-03", 23.5, 2);
+    expect(budapestTodayStr(instant)).toBe("2026-07-03");
+  });
+
+  it("rolls to the next Budapest day just after midnight even though UTC is still on the prior day", () => {
+    // 2026-07-04 00:30 Budapest (CEST, +2) = 2026-07-03 22:30 UTC.
+    const instant = budapestInstant("2026-07-04", 0.5, 2);
+    expect(budapestTodayStr(instant)).toBe("2026-07-04");
+  });
+});
+
+describe("monthStartOf", () => {
+  it("returns the 1st of the month for the given date", () => {
+    expect(monthStartOf("2026-07-17")).toBe("2026-07-01");
+  });
+});
+
+describe("monthEndOf", () => {
+  it("returns the last day of a 31-day month", () => {
+    expect(monthEndOf("2026-07-05")).toBe("2026-07-31");
+  });
+
+  it("returns the last day of a 30-day month", () => {
+    expect(monthEndOf("2026-04-05")).toBe("2026-04-30");
+  });
+
+  it("returns the last day of February in a leap year", () => {
+    expect(monthEndOf("2028-02-10")).toBe("2028-02-29");
+  });
+
+  it("returns the last day of February in a non-leap year", () => {
+    expect(monthEndOf("2026-02-10")).toBe("2026-02-28");
   });
 });
 

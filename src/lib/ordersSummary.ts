@@ -1,10 +1,12 @@
 import { prisma } from "@/lib/db";
-import { parseDay } from "@/lib/dates";
+import { addDaysStr, mondayOf, parseDay, toDayStr } from "@/lib/dates";
 import {
   emptyOrderWeek,
   orderLinesToDaysGrid,
   orderValue,
   quantityField,
+  MEAL_PRICE_FT,
+  MEAL_PRICE_XL_FT,
   ORDER_QUANTITY_FIELDS,
   type OrderDayQuantities,
   type OrderLetter,
@@ -192,4 +194,58 @@ export async function getWeekTotalMeals(weekStart: string): Promise<number> {
 export async function getWeekTotalValue(weekStart: string): Promise<number> {
   const { dayTotals } = await getOrdersSummary(weekStart);
   return dayTotals.reduce((sum, d) => sum + orderValue(d), 0);
+}
+
+export type CustomerMonthlyRow = {
+  customerId: string;
+  storeName: string;
+  totalMeals: number;
+  totalValue: number;
+};
+
+// Billing runs calendar-month, 1st through the last day, independent of the
+// Monday-based order weeks - a month spans parts of 4-6 different
+// `weekStart` weeks, so this pulls every week that could contain a day
+// within [monthStart, monthEnd] and then filters line-by-line to the exact
+// calendar dates, rather than assuming whole weeks fall inside the month.
+export async function getMonthlyOrderSummary(
+  monthStart: string,
+  monthEnd: string
+): Promise<CustomerMonthlyRow[]> {
+  const weekStarts: string[] = [];
+  for (let ws = mondayOf(monthStart); ws <= monthEnd; ws = addDaysStr(ws, 7)) {
+    weekStarts.push(ws);
+  }
+
+  const orders = await prisma.order.findMany({
+    where: { weekStart: { in: weekStarts.map(parseDay) } },
+    include: { customer: true, lines: true },
+  });
+
+  const byCustomer = new Map<string, CustomerMonthlyRow>();
+  for (const order of orders) {
+    const weekStartStr = toDayStr(order.weekStart);
+    for (const line of order.lines) {
+      const date = addDaysStr(weekStartStr, line.dayIndex);
+      if (date < monthStart || date > monthEnd) continue;
+
+      if (!byCustomer.has(order.customerId)) {
+        byCustomer.set(order.customerId, {
+          customerId: order.customerId,
+          storeName: order.customer.storeName,
+          totalMeals: 0,
+          totalValue: 0,
+        });
+      }
+      const row = byCustomer.get(order.customerId)!;
+      row.totalMeals += line.quantity;
+      row.totalValue += line.quantity * (line.isXl ? MEAL_PRICE_XL_FT : MEAL_PRICE_FT);
+    }
+  }
+
+  // Biggest orderer first, not alphabetical - same convention as the weekly
+  // and daily breakdowns.
+  return Array.from(byCustomer.values()).sort(
+    (a, b) => b.totalValue - a.totalValue || a.storeName.localeCompare(b.storeName, "hu")
+  );
 }

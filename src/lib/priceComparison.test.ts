@@ -198,6 +198,34 @@ describe("getPriceComparison", () => {
     expect(row.bySupplier.BAROMFIUDVAR?.normalizedFrom).toBeNull();
   });
 
+  it("reports the latest observedDate across both suppliers and the total observation count", async () => {
+    findMany.mockResolvedValue([
+      {
+        id: "p1",
+        name: "Csirkemell",
+        priceObservations: [
+          obs("BAROMFIUDVAR", 1350, "2026-07-20"),
+          obs("SAJTFUTAR", 1300, "2026-07-15"),
+          obs("BAROMFIUDVAR", 1200, "2026-07-10"),
+        ],
+      },
+    ]);
+
+    const [row] = await getPriceComparison();
+
+    expect(row.latestObservedDate).toBe("2026-07-20");
+    expect(row.observationCount).toBe(3);
+  });
+
+  it("reports a null latestObservedDate and zero count when there are no observations", async () => {
+    findMany.mockResolvedValue([{ id: "p1", name: "Csirkemell", priceObservations: [] }]);
+
+    const [row] = await getPriceComparison();
+
+    expect(row.latestObservedDate).toBeNull();
+    expect(row.observationCount).toBe(0);
+  });
+
   it("breaks same-day observedDate ties by createdAt, not by whichever row comes back first", async () => {
     findMany.mockResolvedValue([]);
     await getPriceComparison();

@@ -69,6 +69,22 @@ function budapestDateAndHour(now: Date): { dateStr: string; hour: number } {
   };
 }
 
+/** Today's date (YYYY-MM-DD) in Budapest wall-clock time - unlike todayStr(),
+ *  which is UTC-based and can be a day off around midnight CET/CEST. */
+export function budapestTodayStr(now: Date = new Date()): string {
+  return budapestDateAndHour(now).dateStr;
+}
+
+export function monthStartOf(dateStr: string): string {
+  return `${dateStr.slice(0, 7)}-01`;
+}
+
+export function monthEndOf(dateStr: string): string {
+  const [year, month] = dateStr.slice(0, 7).split("-").map(Number);
+  const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  return `${dateStr.slice(0, 7)}-${String(lastDay).padStart(2, "0")}`;
+}
+
 function mondayIndexOf(dateStr: string): number {
   const day = parseDay(dateStr).getUTCDay(); // 0=Sun..6=Sat
   return day === 0 ? 6 : day - 1; // 0=Mon..6=Sun

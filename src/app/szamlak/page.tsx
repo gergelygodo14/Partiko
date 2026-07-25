@@ -43,6 +43,8 @@ type PriceComparisonRow = {
   packSize: number | null;
   bySupplier: Partial<Record<Supplier, SupplierPricePoint>>;
   cheaperSupplier: Supplier | null;
+  latestObservedDate: string | null;
+  observationCount: number;
 };
 
 const MAX_DIMENSION = 2000;
@@ -132,12 +134,14 @@ function PriceCell({ point }: { point: SupplierPricePoint }) {
   );
 }
 
-type ComparisonFilter = "changed" | "both" | "all";
+type ComparisonFilter = "changed" | "both" | "all" | "recent" | "mostOrdered";
 
 const COMPARISON_FILTER_OPTIONS: { value: ComparisonFilter; label: string }[] = [
   { value: "changed", label: "Árváltozás" },
   { value: "both", label: "Mindkét beszállítónál" },
   { value: "all", label: "Összes" },
+  { value: "recent", label: "Legfrissebb" },
+  { value: "mostOrdered", label: "Legtöbbet rendelt" },
 ];
 
 // Shown under each merge-candidate's name so the user can tell visually
@@ -410,6 +414,17 @@ export default function SzamlakPage() {
                 return true;
               });
 
+              // "recent"/"mostOrdered" don't exclude anything (same rows as
+              // "all") - they just reorder so the newest/most-recorded
+              // product surfaces first.
+              if (comparisonFilter === "recent") {
+                filteredComparison.sort((a, b) =>
+                  (b.latestObservedDate ?? "").localeCompare(a.latestObservedDate ?? "")
+                );
+              } else if (comparisonFilter === "mostOrdered") {
+                filteredComparison.sort((a, b) => b.observationCount - a.observationCount);
+              }
+
               if (filteredComparison.length === 0) {
                 return (
                   <p className="text-neutral-500">Nincs a szűrésnek megfelelő termék.</p>
@@ -432,6 +447,16 @@ export default function SzamlakPage() {
                         <tr key={row.productId} className="border-t border-neutral-200">
                           <td className="py-2 pr-3 font-medium">
                             {row.productName}
+                            {comparisonFilter === "recent" && (
+                              <p className="font-normal text-xs text-neutral-500">
+                                Utoljára rögzítve: {row.latestObservedDate ?? "–"}
+                              </p>
+                            )}
+                            {comparisonFilter === "mostOrdered" && (
+                              <p className="font-normal text-xs text-neutral-500">
+                                {row.observationCount} alkalommal rögzítve
+                              </p>
+                            )}
                             <div className="flex items-center gap-1.5 mt-1 font-normal text-xs text-neutral-500">
                               <label htmlFor={`packsize-${row.productId}`}>Csomagméret (db/doboz):</label>
                               <input

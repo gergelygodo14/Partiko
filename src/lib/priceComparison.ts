@@ -18,6 +18,15 @@ export type ProductPriceComparisonRow = {
   packSize: number | null;
   bySupplier: Partial<Record<Supplier, SupplierPricePoint>>;
   cheaperSupplier: Supplier | null;
+  // Latest observedDate across BOTH suppliers (not just per-supplier) and
+  // the total number of recorded observations ever - used by the /szamlak
+  // "Legfrissebb" (most recently entered) and "Legtöbbet rendelt" (ordered
+  // most often) sort options. Order frequency, not order quantity: actual
+  // ordered quantities aren't persisted on PriceObservation, so observation
+  // count (how often this product has shown up on an invoice/price list) is
+  // the closest available proxy.
+  latestObservedDate: string | null;
+  observationCount: number;
 };
 
 const BOX_UNIT_WORDS = new Set(["doboz", "karton", "csomag"]);
@@ -100,6 +109,8 @@ export async function getPriceComparison(): Promise<ProductPriceComparisonRow[]>
       packSize: product.packSize,
       bySupplier,
       cheaperSupplier,
+      latestObservedDate: product.priceObservations[0]?.observedDate.toISOString().slice(0, 10) ?? null,
+      observationCount: product.priceObservations.length,
     };
   });
 }

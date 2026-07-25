@@ -38,7 +38,22 @@ type Summary = {
   week: WeekSummary;
 };
 
-type View = "week" | "day";
+type MonthCustomerRow = {
+  customerId: string;
+  storeName: string;
+  totalMeals: number;
+  totalValue: number;
+};
+
+type MonthSummary = {
+  monthStart: string;
+  monthEnd: string;
+  byCustomer: MonthCustomerRow[];
+  totalMeals: number;
+  totalValue: number;
+};
+
+type View = "week" | "day" | "month";
 
 const SHORT_DAY_NAMES = ["H", "K", "Sze", "Cs", "P"];
 const FULL_DAY_NAMES = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek"];
@@ -54,12 +69,21 @@ function dishTotal(q: OrderDayQuantities) {
   return q.a + q.aXl + q.b + q.bXl + q.c + q.cXl;
 }
 
+function formatMonthLabel(dateStr: string) {
+  return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString("hu-HU", {
+    year: "numeric",
+    month: "long",
+  });
+}
+
 export default function OrdersPage() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<View>("week");
   const [dayIndex, setDayIndex] = useState<number | null>(null);
   const [downloading, setDownloading] = useState(false);
+  const [monthSummary, setMonthSummary] = useState<MonthSummary | null>(null);
+  const [monthLoading, setMonthLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -70,6 +94,19 @@ export default function OrdersPage() {
       setLoading(false);
     })();
   }, []);
+
+  // Lazy-loaded only when the tab is actually opened - a month spans several
+  // order weeks, so it's a bigger query than the week/day views that are
+  // always fetched upfront.
+  useEffect(() => {
+    if (view !== "month" || monthSummary || monthLoading) return;
+    setMonthLoading(true);
+    (async () => {
+      const res = await fetch("/api/orders/monthly-summary");
+      setMonthSummary(await res.json());
+      setMonthLoading(false);
+    })();
+  }, [view, monthSummary, monthLoading]);
 
   // A plain <a href> to a downloadable attachment navigates the whole
   // standalone (home-screen) PWA away to a black QuickLook-style screen on
@@ -140,6 +177,16 @@ export default function OrdersPage() {
           }`}
         >
           Napi bontás
+        </button>
+        <button
+          onClick={() => setView("month")}
+          className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base ${
+            view === "month"
+              ? "bg-yellow-400 text-black"
+              : "border border-neutral-300 active:bg-neutral-100"
+          }`}
+        >
+          Havi elszámolás
         </button>
       </div>
 
@@ -217,7 +264,7 @@ export default function OrdersPage() {
             </p>
           </section>
         </>
-      ) : (
+      ) : view === "day" ? (
         <>
           <div className="flex gap-1.5">
             {FULL_DAY_NAMES.map((name, i) => (
@@ -283,6 +330,72 @@ export default function OrdersPage() {
                 </table>
               </div>
             )}
+          </section>
+        </>
+      ) : monthLoading || !monthSummary ? (
+        <p className="text-neutral-500">Betöltés...</p>
+      ) : (
+        <>
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold">
+              Havi elszámolás{" "}
+              <span className="text-neutral-400 font-normal text-sm capitalize">
+                ({formatMonthLabel(monthSummary.monthStart)})
+              </span>
+            </h2>
+            {monthSummary.byCustomer.length === 0 ? (
+              <p className="text-neutral-500">Még nincs leadott rendelés erre a hónapra.</p>
+            ) : (
+              <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-neutral-100 text-neutral-600">
+                    <tr>
+                      <th className="text-left px-3 py-3">Üzlet</th>
+                      <th className="text-right px-3 py-3">Összesen</th>
+                      <th className="text-right px-3 py-3">Fizetendő</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {monthSummary.byCustomer.map((c) => (
+                      <tr key={c.customerId} className="border-t border-neutral-100">
+                        <td className="px-3 py-3">{c.storeName}</td>
+                        <td className="px-3 py-3 text-right">{c.totalMeals}</td>
+                        <td className="px-3 py-3 text-right font-medium">
+                          {c.totalValue.toLocaleString("hu-HU")} Ft
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="border-t border-neutral-300 font-semibold">
+                      <td className="px-3 py-3">Összesen</td>
+                      <td className="px-3 py-3 text-right">{monthSummary.totalMeals}</td>
+                      <td className="px-3 py-3 text-right">
+                        {monthSummary.totalValue.toLocaleString("hu-HU")} Ft
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            )}
+          </section>
+
+          <section className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm space-y-1">
+            <h2 className="text-lg font-semibold">Havi összesítés</h2>
+            <p className="text-neutral-600">
+              {formatDate(monthSummary.monthStart)}-től {formatDate(monthSummary.monthEnd)}-ig eddig
+              összesen{" "}
+              <span className="font-semibold">
+                {monthSummary.totalMeals.toLocaleString("hu-HU")}
+              </span>{" "}
+              kaja lett megrendelve.
+            </p>
+            <p className="text-neutral-600">
+              Összeg:{" "}
+              <span className="font-semibold">
+                {monthSummary.totalValue.toLocaleString("hu-HU")} Ft
+              </span>
+            </p>
           </section>
         </>
       )}
