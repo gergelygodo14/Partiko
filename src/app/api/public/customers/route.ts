@@ -9,7 +9,25 @@ function isValidName(value: unknown): value is string {
   return typeof value === "string" && value.length > 0 && value.length <= MAX_NAME_LENGTH;
 }
 
-export const OPTIONS = (request: NextRequest) => corsPreflight(request, "POST, OPTIONS");
+export const OPTIONS = (request: NextRequest) => corsPreflight(request, "GET, POST, OPTIONS");
+
+// Full customer list, for client-side typeahead (store identity is shared
+// infrastructure between ready-meal and sandwich ordering - see the
+// sandwich-ordering plan for why this lives here rather than a separate
+// sandwich-scoped route). At the business's actual scale (tens of stores)
+// fetching the whole list once and filtering client-side is simpler and
+// cheaper than a server-side search endpoint.
+export const GET = withCors(
+  withApiErrorHandling(async () => {
+    const customers = await prisma.customer.findMany({
+      select: { id: true, storeName: true },
+      orderBy: { storeName: "asc" },
+    });
+    return NextResponse.json(
+      customers.map((c) => ({ customerId: c.id, storeName: c.storeName }))
+    );
+  })
+);
 
 export const POST = withCors(
   withApiErrorHandling(async (request: NextRequest) => {

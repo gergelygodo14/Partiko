@@ -52,11 +52,12 @@ model WeeklyMenu {
 }
 
 model Customer {
-  id          String   @id @default(cuid())
-  storeName   String
-  companyName String
-  createdAt   DateTime @default(now())
-  orders      Order[]
+  id             String          @id @default(cuid())
+  storeName      String
+  companyName    String
+  createdAt      DateTime        @default(now())
+  orders         Order[]
+  sandwichOrders SandwichOrder[]
 
   @@index([storeName, companyName])
 }
@@ -179,4 +180,43 @@ model Dish {
   id        String   @id @default(cuid())
   name      String   @unique
   createdAt DateTime @default(now())
+}
+
+model SandwichItem {
+  id         String              @id @default(cuid())
+  name       String
+  price      Int
+  order      Int                 @default(0)
+  archived   Boolean             @default(false)
+  createdAt  DateTime            @default(now())
+  orderLines SandwichOrderLine[]
+}
+
+model SandwichOrder {
+  id         String              @id @default(cuid())
+  customerId String
+  customer   Customer            @relation(fields: [customerId], references: [id])
+  orderDate  DateTime
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+  lines      SandwichOrderLine[]
+
+  @@unique([customerId, orderDate])
+  @@index([orderDate])
+}
+
+// unitPriceFt snapshots SandwichItem.price at order time - the catalog price
+// is admin-editable, so a later price change must not retroactively change
+// historical Ft totals on old orders (same reasoning as PriceObservation).
+model SandwichOrderLine {
+  id          String        @id @default(cuid())
+  orderId     String
+  order       SandwichOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  itemId      String
+  item        SandwichItem  @relation(fields: [itemId], references: [id])
+  quantity    Int
+  unitPriceFt Int
+
+  @@unique([orderId, itemId])
+  @@index([orderId])
 }

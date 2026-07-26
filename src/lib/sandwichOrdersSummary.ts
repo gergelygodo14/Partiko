@@ -1,0 +1,151 @@
+import { prisma } from "@/lib/db";
+import { addDaysStr, parseDay, rangeBetween, toDayStr } from "@/lib/dates";
+import { sandwichOrderTotalCount, sandwichOrderValueFt } from "@/lib/sandwichOrders";
+
+export type SandwichItemTotal = { itemId: string; itemName: string; quantity: number; valueFt: number };
+export type SandwichCustomerTotal = { customerId: string; storeName: string; quantity: number; valueFt: number };
+
+export type SandwichPeriodSummary = {
+  byItem: SandwichItemTotal[];
+  byCustomer: SandwichCustomerTotal[];
+  totalQuantity: number;
+  totalValueFt: number;
+};
+
+async function summarizeSandwichOrders(fromStr: string, toStr: string): Promise<SandwichPeriodSummary> {
+  const { gte, lt } = rangeBetween(fromStr, toStr);
+  const orders = await prisma.sandwichOrder.findMany({
+    where: { orderDate: { gte, lt } },
+    include: { customer: true, lines: { include: { item: true } } },
+  });
+
+  const itemMap = new Map<string, SandwichItemTotal>();
+  const customerMap = new Map<string, SandwichCustomerTotal>();
+  let totalQuantity = 0;
+  let totalValueFt = 0;
+
+  for (const order of orders) {
+    for (const line of order.lines) {
+      if (line.quantity <= 0) continue;
+      const lineValue = line.quantity * line.unitPriceFt;
+      totalQuantity += line.quantity;
+      totalValueFt += lineValue;
+
+      if (!itemMap.has(line.itemId)) {
+        itemMap.set(line.itemId, { itemId: line.itemId, itemName: line.item.name, quantity: 0, valueFt: 0 });
+      }
+      const itemRow = itemMap.get(line.itemId)!;
+      itemRow.quantity += line.quantity;
+      itemRow.valueFt += lineValue;
+
+      if (!customerMap.has(order.customerId)) {
+        customerMap.set(order.customerId, {
+          customerId: order.customerId,
+          storeName: order.customer.storeName,
+          quantity: 0,
+          valueFt: 0,
+        });
+      }
+      const customerRow = customerMap.get(order.customerId)!;
+      customerRow.quantity += line.quantity;
+      customerRow.valueFt += lineValue;
+    }
+  }
+
+  // Biggest first, not alphabetical - same convention as the ready-meal
+  // summaries, ties broken by name.
+  const byItem = Array.from(itemMap.values()).sort(
+    (a, b) => b.quantity - a.quantity || a.itemName.localeCompare(b.itemName, "hu")
+  );
+  const byCustomer = Array.from(customerMap.values()).sort(
+    (a, b) => b.quantity - a.quantity || a.storeName.localeCompare(b.storeName, "hu")
+  );
+
+  return { byItem, byCustomer, totalQuantity, totalValueFt };
+}
+
+export type SandwichWeekSummary = SandwichPeriodSummary & { weekStart: string; weekEnd: string };
+
+// "Week" here means Monday-Friday (no weekend delivery), mirroring the
+// ready-meal weekStart convention, even though SandwichOrder.orderDate is a
+// plain calendar date with no weekStart field of its own.
+export async function getSandwichWeekSummary(weekStart: string): Promise<SandwichWeekSummary> {
+  const weekEnd = addDaysStr(weekStart, 4);
+  const summary = await summarizeSandwichOrders(weekStart, weekEnd);
+  return { weekStart, weekEnd, ...summary };
+}
+
+export async function getSandwichMonthSummary(monthStart: string, monthEnd: string): Promise<SandwichPeriodSummary> {
+  return summarizeSandwichOrders(monthStart, monthEnd);
+}
+
+export type SandwichDayCustomerOrder = {
+  customerId: string;
+  storeName: string;
+  lines: { itemId: string; itemName: string; itemOrder: number; quantity: number }[];
+  totalQuantity: number;
+};
+
+// One row per store that ordered on `date`, only nonzero lines, sorted
+// biggest-orderer-first - source data for the rotated kitchen xlsx export.
+export async function getSandwichOrdersForDay(date: string): Promise<SandwichDayCustomerOrder[]> {
+  const orders = await prisma.sandwichOrder.findMany({
+    where: { orderDate: parseDay(date) },
+    include: { customer: true, lines: { include: { item: true } } },
+  });
+
+  const rows = orders.map((order) => {
+    const lines = order.lines
+      .filter((line) => line.quantity > 0)
+      .map((line) => ({
+        itemId: line.itemId,
+        itemName: line.item.name,
+        itemOrder: line.item.order,
+        quantity: line.quantity,
+      }));
+    return {
+      customerId: order.customerId,
+      storeName: order.customer.storeName,
+      lines,
+      totalQuantity: lines.reduce((sum, l) => sum + l.quantity, 0),
+    };
+  });
+
+  return rows.sort((a, b) => b.totalQuantity - a.totalQuantity || a.storeName.localeCompare(b.storeName, "hu"));
+}
+
+export type SandwichHistoryEntry = {
+  orderDate: string;
+  lines: { itemId: string; itemName: string; quantity: number }[];
+  totalQuantity: number;
+  totalValueFt: number;
+};
+
+// A customer's most recent distinct order dates (newest first), for the
+// "same as last time" prefill chips on the ordering page.
+export async function getSandwichCustomerHistory(
+  customerId: string,
+  limit = 5
+): Promise<SandwichHistoryEntry[]> {
+  const orders = await prisma.sandwichOrder.findMany({
+    where: { customerId },
+    orderBy: { orderDate: "desc" },
+    take: limit,
+    include: { lines: { include: { item: true } } },
+  });
+
+  return orders.map((order) => {
+    const nonZeroLines = order.lines.filter((line) => line.quantity > 0);
+    const lines = nonZeroLines.map((line) => ({
+      itemId: line.itemId,
+      itemName: line.item.name,
+      quantity: line.quantity,
+    }));
+    return {
+      orderDate: toDayStr(order.orderDate),
+      lines,
+      totalQuantity: sandwichOrderTotalCount(nonZeroLines),
+      totalValueFt: sandwichOrderValueFt(nonZeroLines),
+    };
+  });
+}
