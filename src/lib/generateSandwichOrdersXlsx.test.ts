@@ -160,10 +160,31 @@ describe("generateSandwichOrdersXlsx", () => {
     expect(sheet1).toBeDefined();
     expect(sheet2).toBeDefined();
 
-    // 9 stores split into a first half of 5 and a second half of 4.
+    // 9 stores chunked into a full sheet of 8, then 1 on the next.
     expect(sheet1.getRow(1).getCell(2).value).toBe("A");
-    expect(sheet1.getRow(1).getCell(6).value).toBe("E");
-    expect(sheet2.getRow(1).getCell(2).value).toBe("F");
+    expect(sheet1.getRow(1).getCell(9).value).toBe("H");
+    expect(sheet2.getRow(1).getCell(2).value).toBe("I");
+  });
+
+  it("adds a third sheet when even the second sheet would overflow", async () => {
+    const names = Array.from({ length: 20 }, (_, i) => `Store${i + 1}`);
+    const rows: SandwichDayCustomerOrder[] = names.map((name, i) => ({
+      customerId: `c${i}`,
+      storeName: name,
+      lines: [{ itemId: "teszt1", itemName: "Teszt Szendvics", itemOrder: 1, quantity: 1 }],
+      totalQuantity: 1,
+    }));
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const workbook = await readBack(buffer);
+
+    // 20 stores -> 8 + 8 + 4 across three sheets.
+    expect(workbook.getWorksheet("SZENDVICS HÉTFŐ 1")).toBeDefined();
+    expect(workbook.getWorksheet("SZENDVICS HÉTFŐ 2")).toBeDefined();
+    const sheet3 = workbook.getWorksheet("SZENDVICS HÉTFŐ 3")!;
+    expect(sheet3).toBeDefined();
+    expect(sheet3.getRow(1).getCell(2).value).toBe("Store17");
+    expect(sheet3.getRow(1).getCell(5).value).toBe("Store20");
+    expect(workbook.getWorksheet("SZENDVICS HÉTFŐ 4")).toBeUndefined();
   });
 
   it("keeps everything on one sheet for a normal-size day (8 stores or fewer)", async () => {

@@ -194,19 +194,17 @@ export async function generateSandwichOrdersXlsx(
     (a, b) => a.order - b.order || a.name.localeCompare(b.name, "hu")
   );
 
-  // Split across two pages once a day gets wide enough that fit-to-width
-  // would squeeze every store's column illegibly small - a normal, small
-  // day stays on one sheet rather than splitting into a near-empty second
-  // page. 8 stores (+ the blank phone-order columns) is about what still
-  // prints readably on one A4 landscape page.
-  const SPLIT_THRESHOLD = 8;
+  // Chunk stores into as many sheets as needed so each one still prints
+  // readably on one A4 landscape page - not just a single split into two,
+  // since a big enough day would still overflow a second sheet too. 8
+  // stores (+ the blank phone-order columns) is about what still prints
+  // readably on one page.
+  const STORES_PER_SHEET = 8;
   const label = dayName || date;
-  if (rows.length <= SPLIT_THRESHOLD) {
-    buildSheet(workbook, `SZENDVICS ${label} 1`, label, items, rows);
-  } else {
-    const mid = Math.ceil(rows.length / 2);
-    buildSheet(workbook, `SZENDVICS ${label} 1`, label, items, rows.slice(0, mid));
-    buildSheet(workbook, `SZENDVICS ${label} 2`, label, items, rows.slice(mid));
+  const sheetCount = Math.max(1, Math.ceil(rows.length / STORES_PER_SHEET));
+  for (let i = 0; i < sheetCount; i++) {
+    const chunk = rows.slice(i * STORES_PER_SHEET, (i + 1) * STORES_PER_SHEET);
+    buildSheet(workbook, `SZENDVICS ${label} ${i + 1}`, label, items, chunk);
   }
 
   const buffer = await workbook.xlsx.writeBuffer();
