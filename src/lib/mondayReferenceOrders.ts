@@ -457,7 +457,7 @@ export const MONDAY_REFERENCE_ORDERS: Record<string, { itemName: string; quantit
       "quantity": 8
     }
   ],
-  "Székely": [
+  "Székelysor": [
     {
       "itemName": "Hamburger",
       "quantity": 1
