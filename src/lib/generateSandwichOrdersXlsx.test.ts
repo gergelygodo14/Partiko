@@ -245,4 +245,104 @@ describe("generateSandwichOrdersXlsx", () => {
     // Row 3 = molnárka,kolb (order 5, not a boundary) -> plain thin rule.
     expect(sheet.getRow(3).getCell(1).border?.bottom?.style).toBe("thin");
   });
+
+  it("groups all FAV stores adjacent to each other even if scattered in the input order", async () => {
+    const rows: SandwichDayCustomerOrder[] = [
+      "NÁ",
+      "FAV Mars",
+      "ÁG U.",
+      "Fav Retek",
+      "ZÁKÁNYSZÉK",
+    ].map((name, i) => ({
+      customerId: `c${i}`,
+      storeName: name,
+      lines: [{ itemId: "teszt1", itemName: "Teszt Szendvics", itemOrder: 1, quantity: 1 }],
+      totalQuantity: 1,
+    }));
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const workbook = await readBack(buffer);
+    const sheet = workbook.getWorksheet("SZENDVICS HÉTFŐ 1")!;
+
+    const header = (sheet.getRow(1).values as unknown[]).slice(1);
+    // NÁ stays first (not FAV/Coop), then both FAV stores land adjacent to
+    // each other at the position of the first one encountered.
+    expect(header).toEqual([
+      "HÉTFŐ",
+      "NÁ",
+      "FAV Mars",
+      "Fav Retek",
+      "ÁG U.",
+      "ZÁKÁNYSZÉK",
+      "",
+      "",
+      "",
+      "",
+      "Összesen",
+    ]);
+  });
+
+  it("groups all Coop stores adjacent to each other even if scattered in the input order", async () => {
+    const rows: SandwichDayCustomerOrder[] = [
+      "Coop 103",
+      "NÁ",
+      "Coop Zsombó",
+    ].map((name, i) => ({
+      customerId: `c${i}`,
+      storeName: name,
+      lines: [{ itemId: "teszt1", itemName: "Teszt Szendvics", itemOrder: 1, quantity: 1 }],
+      totalQuantity: 1,
+    }));
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const workbook = await readBack(buffer);
+    const sheet = workbook.getWorksheet("SZENDVICS HÉTFŐ 1")!;
+
+    const header = (sheet.getRow(1).values as unknown[]).slice(1);
+    expect(header).toEqual([
+      "HÉTFŐ",
+      "Coop 103",
+      "Coop Zsombó",
+      "NÁ",
+      "",
+      "",
+      "",
+      "",
+      "Összesen",
+    ]);
+  });
+
+  it("puts countryside (vidék) stores on their own sheet, never mixed with in-town stores", async () => {
+    const rows: SandwichDayCustomerOrder[] = ["NÁ", "Határ", "Coop 103", "Kisszállás"].map(
+      (name, i) => ({
+        customerId: `c${i}`,
+        storeName: name,
+        lines: [{ itemId: "teszt1", itemName: "Teszt Szendvics", itemOrder: 1, quantity: 1 }],
+        totalQuantity: 1,
+      })
+    );
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const workbook = await readBack(buffer);
+
+    const mainSheet = workbook.getWorksheet("SZENDVICS HÉTFŐ 1")!;
+    const mainHeader = (mainSheet.getRow(1).values as unknown[]).slice(1);
+    expect(mainHeader).toEqual(["HÉTFŐ", "NÁ", "Coop 103", "", "", "", "", "Összesen"]);
+
+    const videkSheet = workbook.getWorksheet("SZENDVICS HÉTFŐ VIDÉK")!;
+    expect(videkSheet).toBeDefined();
+    const videkHeader = (videkSheet.getRow(1).values as unknown[]).slice(1);
+    expect(videkHeader).toEqual(["HÉTFŐ", "Határ", "Kisszállás", "", "", "", "", "Összesen"]);
+  });
+
+  it("does not create a VIDÉK sheet when no countryside store ordered that day", async () => {
+    const rows: SandwichDayCustomerOrder[] = [
+      {
+        customerId: "c1",
+        storeName: "NÁ",
+        lines: [{ itemId: "teszt1", itemName: "Teszt Szendvics", itemOrder: 1, quantity: 1 }],
+        totalQuantity: 1,
+      },
+    ];
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const workbook = await readBack(buffer);
+    expect(workbook.worksheets.some((s) => s.name.includes("VIDÉK"))).toBe(false);
+  });
 });
