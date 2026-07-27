@@ -443,7 +443,7 @@ export const MONDAY_REFERENCE_ORDERS: Record<string, { itemName: string; quantit
       "quantity": 4
     }
   ],
-  "CSIRKE 10db": [
+  "Csirke": [
     {
       "itemName": "Hamburger",
       "quantity": 1
