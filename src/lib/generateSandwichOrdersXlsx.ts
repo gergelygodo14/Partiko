@@ -10,6 +10,45 @@ const MAX_SHEET_NAME_LENGTH = 31;
 const ITEM_FONT = { name: "Arial", bold: true, italic: true, size: 12 };
 const DATA_FONT = { name: "Comic Sans MS", bold: true, size: 11 };
 
+// The reference sheet's own row labels (exact case, its internal shorthand)
+// rather than the nicer full catalog name used everywhere else in the app -
+// the owner asked for the kitchen printout specifically to read exactly like
+// what they already hand-write, not the customer-facing product names.
+const EXCEL_LABEL_BY_ITEM_NAME: Record<string, string> = {
+  "Sonkás bagel": "BAGEL",
+  "Fasírtos-pfefferonis szendvics": "fasírtos-pfeff",
+  "Grillezett csirkemell papucs": "grill papucs",
+  "Hamburger": "hamburger",
+  "Molnárka (kicsi) kolbászos": "molnárka,kolb",
+  "Molnárka (kicsi) sonkás": "molnárka,sonkás",
+  "Molnárka (kicsi) szalámis": "molnárka szalámis",
+  "Csirkemelles bigkifli": "BIGKIFLI",
+  "Fetasajtos bigkifli": "BIGKIFLI fetás",
+  "Nagyi kifli": "nagyi",
+  "Pleskavica": "pleskavica",
+  "Dupla szalámis pogácsa": "pogácsa",
+  "Rántott húsos vekni": "rántott húsos",
+  "Rántott húsos vekni (teljes kiőrlésű)": "RHZS TK",
+  "Sajtburger": "sajtburger",
+  "Rántott húsos papucs": "RHZS PAPUCS",
+  "Dupla sajtburger": "DUPLA SAJTBURG",
+  "Mini burger": "miniburger",
+  "Pötyi pogi (dupla rántott húsos pogácsa)": "PÖTYI",
+  "Csirkés tortilla": "TORTILLA",
+  "Extra szendvics": "EXTRA",
+  "Mediterrán karajos vekni": "Karajos vekni",
+  "Szegedi sonkás vekni": "Szegedi sonkás",
+  "Piccante szalámis (olasz, csípős)": "PICCANTE",
+  "Csirkés panini": "Csirkés panini",
+  "Tépett húsos szendvics": "Tépett húsos",
+};
+
+// The reference sheet draws a thick horizontal rule after these catalog
+// `order` values (its own hand-drawn grouping of similar items - e.g. all
+// the molnárka/bigkifli variants together, all the rántott húsos variants
+// together) - 6 rules, verified cell-by-cell against the KEDD tab.
+const GROUP_DIVIDER_AFTER_ORDER = new Set([4, 9, 12, 17, 21, 24]);
+
 // A handful of extra blank store-columns for stores that phoned in an order
 // too late to be in the system - deliberately small (unlike the ready-meal
 // sheet's MIN_PRINTABLE_ROWS padding, which pads the cheap, unbounded-length
@@ -18,15 +57,18 @@ const DATA_FONT = { name: "Comic Sans MS", bold: true, size: 11 };
 // of just extending the sheet downward.
 const EXTRA_BLANK_STORE_COLUMNS = 4;
 
-// Thin grid throughout, with a thick rule under the header row - same
-// border convention as the reference sheet (thick line separating the
-// store-name header from the quantity grid below it).
-function applyGridBorders(sheet: ExcelJS.Worksheet, columnCount: number) {
+// Thin grid throughout, with a thick rule under the header row and under
+// each group boundary - same border convention as the reference sheet.
+function applyGridBorders(
+  sheet: ExcelJS.Worksheet,
+  columnCount: number,
+  thickAfterRow: (row: number) => boolean
+) {
   for (let r = 1; r <= sheet.rowCount; r++) {
     for (let c = 1; c <= columnCount; c++) {
       sheet.getRow(r).getCell(c).border = {
         top: { style: "thin" },
-        bottom: { style: r === 1 ? "thick" : "thin" },
+        bottom: { style: r === 1 || thickAfterRow(r) ? "thick" : "thin" },
         left: { style: "thin" },
         right: { style: "thin" },
       };
@@ -38,40 +80,25 @@ function quantityFor(row: SandwichDayCustomerOrder, itemId: string): number {
   return row.lines.find((line) => line.itemId === itemId)?.quantity ?? 0;
 }
 
-// Rotated from the ready-meal kitchen sheet: sandwiches (the near-fixed,
-// slow-growing axis) go down the rows, stores (the variable, unbounded
-// axis) go across the columns, A4 landscape. Quantities only, no
-// prices/totals in Ft (confirmed with the owner - matches the ready-meal
-// kitchen sheet's own "no pricing" convention).
-export async function generateSandwichOrdersXlsx(
-  date: string,
-  dayName: string,
-  rows: SandwichDayCustomerOrder[]
-): Promise<Buffer> {
-  const workbook = new ExcelJS.Workbook();
-  const sheetName = `SZENDVICS ${dayName || date}`.slice(0, MAX_SHEET_NAME_LENGTH);
-  const sheet = workbook.addWorksheet(sheetName);
+type Item = { itemId: string; name: string; order: number };
 
-  // Union of items that actually appear today, sorted by catalog order -
-  // not a static full-catalog scan, mirrors how the ready-meal export only
-  // shows dishes actually configured for the day rather than the whole menu.
-  const itemMap = new Map<string, { name: string; order: number }>();
-  for (const row of rows) {
-    for (const line of row.lines) {
-      if (!itemMap.has(line.itemId)) {
-        itemMap.set(line.itemId, { name: line.itemName, order: line.itemOrder });
-      }
-    }
-  }
-  const items = Array.from(itemMap.entries())
-    .map(([itemId, info]) => ({ itemId, ...info }))
-    .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name, "hu"));
+// One printable A4-landscape page for a subset of stores - split out so a
+// busy day (many stores) becomes two narrower sheets instead of one sheet
+// squeezed illegibly small to fit-to-width.
+function buildSheet(
+  workbook: ExcelJS.Workbook,
+  sheetName: string,
+  columnHeaderLabel: string,
+  items: Item[],
+  rows: SandwichDayCustomerOrder[]
+) {
+  const sheet = workbook.addWorksheet(sheetName.slice(0, MAX_SHEET_NAME_LENGTH));
 
   const centered = { alignment: { horizontal: "center" as const }, font: DATA_FONT };
   const itemNameStyle = { font: ITEM_FONT };
 
   const columns: Partial<ExcelJS.Column>[] = [
-    { header: dayName || date, key: "itemName", width: 30, style: itemNameStyle },
+    { header: columnHeaderLabel, key: "itemName", width: 30, style: itemNameStyle },
   ];
   // rows arrives pre-sorted biggest-orderer-first (see getSandwichOrdersForDay).
   rows.forEach((row) => {
@@ -103,7 +130,9 @@ export async function generateSandwichOrdersXlsx(
   };
 
   items.forEach((item) => {
-    const rowData: Record<string, string | number> = { itemName: item.name };
+    const rowData: Record<string, string | number> = {
+      itemName: EXCEL_LABEL_BY_ITEM_NAME[item.name] ?? item.name,
+    };
     let itemTotal = 0;
     rows.forEach((row) => {
       const qty = quantityFor(row, item.itemId);
@@ -124,11 +153,60 @@ export async function generateSandwichOrdersXlsx(
   sheet.addRow(totalsRowData);
   const totalsRow = sheet.getRow(sheet.rowCount);
 
-  applyGridBorders(sheet, sheet.columns.length);
+  // Item rows start at sheet row 2 (row 1 is the header); a divider drawn
+  // "after" a given item lands on that same item's own row (its bottom
+  // border), matching how the reference sheet places its thick rules.
+  applyGridBorders(sheet, sheet.columns.length, (r) => {
+    const item = items[r - 2];
+    return item !== undefined && GROUP_DIVIDER_AFTER_ORDER.has(item.order);
+  });
   // Thick top border sets the totals row apart from the item rows above it.
   for (let c = 1; c <= sheet.columns.length; c++) {
     const cell = totalsRow.getCell(c);
     cell.border = { ...cell.border, top: { style: "thick" } };
+  }
+}
+
+// Rotated from the ready-meal kitchen sheet: sandwiches (the near-fixed,
+// slow-growing axis) go down the rows, stores (the variable, unbounded
+// axis) go across the columns, A4 landscape. Quantities only, no
+// prices/totals in Ft (confirmed with the owner - matches the ready-meal
+// kitchen sheet's own "no pricing" convention).
+export async function generateSandwichOrdersXlsx(
+  date: string,
+  dayName: string,
+  rows: SandwichDayCustomerOrder[]
+): Promise<Buffer> {
+  const workbook = new ExcelJS.Workbook();
+
+  // Union of items that actually appear today, sorted by catalog order -
+  // not a static full-catalog scan, mirrors how the ready-meal export only
+  // shows dishes actually configured for the day rather than the whole menu.
+  const itemMap = new Map<string, Item>();
+  for (const row of rows) {
+    for (const line of row.lines) {
+      if (!itemMap.has(line.itemId)) {
+        itemMap.set(line.itemId, { itemId: line.itemId, name: line.itemName, order: line.itemOrder });
+      }
+    }
+  }
+  const items = Array.from(itemMap.values()).sort(
+    (a, b) => a.order - b.order || a.name.localeCompare(b.name, "hu")
+  );
+
+  // Split across two pages once a day gets wide enough that fit-to-width
+  // would squeeze every store's column illegibly small - a normal, small
+  // day stays on one sheet rather than splitting into a near-empty second
+  // page. 8 stores (+ the blank phone-order columns) is about what still
+  // prints readably on one A4 landscape page.
+  const SPLIT_THRESHOLD = 8;
+  const label = dayName || date;
+  if (rows.length <= SPLIT_THRESHOLD) {
+    buildSheet(workbook, `SZENDVICS ${label} 1`, label, items, rows);
+  } else {
+    const mid = Math.ceil(rows.length / 2);
+    buildSheet(workbook, `SZENDVICS ${label} 1`, label, items, rows.slice(0, mid));
+    buildSheet(workbook, `SZENDVICS ${label} 2`, label, items, rows.slice(mid));
   }
 
   const buffer = await workbook.xlsx.writeBuffer();

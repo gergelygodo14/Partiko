@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { computeMeatPrep } from "@/lib/sandwichMeatPrep";
 
 type ItemTotal = { itemId: string; itemName: string; quantity: number; valueFt: number };
 type CustomerTotal = { customerId: string; storeName: string; quantity: number; valueFt: number };
@@ -33,6 +34,7 @@ function formatMonthLabel(dateStr: string) {
 }
 
 function SummaryTables({ summary }: { summary: PeriodSummary }) {
+  const meatPrep = computeMeatPrep(summary.byItem);
   return (
     <>
       <section className="space-y-3">
@@ -102,6 +104,24 @@ function SummaryTables({ summary }: { summary: PeriodSummary }) {
             </table>
           </div>
         )}
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-lg font-semibold">Húsigény</h2>
+        <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm grid grid-cols-3 divide-x divide-neutral-100">
+          <div className="p-4 text-center">
+            <div className="text-2xl font-semibold">{meatPrep.rantottHusDb}</div>
+            <div className="text-xs text-neutral-500 mt-1">db rántott hús</div>
+          </div>
+          <div className="p-4 text-center">
+            <div className="text-2xl font-semibold">{meatPrep.tortillaHusDb}</div>
+            <div className="text-xs text-neutral-500 mt-1">db tortilla hús</div>
+          </div>
+          <div className="p-4 text-center">
+            <div className="text-2xl font-semibold">{meatPrep.grillHusDb}</div>
+            <div className="text-xs text-neutral-500 mt-1">db grill hús</div>
+          </div>
+        </div>
       </section>
     </>
   );
