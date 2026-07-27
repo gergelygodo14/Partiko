@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { computeMeatPrep } from "@/lib/sandwichMeatPrep";
 
 type ItemTotal = { itemId: string; itemName: string; quantity: number; valueFt: number };
 type CustomerTotal = { customerId: string; storeName: string; quantity: number; valueFt: number };
@@ -19,6 +18,14 @@ type MonthSummary = PeriodSummary & { monthStart: string; monthEnd: string };
 
 type View = "week" | "month";
 
+type MeatPrep = {
+  date: string;
+  dayName: string;
+  rantottHusDb: number;
+  tortillaHusDb: number;
+  grillHusDb: number;
+};
+
 function formatDate(dateStr: string) {
   return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString("hu-HU", {
     month: "2-digit",
@@ -34,7 +41,6 @@ function formatMonthLabel(dateStr: string) {
 }
 
 function SummaryTables({ summary }: { summary: PeriodSummary }) {
-  const meatPrep = computeMeatPrep(summary.byItem);
   return (
     <>
       <section className="space-y-3">
@@ -105,25 +111,34 @@ function SummaryTables({ summary }: { summary: PeriodSummary }) {
           </div>
         )}
       </section>
-
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Húsigény</h2>
-        <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm grid grid-cols-3 divide-x divide-neutral-100">
-          <div className="p-4 text-center">
-            <div className="text-2xl font-semibold">{meatPrep.rantottHusDb}</div>
-            <div className="text-xs text-neutral-500 mt-1">db rántott hús</div>
-          </div>
-          <div className="p-4 text-center">
-            <div className="text-2xl font-semibold">{meatPrep.tortillaHusDb}</div>
-            <div className="text-xs text-neutral-500 mt-1">db tortilla hús</div>
-          </div>
-          <div className="p-4 text-center">
-            <div className="text-2xl font-semibold">{meatPrep.grillHusDb}</div>
-            <div className="text-xs text-neutral-500 mt-1">db grill hús</div>
-          </div>
-        </div>
-      </section>
     </>
+  );
+}
+
+function MeatPrepSection({ meatPrep }: { meatPrep: MeatPrep }) {
+  return (
+    <section className="space-y-3">
+      <h2 className="text-lg font-semibold">
+        Húsigény{" "}
+        <span className="text-neutral-400 font-normal text-sm">
+          ({meatPrep.dayName} {formatDate(meatPrep.date)})
+        </span>
+      </h2>
+      <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm grid grid-cols-3 divide-x divide-neutral-100">
+        <div className="p-4 text-center">
+          <div className="text-2xl font-semibold">{meatPrep.rantottHusDb}</div>
+          <div className="text-xs text-neutral-500 mt-1">db rántott hús</div>
+        </div>
+        <div className="p-4 text-center">
+          <div className="text-2xl font-semibold">{meatPrep.tortillaHusDb}</div>
+          <div className="text-xs text-neutral-500 mt-1">db tortilla hús</div>
+        </div>
+        <div className="p-4 text-center">
+          <div className="text-2xl font-semibold">{meatPrep.grillHusDb}</div>
+          <div className="text-xs text-neutral-500 mt-1">db grill hús</div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -134,12 +149,17 @@ export default function SandwichOrdersTab() {
   const [downloading, setDownloading] = useState(false);
   const [monthSummary, setMonthSummary] = useState<MonthSummary | null>(null);
   const [monthLoading, setMonthLoading] = useState(false);
+  const [meatPrep, setMeatPrep] = useState<MeatPrep | null>(null);
 
   useEffect(() => {
     (async () => {
       const res = await fetch("/api/sandwich-orders/summary");
       setWeekSummary(await res.json());
       setLoading(false);
+    })();
+    (async () => {
+      const res = await fetch("/api/sandwich-orders/tomorrow-meat-prep");
+      setMeatPrep(await res.json());
     })();
   }, []);
 
@@ -212,6 +232,8 @@ export default function SandwichOrdersTab() {
           Szendvics-katalógus szerkesztése
         </Link>
       </section>
+
+      {meatPrep && <MeatPrepSection meatPrep={meatPrep} />}
 
       <div className="flex gap-2">
         <button
