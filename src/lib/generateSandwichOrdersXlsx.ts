@@ -2,7 +2,13 @@ import ExcelJS from "exceljs";
 import type { SandwichDayCustomerOrder } from "@/lib/sandwichOrdersSummary";
 
 const MAX_SHEET_NAME_LENGTH = 31;
-const FONT_SIZE = 14;
+
+// Matches the kitchen's own hand-built reference sheet
+// (partiko-szendvics/reference/rendelések.xlsx, KEDD tab) so the printed
+// export looks like what they're already used to: item names in Arial
+// bold italic, store names/quantities in Comic Sans MS bold.
+const ITEM_FONT = { name: "Arial", bold: true, italic: true, size: 12 };
+const DATA_FONT = { name: "Comic Sans MS", bold: true, size: 11 };
 
 // A handful of extra blank store-columns for stores that phoned in an order
 // too late to be in the system - deliberately small (unlike the ready-meal
@@ -12,17 +18,17 @@ const FONT_SIZE = 14;
 // of just extending the sheet downward.
 const EXTRA_BLANK_STORE_COLUMNS = 4;
 
-// Vertical (column) borders thick, horizontal (row) borders thin - same
-// convention as the ready-meal export, reimplemented independently here so
-// this file never needs to import from (or risk changing) that one.
+// Thin grid throughout, with a thick rule under the header row - same
+// border convention as the reference sheet (thick line separating the
+// store-name header from the quantity grid below it).
 function applyGridBorders(sheet: ExcelJS.Worksheet, columnCount: number) {
   for (let r = 1; r <= sheet.rowCount; r++) {
     for (let c = 1; c <= columnCount; c++) {
       sheet.getRow(r).getCell(c).border = {
         top: { style: "thin" },
-        bottom: { style: "thin" },
-        left: { style: "medium" },
-        right: { style: "medium" },
+        bottom: { style: r === 1 ? "thick" : "thin" },
+        left: { style: "thin" },
+        right: { style: "thin" },
       };
     }
   }
@@ -61,8 +67,8 @@ export async function generateSandwichOrdersXlsx(
     .map(([itemId, info]) => ({ itemId, ...info }))
     .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name, "hu"));
 
-  const centered = { alignment: { horizontal: "center" as const }, font: { size: FONT_SIZE } };
-  const itemNameStyle = { font: { size: FONT_SIZE, bold: true } };
+  const centered = { alignment: { horizontal: "center" as const }, font: DATA_FONT };
+  const itemNameStyle = { font: ITEM_FONT };
 
   const columns: Partial<ExcelJS.Column>[] = [
     { header: dayName || date, key: "itemName", width: 30, style: itemNameStyle },
@@ -80,7 +86,6 @@ export async function generateSandwichOrdersXlsx(
   // Store names can be long; let the header wrap instead of getting cut off
   // (Excel auto-sizes the row height to fit).
   sheet.getRow(1).alignment = { wrapText: true, vertical: "middle", horizontal: "center" };
-  sheet.getRow(1).font = { bold: true, size: FONT_SIZE };
   sheet.pageSetup = {
     paperSize: 9,
     orientation: "landscape",
@@ -118,7 +123,6 @@ export async function generateSandwichOrdersXlsx(
   totalsRowData.total = grandTotal;
   sheet.addRow(totalsRowData);
   const totalsRow = sheet.getRow(sheet.rowCount);
-  totalsRow.font = { bold: true, size: FONT_SIZE };
 
   applyGridBorders(sheet, sheet.columns.length);
   // Thick top border sets the totals row apart from the item rows above it.

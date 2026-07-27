@@ -207,7 +207,7 @@ export default function SandwichOrdersTab() {
 
       {view === "week" ? (
         <>
-          <h2 className="text-lg font-semibold -mb-4">
+          <h2 className="text-lg font-semibold">
             Heti szendvics rendelések{" "}
             <span className="text-neutral-400 font-normal text-sm">
               ({formatDate(weekSummary.weekStart)} – {formatDate(weekSummary.weekEnd)})
@@ -219,7 +219,7 @@ export default function SandwichOrdersTab() {
         <p className="text-neutral-500">Betöltés...</p>
       ) : (
         <>
-          <h2 className="text-lg font-semibold -mb-4 capitalize">
+          <h2 className="text-lg font-semibold capitalize">
             Havi szendvics elszámolás{" "}
             <span className="text-neutral-400 font-normal text-sm normal-case">
               ({formatMonthLabel(monthSummary.monthStart)})

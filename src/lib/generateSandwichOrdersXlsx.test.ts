@@ -104,7 +104,8 @@ describe("generateSandwichOrdersXlsx", () => {
     expect(totalsRow.getCell(2).value).toBe(3); // Zöld Bolt column total
     expect(totalsRow.getCell(3).value).toBe(2); // Alma Büfé column total
     expect(totalsRow.getCell(totalCol).value).toBe(5); // grand total
-    expect(totalsRow.font?.bold).toBe(true);
+    expect(totalsRow.getCell(1).font?.bold).toBe(true);
+    expect(totalsRow.getCell(2).font?.bold).toBe(true);
     expect(totalsRow.getCell(1).border?.top?.style).toBe("thick");
   });
 
