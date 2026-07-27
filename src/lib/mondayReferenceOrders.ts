@@ -1099,7 +1099,7 @@ export const MONDAY_REFERENCE_ORDERS: Record<string, { itemName: string; quantit
       "quantity": 5
     }
   ],
-  "OMW": [
+  "OMV": [
     {
       "itemName": "Molnárka (kicsi) kolbászos",
       "quantity": 2
