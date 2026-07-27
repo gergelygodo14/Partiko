@@ -114,6 +114,39 @@ export async function getSandwichOrdersForDay(date: string): Promise<SandwichDay
   return rows.sort((a, b) => b.totalQuantity - a.totalQuantity || a.storeName.localeCompare(b.storeName, "hu"));
 }
 
+export type SandwichDailyItemTotal = {
+  itemId: string;
+  itemName: string;
+  itemOrder: number;
+  quantity: number;
+};
+
+// Every active catalog item (including ones with 0 that day, unlike
+// getSandwichOrdersForDay's "only nonzero" convention) - matches the
+// reference sheet's own daily-summary tab, which lists the full catalog
+// with a literal 0 for anything not ordered, source data for
+// generateSandwichDailySummaryXlsx.
+export async function getSandwichItemTotalsForDay(date: string): Promise<SandwichDailyItemTotal[]> {
+  const [catalog, orders] = await Promise.all([
+    prisma.sandwichItem.findMany({ where: { archived: false }, orderBy: [{ order: "asc" }, { name: "asc" }] }),
+    prisma.sandwichOrder.findMany({ where: { orderDate: parseDay(date) }, include: { lines: true } }),
+  ]);
+
+  const quantityByItemId = new Map<string, number>();
+  for (const order of orders) {
+    for (const line of order.lines) {
+      quantityByItemId.set(line.itemId, (quantityByItemId.get(line.itemId) ?? 0) + line.quantity);
+    }
+  }
+
+  return catalog.map((item) => ({
+    itemId: item.id,
+    itemName: item.name,
+    itemOrder: item.order,
+    quantity: quantityByItemId.get(item.id) ?? 0,
+  }));
+}
+
 export type SandwichHistoryEntry = {
   orderDate: string;
   lines: { itemId: string; itemName: string; quantity: number }[];

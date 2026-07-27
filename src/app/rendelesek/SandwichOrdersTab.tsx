@@ -156,10 +156,10 @@ export default function SandwichOrdersTab() {
   // Same blob-download pattern as the ready-meal export - required because
   // the app runs as an iOS home-screen PWA, where a plain <a href> would
   // navigate the whole app away with no way back.
-  async function downloadTomorrowSandwiches() {
+  async function downloadFile(apiPath: string) {
     setDownloading(true);
     try {
-      const res = await fetch("/api/sandwich-orders/export");
+      const res = await fetch(apiPath);
       const blob = await res.blob();
       const disposition = res.headers.get("Content-Disposition") ?? "";
       const filename = disposition.match(/filename="([^"]+)"/)?.[1] ?? "szendvics.xlsx";
@@ -184,7 +184,7 @@ export default function SandwichOrdersTab() {
     <div className="space-y-8">
       <section className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm space-y-3">
         <button
-          onClick={downloadTomorrowSandwiches}
+          onClick={() => downloadFile("/api/sandwich-orders/export")}
           disabled={downloading}
           className="block w-full text-center bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500 disabled:opacity-50"
         >
@@ -193,6 +193,17 @@ export default function SandwichOrdersTab() {
         <p className="text-xs text-neutral-500 text-center">
           Mindig a következő napra tartalmazza a rendeléseket, boltonként oszlopban, szendvicsenként
           sorban.
+        </p>
+        <button
+          onClick={() => downloadFile("/api/sandwich-orders/daily-summary-export")}
+          disabled={downloading}
+          className="block w-full text-center border border-neutral-300 font-semibold text-base px-5 py-3 rounded-xl active:bg-neutral-100 disabled:opacity-50"
+        >
+          {downloading ? "Letöltés…" : "Holnapi szendvics összesítő letöltése (.xlsx)"}
+        </button>
+        <p className="text-xs text-neutral-500 text-center">
+          Csak szendvicsenkénti darabszám, boltok nélkül - a rendelések excel "összesítés" fülének
+          formátumában.
         </p>
         <Link
           href="/rendelesek/szendvics-termekek"

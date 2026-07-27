@@ -1,10 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const findManySandwichOrder = vi.fn();
+const findManySandwichItem = vi.fn();
 
 vi.mock("@/lib/db", () => ({
   prisma: {
     sandwichOrder: { findMany: (...args: unknown[]) => findManySandwichOrder(...args) },
+    sandwichItem: { findMany: (...args: unknown[]) => findManySandwichItem(...args) },
   },
 }));
 
@@ -13,10 +15,12 @@ const {
   getSandwichMonthSummary,
   getSandwichOrdersForDay,
   getSandwichCustomerHistory,
+  getSandwichItemTotalsForDay,
 } = await import("@/lib/sandwichOrdersSummary");
 
 beforeEach(() => {
   findManySandwichOrder.mockReset();
+  findManySandwichItem.mockReset();
 });
 
 function order(
@@ -140,5 +144,37 @@ describe("getSandwichCustomerHistory", () => {
     expect(findManySandwichOrder).toHaveBeenCalledWith(
       expect.objectContaining({ where: { customerId: "c1" }, take: 5 })
     );
+  });
+});
+
+describe("getSandwichItemTotalsForDay", () => {
+  it("includes every active catalog item, defaulting to 0 when not ordered that day", async () => {
+    findManySandwichItem.mockResolvedValue([
+      { id: "i1", name: "Sonkás bagel", order: 1 },
+      { id: "i2", name: "Hamburger", order: 4 },
+    ]);
+    findManySandwichOrder.mockResolvedValue([
+      {
+        lines: [{ itemId: "i1", quantity: 5 }],
+      },
+    ]);
+
+    const totals = await getSandwichItemTotalsForDay("2026-07-28");
+
+    expect(totals).toEqual([
+      { itemId: "i1", itemName: "Sonkás bagel", itemOrder: 1, quantity: 5 },
+      { itemId: "i2", itemName: "Hamburger", itemOrder: 4, quantity: 0 },
+    ]);
+  });
+
+  it("sums quantities across multiple orders for the same item", async () => {
+    findManySandwichItem.mockResolvedValue([{ id: "i1", name: "Hamburger", order: 4 }]);
+    findManySandwichOrder.mockResolvedValue([
+      { lines: [{ itemId: "i1", quantity: 2 }] },
+      { lines: [{ itemId: "i1", quantity: 3 }] },
+    ]);
+
+    const totals = await getSandwichItemTotalsForDay("2026-07-28");
+    expect(totals[0].quantity).toBe(5);
   });
 });
