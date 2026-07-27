@@ -165,7 +165,7 @@ export const MONDAY_REFERENCE_ORDERS: Record<string, { itemName: string; quantit
       "quantity": 1
     }
   ],
-  "Vedres": [
+  "Fav vedres": [
     {
       "itemName": "Grillezett csirkemell papucs",
       "quantity": 1
@@ -211,7 +211,7 @@ export const MONDAY_REFERENCE_ORDERS: Record<string, { itemName: string; quantit
       "quantity": 1
     }
   ],
-  "Vadas- park": [
+  "Fav Vadaspark": [
     {
       "itemName": "Fasírtos-pfefferonis szendvics",
       "quantity": 2
@@ -287,7 +287,7 @@ export const MONDAY_REFERENCE_ORDERS: Record<string, { itemName: string; quantit
       "quantity": 1
     }
   ],
-  "MARS": [
+  "FAV Mars": [
     {
       "itemName": "Sajtburger",
       "quantity": 1
@@ -309,7 +309,7 @@ export const MONDAY_REFERENCE_ORDERS: Record<string, { itemName: string; quantit
       "quantity": 1
     }
   ],
-  "DESZK": [
+  "Fav Deszk": [
     {
       "itemName": "Molnárka (kicsi) kolbászos",
       "quantity": 2
@@ -327,7 +327,7 @@ export const MONDAY_REFERENCE_ORDERS: Record<string, { itemName: string; quantit
       "quantity": 2
     }
   ],
-  "Röszke": [
+  "Fav Röszke": [
     {
       "itemName": "Sonkás bagel",
       "quantity": 1
@@ -409,7 +409,7 @@ export const MONDAY_REFERENCE_ORDERS: Record<string, { itemName: string; quantit
       "quantity": 3
     }
   ],
-  "Retek": [
+  "Fav Retek": [
     {
       "itemName": "Molnárka (kicsi) kolbászos",
       "quantity": 2
