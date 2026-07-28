@@ -16,6 +16,7 @@ const {
   getSandwichOrdersForDay,
   getSandwichCustomerHistory,
   getSandwichItemTotalsForDay,
+  getSandwichWeekDailyItemTotals,
 } = await import("@/lib/sandwichOrdersSummary");
 
 beforeEach(() => {
@@ -176,5 +177,60 @@ describe("getSandwichItemTotalsForDay", () => {
 
     const totals = await getSandwichItemTotalsForDay("2026-07-28");
     expect(totals[0].quantity).toBe(5);
+  });
+});
+
+describe("getSandwichWeekDailyItemTotals", () => {
+  it("returns 5 weekdays (Mon-Fri), each with the full catalog, quantities placed on the right day", async () => {
+    findManySandwichItem.mockResolvedValue([
+      { id: "i1", name: "Sonkás bagel", order: 1 },
+      { id: "i2", name: "Hamburger", order: 4 },
+    ]);
+    findManySandwichOrder.mockResolvedValue([
+      { orderDate: new Date("2026-07-27T00:00:00.000Z"), lines: [{ itemId: "i1", quantity: 5 }] }, // Monday
+      { orderDate: new Date("2026-07-29T00:00:00.000Z"), lines: [{ itemId: "i2", quantity: 3 }] }, // Wednesday
+    ]);
+
+    const days = await getSandwichWeekDailyItemTotals("2026-07-27");
+
+    expect(days).toHaveLength(5);
+    expect(days.map((d) => d.date)).toEqual([
+      "2026-07-27",
+      "2026-07-28",
+      "2026-07-29",
+      "2026-07-30",
+      "2026-07-31",
+    ]);
+    expect(days[0].items).toEqual([
+      { itemId: "i1", itemName: "Sonkás bagel", itemOrder: 1, quantity: 5 },
+      { itemId: "i2", itemName: "Hamburger", itemOrder: 4, quantity: 0 },
+    ]);
+    expect(days[1].items).toEqual([
+      { itemId: "i1", itemName: "Sonkás bagel", itemOrder: 1, quantity: 0 },
+      { itemId: "i2", itemName: "Hamburger", itemOrder: 4, quantity: 0 },
+    ]);
+    expect(days[2].items).toEqual([
+      { itemId: "i1", itemName: "Sonkás bagel", itemOrder: 1, quantity: 0 },
+      { itemId: "i2", itemName: "Hamburger", itemOrder: 4, quantity: 3 },
+    ]);
+  });
+
+  it("sums multiple same-day orders for the same item onto one day", async () => {
+    findManySandwichItem.mockResolvedValue([{ id: "i1", name: "Hamburger", order: 4 }]);
+    findManySandwichOrder.mockResolvedValue([
+      { orderDate: new Date("2026-07-27T00:00:00.000Z"), lines: [{ itemId: "i1", quantity: 2 }] },
+      { orderDate: new Date("2026-07-27T00:00:00.000Z"), lines: [{ itemId: "i1", quantity: 4 }] },
+    ]);
+
+    const days = await getSandwichWeekDailyItemTotals("2026-07-27");
+    expect(days[0].items[0].quantity).toBe(6);
+  });
+
+  it("returns all-zero days when nothing was ordered that week", async () => {
+    findManySandwichItem.mockResolvedValue([{ id: "i1", name: "Hamburger", order: 4 }]);
+    findManySandwichOrder.mockResolvedValue([]);
+
+    const days = await getSandwichWeekDailyItemTotals("2026-07-27");
+    expect(days.every((d) => d.items.every((i) => i.quantity === 0))).toBe(true);
   });
 });

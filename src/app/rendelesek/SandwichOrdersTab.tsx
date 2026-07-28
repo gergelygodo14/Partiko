@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { addDaysStr } from "@/lib/dates";
 
 type ItemTotal = { itemId: string; itemName: string; quantity: number; valueFt: number };
 type CustomerTotal = { customerId: string; storeName: string; quantity: number; valueFt: number };
@@ -16,7 +17,11 @@ type PeriodSummary = {
 type WeekSummary = PeriodSummary & { weekStart: string; weekEnd: string };
 type MonthSummary = PeriodSummary & { monthStart: string; monthEnd: string };
 
-type View = "week" | "month";
+type DailyItemTotal = { itemId: string; itemName: string; itemOrder: number; quantity: number };
+type DayItemTotals = { date: string; items: DailyItemTotal[] };
+type DayBreakdown = { weekStart: string; days: DayItemTotals[] };
+
+type View = "week" | "day" | "month";
 
 type MeatPrep = {
   date: string;
@@ -25,6 +30,9 @@ type MeatPrep = {
   tortillaHusDb: number;
   grillHusDkg: number;
 };
+
+const SHORT_DAY_NAMES = ["H", "K", "Sze", "Cs", "P"];
+const FULL_DAY_NAMES = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek"];
 
 function formatDate(dateStr: string) {
   return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString("hu-HU", {
@@ -144,6 +152,47 @@ function MeatPrepSection({ meatPrep }: { meatPrep: MeatPrep }) {
   );
 }
 
+function DayItemsTable({ day, dayIndex }: { day: DayItemTotals; dayIndex: number }) {
+  const nonZero = day.items.filter((item) => item.quantity > 0);
+  const total = nonZero.reduce((sum, item) => sum + item.quantity, 0);
+  return (
+    <section className="space-y-3">
+      <h2 className="text-lg font-semibold">
+        {FULL_DAY_NAMES[dayIndex]}{" "}
+        <span className="text-neutral-400 font-normal text-sm">({formatDate(day.date)})</span>
+      </h2>
+      {nonZero.length === 0 ? (
+        <p className="text-neutral-500">Nincs leadott szendvics-rendelés erre a napra.</p>
+      ) : (
+        <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-neutral-100 text-neutral-600">
+              <tr>
+                <th className="text-left px-3 py-3">Szendvics</th>
+                <th className="text-right px-3 py-3">Db</th>
+              </tr>
+            </thead>
+            <tbody>
+              {nonZero.map((item) => (
+                <tr key={item.itemId} className="border-t border-neutral-100">
+                  <td className="px-3 py-3">{item.itemName}</td>
+                  <td className="px-3 py-3 text-right">{item.quantity}</td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr className="border-t border-neutral-300 font-semibold">
+                <td className="px-3 py-3">Összesen</td>
+                <td className="px-3 py-3 text-right">{total}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
+
 export default function SandwichOrdersTab() {
   const [weekSummary, setWeekSummary] = useState<WeekSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -152,6 +201,13 @@ export default function SandwichOrdersTab() {
   const [monthSummary, setMonthSummary] = useState<MonthSummary | null>(null);
   const [monthLoading, setMonthLoading] = useState(false);
   const [meatPrep, setMeatPrep] = useState<MeatPrep | null>(null);
+  const [dayWeekStart, setDayWeekStart] = useState<string | null>(null);
+  const [dayBreakdown, setDayBreakdown] = useState<DayBreakdown | null>(null);
+  const [dayBreakdownLoading, setDayBreakdownLoading] = useState(false);
+  const [selectedDayIndex, setSelectedDayIndex] = useState(() => {
+    const jsWeekday = new Date().getDay(); // 0=Sun..6=Sat
+    return Math.min(jsWeekday === 0 ? 6 : jsWeekday - 1, 4);
+  });
 
   useEffect(() => {
     (async () => {
@@ -174,6 +230,26 @@ export default function SandwichOrdersTab() {
       setMonthLoading(false);
     })();
   }, [view, monthSummary, monthLoading]);
+
+  // Defaults the browsable week to the current one once it's known - can't
+  // seed useState with it directly since weekSummary isn't loaded yet on the
+  // first render.
+  useEffect(() => {
+    if (weekSummary && dayWeekStart === null) setDayWeekStart(weekSummary.weekStart);
+  }, [weekSummary, dayWeekStart]);
+
+  // Re-fetches on every week-arrow click (not just the first time the tab
+  // opens) - the data is tiny and this keeps the logic simple, no caching
+  // needed for an internal admin panel.
+  useEffect(() => {
+    if (view !== "day" || !dayWeekStart) return;
+    setDayBreakdownLoading(true);
+    (async () => {
+      const res = await fetch(`/api/sandwich-orders/day-breakdown?week=${dayWeekStart}`);
+      setDayBreakdown(await res.json());
+      setDayBreakdownLoading(false);
+    })();
+  }, [view, dayWeekStart]);
 
   // Same blob-download pattern as the ready-meal export - required because
   // the app runs as an iOS home-screen PWA, where a plain <a href> would
@@ -249,6 +325,16 @@ export default function SandwichOrdersTab() {
           Heti összesítés
         </button>
         <button
+          onClick={() => setView("day")}
+          className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base ${
+            view === "day"
+              ? "bg-yellow-400 text-black"
+              : "border border-neutral-300 active:bg-neutral-100"
+          }`}
+        >
+          Napi bontás
+        </button>
+        <button
           onClick={() => setView("month")}
           className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base ${
             view === "month"
@@ -269,6 +355,49 @@ export default function SandwichOrdersTab() {
             </span>
           </h2>
           <SummaryTables summary={weekSummary} />
+        </>
+      ) : view === "day" ? (
+        <>
+          <div className="flex items-center justify-between gap-2">
+            <button
+              onClick={() => dayWeekStart && setDayWeekStart(addDaysStr(dayWeekStart, -7))}
+              className="px-3 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold active:bg-neutral-100"
+            >
+              ◀ Előző hét
+            </button>
+            <span className="text-sm text-neutral-500">
+              {dayWeekStart &&
+                `${formatDate(dayWeekStart)} – ${formatDate(addDaysStr(dayWeekStart, 4))}`}
+            </span>
+            <button
+              onClick={() => dayWeekStart && setDayWeekStart(addDaysStr(dayWeekStart, 7))}
+              className="px-3 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold active:bg-neutral-100"
+            >
+              Következő hét ▶
+            </button>
+          </div>
+
+          <div className="flex gap-1.5">
+            {FULL_DAY_NAMES.map((name, i) => (
+              <button
+                key={name}
+                onClick={() => setSelectedDayIndex(i)}
+                className={`flex-1 px-1 py-2.5 rounded-xl font-semibold text-sm ${
+                  selectedDayIndex === i
+                    ? "bg-yellow-400 text-black"
+                    : "border border-neutral-300 active:bg-neutral-100"
+                }`}
+              >
+                {SHORT_DAY_NAMES[i]}
+              </button>
+            ))}
+          </div>
+
+          {dayBreakdownLoading || !dayBreakdown ? (
+            <p className="text-neutral-500">Betöltés...</p>
+          ) : (
+            <DayItemsTable day={dayBreakdown.days[selectedDayIndex]} dayIndex={selectedDayIndex} />
+          )}
         </>
       ) : monthLoading || !monthSummary ? (
         <p className="text-neutral-500">Betöltés...</p>

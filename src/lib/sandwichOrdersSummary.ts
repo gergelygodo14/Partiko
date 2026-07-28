@@ -147,6 +147,47 @@ export async function getSandwichItemTotalsForDay(date: string): Promise<Sandwic
   }));
 }
 
+export type SandwichDayItemTotals = { date: string; items: SandwichDailyItemTotal[] };
+
+// Per-weekday (Mon-Fri) item totals for a given week - lets the owner look
+// back at e.g. "last Wednesday" to gauge how much bakery bread to order for
+// this Wednesday, which the week/month aggregate views can't answer since
+// they collapse every weekday of the period into one number.
+export async function getSandwichWeekDailyItemTotals(weekStart: string): Promise<SandwichDayItemTotals[]> {
+  const weekEndExclusive = addDaysStr(weekStart, 5); // Saturday, exclusive upper bound
+  const [catalog, orders] = await Promise.all([
+    prisma.sandwichItem.findMany({ where: { archived: false }, orderBy: [{ order: "asc" }, { name: "asc" }] }),
+    prisma.sandwichOrder.findMany({
+      where: { orderDate: { gte: parseDay(weekStart), lt: parseDay(weekEndExclusive) } },
+      include: { lines: true },
+    }),
+  ]);
+
+  const quantityByDay = new Map<string, Map<string, number>>();
+  for (const order of orders) {
+    const dayStr = toDayStr(order.orderDate);
+    if (!quantityByDay.has(dayStr)) quantityByDay.set(dayStr, new Map());
+    const dayMap = quantityByDay.get(dayStr)!;
+    for (const line of order.lines) {
+      dayMap.set(line.itemId, (dayMap.get(line.itemId) ?? 0) + line.quantity);
+    }
+  }
+
+  return [0, 1, 2, 3, 4].map((offset) => {
+    const date = addDaysStr(weekStart, offset);
+    const dayMap = quantityByDay.get(date);
+    return {
+      date,
+      items: catalog.map((item) => ({
+        itemId: item.id,
+        itemName: item.name,
+        itemOrder: item.order,
+        quantity: dayMap?.get(item.id) ?? 0,
+      })),
+    };
+  });
+}
+
 export type SandwichHistoryEntry = {
   orderDate: string;
   lines: { itemId: string; itemName: string; quantity: number }[];
