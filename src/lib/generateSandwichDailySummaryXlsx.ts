@@ -4,12 +4,12 @@ import { EXCEL_LABEL_BY_ITEM_NAME } from "@/lib/generateSandwichOrdersXlsx";
 
 const MAX_SHEET_NAME_LENGTH = 31;
 
-// Matches the reference sheet's "összesítés" tab formatting: item name in
+// Matches the reference sheet's "összesítés" tab exactly: item name in
 // large bold italic Arial (its own shorthand, same as the kitchen export),
 // one quantity column per item, no header row, no store breakdown, no
-// prices - verified cell-by-cell (font/size/order) against that tab. Unlike
-// that reference tab, items nobody ordered that day are left off entirely
-// (the owner found the full-catalog zero rows just cluttered the printout).
+// prices - verified cell-by-cell (font/size/order) against that tab. Always
+// lists the full catalog, including items with a 0 that day - the owner
+// wants to see every sandwich at a glance, not just the ones ordered.
 const ITEM_FONT = { name: "Arial", bold: true, italic: true, size: 16 };
 const QTY_FONT = { name: "Comic Sans MS", bold: true, size: 11 };
 
@@ -31,9 +31,9 @@ export async function generateSandwichDailySummaryXlsx(
     },
   ];
 
-  const sorted = items
-    .filter((item) => item.quantity > 0)
-    .sort((a, b) => a.itemOrder - b.itemOrder || a.itemName.localeCompare(b.itemName, "hu"));
+  const sorted = [...items].sort(
+    (a, b) => a.itemOrder - b.itemOrder || a.itemName.localeCompare(b.itemName, "hu")
+  );
   sorted.forEach((item) => {
     sheet.addRow({
       itemName: EXCEL_LABEL_BY_ITEM_NAME[item.itemName] ?? item.itemName,

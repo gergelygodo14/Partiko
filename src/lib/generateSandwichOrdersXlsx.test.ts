@@ -9,9 +9,11 @@ async function readBack(buffer: Buffer) {
   return workbook;
 }
 
+const ONE_ITEM_CATALOG = [{ itemId: "teszt1", name: "Teszt Szendvics", order: 1 }];
+
 describe("generateSandwichOrdersXlsx", () => {
   it("names the first sheet 'SZENDVICS <nap> 1' and uses the date as a fallback when no day name is given", async () => {
-    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "", []);
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "", [], []);
     const workbook = await readBack(buffer);
     expect(workbook.getWorksheet("SZENDVICS 2026-07-06 1")).toBeDefined();
   });
@@ -34,7 +36,11 @@ describe("generateSandwichOrdersXlsx", () => {
         totalQuantity: 2,
       },
     ];
-    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const catalogItems = [
+      { itemId: "teszt1", name: "Teszt Szendvics", order: 1 },
+      { itemId: "teszt2", name: "Teszt Molnárka", order: 2 },
+    ];
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows, catalogItems);
     const workbook = await readBack(buffer);
     const sheet = workbook.getWorksheet("SZENDVICS HÉTFŐ 1")!;
 
@@ -65,7 +71,11 @@ describe("generateSandwichOrdersXlsx", () => {
         totalQuantity: 5,
       },
     ];
-    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const catalogItems = [
+      { itemId: "teszt1", name: "Teszt Szendvics", order: 1 },
+      { itemId: "teszt2", name: "Teszt Molnárka", order: 2 },
+    ];
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows, catalogItems);
     const workbook = await readBack(buffer);
     const sheet = workbook.getWorksheet("SZENDVICS HÉTFŐ 1")!;
 
@@ -92,7 +102,7 @@ describe("generateSandwichOrdersXlsx", () => {
         totalQuantity: 2,
       },
     ];
-    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows, ONE_ITEM_CATALOG);
     const workbook = await readBack(buffer);
     const sheet = workbook.getWorksheet("SZENDVICS HÉTFŐ 1")!;
 
@@ -110,7 +120,7 @@ describe("generateSandwichOrdersXlsx", () => {
     expect(totalsRow.getCell(1).border?.top?.style).toBe("thick");
   });
 
-  it("only lists items that actually appear that day, not the full catalog", async () => {
+  it("lists the full catalog every time, even sandwiches nobody ordered that day", async () => {
     const rows: SandwichDayCustomerOrder[] = [
       {
         customerId: "c1",
@@ -119,16 +129,26 @@ describe("generateSandwichOrdersXlsx", () => {
         totalQuantity: 1,
       },
     ];
-    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const catalogItems = [
+      { itemId: "teszt1", name: "Teszt Szendvics", order: 1 },
+      { itemId: "teszt2", name: "Teszt Molnárka", order: 2 },
+    ];
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows, catalogItems);
     const workbook = await readBack(buffer);
     const sheet = workbook.getWorksheet("SZENDVICS HÉTFŐ 1")!;
 
-    // Header + 1 item row + totals row = 3 rows total.
-    expect(sheet.rowCount).toBe(3);
+    // Header + 2 item rows (Teszt Molnárka included even though unordered)
+    // + totals row = 4 rows total.
+    expect(sheet.rowCount).toBe(4);
+    expect(sheet.getRow(3).getCell(1).value).toBe("Teszt Molnárka");
+    expect(sheet.getRow(3).getCell(2).value).toBeFalsy(); // nobody ordered it - blank cell
+    const totalsColIndex = sheet.getRow(1).values as unknown[];
+    const totalCol = totalsColIndex.indexOf("Összesen");
+    expect(sheet.getRow(3).getCell(totalCol).value).toBe(0);
   });
 
   it("uses landscape A4 with fit-to-width (not fit-to-height)", async () => {
-    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", []);
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", [], []);
     const workbook = await readBack(buffer);
     const sheet = workbook.getWorksheet("SZENDVICS HÉTFŐ 1")!;
 
@@ -138,7 +158,7 @@ describe("generateSandwichOrdersXlsx", () => {
   });
 
   it("still produces a valid, empty sheet when nothing was ordered", async () => {
-    const buffer = await generateSandwichOrdersXlsx("2026-07-05", "VASÁRNAP", []);
+    const buffer = await generateSandwichOrdersXlsx("2026-07-05", "VASÁRNAP", [], []);
     const workbook = await readBack(buffer);
     const sheet = workbook.getWorksheet("SZENDVICS VASÁRNAP 1")!;
     expect(sheet.getRow(sheet.rowCount).getCell(1).value).toBe("Összesen");
@@ -152,7 +172,7 @@ describe("generateSandwichOrdersXlsx", () => {
       lines: [{ itemId: "teszt1", itemName: "Teszt Szendvics", itemOrder: 1, quantity: 1 }],
       totalQuantity: 1,
     }));
-    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows, ONE_ITEM_CATALOG);
     const workbook = await readBack(buffer);
 
     const sheet1 = workbook.getWorksheet("SZENDVICS HÉTFŐ 1")!;
@@ -174,7 +194,7 @@ describe("generateSandwichOrdersXlsx", () => {
       lines: [{ itemId: "teszt1", itemName: "Teszt Szendvics", itemOrder: 1, quantity: 1 }],
       totalQuantity: 1,
     }));
-    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows, ONE_ITEM_CATALOG);
     const workbook = await readBack(buffer);
 
     // 20 stores -> 8 + 8 + 4 across three sheets.
@@ -196,7 +216,7 @@ describe("generateSandwichOrdersXlsx", () => {
         totalQuantity: 1,
       },
     ];
-    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows, ONE_ITEM_CATALOG);
     const workbook = await readBack(buffer);
     expect(workbook.getWorksheet("SZENDVICS HÉTFŐ 1")).toBeDefined();
     expect(workbook.getWorksheet("SZENDVICS HÉTFŐ 2")).toBeUndefined();
@@ -215,7 +235,12 @@ describe("generateSandwichOrdersXlsx", () => {
         totalQuantity: 3,
       },
     ];
-    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const catalogItems = [
+      { itemId: "i1", name: "Hamburger", order: 4 },
+      { itemId: "i2", name: "Sonkás bagel", order: 1 },
+      { itemId: "i3", name: "Rántott húsos papucs", order: 16 },
+    ];
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows, catalogItems);
     const workbook = await readBack(buffer);
     const sheet = workbook.getWorksheet("SZENDVICS HÉTFŐ 1")!;
 
@@ -236,7 +261,11 @@ describe("generateSandwichOrdersXlsx", () => {
         totalQuantity: 2,
       },
     ];
-    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const catalogItems = [
+      { itemId: "i1", name: "Hamburger", order: 4 },
+      { itemId: "i2", name: "Molnárka (kicsi) kolbászos", order: 5 },
+    ];
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows, catalogItems);
     const workbook = await readBack(buffer);
     const sheet = workbook.getWorksheet("SZENDVICS HÉTFŐ 1")!;
 
@@ -259,7 +288,7 @@ describe("generateSandwichOrdersXlsx", () => {
       lines: [{ itemId: "teszt1", itemName: "Teszt Szendvics", itemOrder: 1, quantity: 1 }],
       totalQuantity: 1,
     }));
-    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows, ONE_ITEM_CATALOG);
     const workbook = await readBack(buffer);
     const sheet = workbook.getWorksheet("SZENDVICS HÉTFŐ 1")!;
 
@@ -292,7 +321,7 @@ describe("generateSandwichOrdersXlsx", () => {
       lines: [{ itemId: "teszt1", itemName: "Teszt Szendvics", itemOrder: 1, quantity: 1 }],
       totalQuantity: 1,
     }));
-    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows, ONE_ITEM_CATALOG);
     const workbook = await readBack(buffer);
     const sheet = workbook.getWorksheet("SZENDVICS HÉTFŐ 1")!;
 
@@ -319,7 +348,7 @@ describe("generateSandwichOrdersXlsx", () => {
         totalQuantity: 1,
       })
     );
-    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows, ONE_ITEM_CATALOG);
     const workbook = await readBack(buffer);
 
     const mainSheet = workbook.getWorksheet("SZENDVICS HÉTFŐ 1")!;
@@ -341,7 +370,7 @@ describe("generateSandwichOrdersXlsx", () => {
         totalQuantity: 1,
       },
     ];
-    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows);
+    const buffer = await generateSandwichOrdersXlsx("2026-07-06", "HÉTFŐ", rows, ONE_ITEM_CATALOG);
     const workbook = await readBack(buffer);
     expect(workbook.worksheets.some((s) => s.name.includes("VIDÉK"))).toBe(false);
   });

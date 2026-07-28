@@ -21,7 +21,7 @@ describe("generateSandwichDailySummaryXlsx", () => {
     expect(sheet.getRow(1).getCell(2).value).toBe(3);
   });
 
-  it("leaves out items with a zero quantity - only what was actually ordered gets printed", async () => {
+  it("includes items with a zero quantity, not just items that were ordered", async () => {
     const items: SandwichDailyItemTotal[] = [
       { itemId: "i1", itemName: "Hamburger", itemOrder: 4, quantity: 0 },
       { itemId: "i2", itemName: "Sonkás bagel", itemOrder: 1, quantity: 5 },
@@ -30,9 +30,11 @@ describe("generateSandwichDailySummaryXlsx", () => {
     const workbook = await readBack(buffer);
     const sheet = workbook.worksheets[0];
 
-    expect(sheet.rowCount).toBe(1);
+    // Sorted by catalog order: BAGEL (order 1) before hamburger (order 4).
     expect(sheet.getRow(1).getCell(1).value).toBe("BAGEL");
     expect(sheet.getRow(1).getCell(2).value).toBe(5);
+    expect(sheet.getRow(2).getCell(1).value).toBe("hamburger");
+    expect(sheet.getRow(2).getCell(2).value).toBe(0);
   });
 
   it("uses large bold italic Arial for item names and bold Comic Sans MS for quantities", async () => {

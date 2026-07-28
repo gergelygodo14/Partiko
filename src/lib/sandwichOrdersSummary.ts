@@ -114,12 +114,20 @@ export async function getSandwichOrdersForDay(date: string): Promise<SandwichDay
   return rows.sort((a, b) => b.totalQuantity - a.totalQuantity || a.storeName.localeCompare(b.storeName, "hu"));
 }
 
-export type SandwichDailyItemTotal = {
-  itemId: string;
-  itemName: string;
-  itemOrder: number;
-  quantity: number;
-};
+export type SandwichCatalogItem = { itemId: string; itemName: string; itemOrder: number };
+
+// Every active catalog item, sorted for print/display - shared by anything
+// that needs to list the full sandwich lineup regardless of what was
+// actually ordered (the kitchen export, the daily summary export).
+export async function getActiveSandwichCatalog(): Promise<SandwichCatalogItem[]> {
+  const catalog = await prisma.sandwichItem.findMany({
+    where: { archived: false },
+    orderBy: [{ order: "asc" }, { name: "asc" }],
+  });
+  return catalog.map((item) => ({ itemId: item.id, itemName: item.name, itemOrder: item.order }));
+}
+
+export type SandwichDailyItemTotal = SandwichCatalogItem & { quantity: number };
 
 // Every active catalog item (including ones with 0 that day, unlike
 // getSandwichOrdersForDay's "only nonzero" convention) - matches the
@@ -128,7 +136,7 @@ export type SandwichDailyItemTotal = {
 // generateSandwichDailySummaryXlsx.
 export async function getSandwichItemTotalsForDay(date: string): Promise<SandwichDailyItemTotal[]> {
   const [catalog, orders] = await Promise.all([
-    prisma.sandwichItem.findMany({ where: { archived: false }, orderBy: [{ order: "asc" }, { name: "asc" }] }),
+    getActiveSandwichCatalog(),
     prisma.sandwichOrder.findMany({ where: { orderDate: parseDay(date) }, include: { lines: true } }),
   ]);
 
@@ -140,10 +148,8 @@ export async function getSandwichItemTotalsForDay(date: string): Promise<Sandwic
   }
 
   return catalog.map((item) => ({
-    itemId: item.id,
-    itemName: item.name,
-    itemOrder: item.order,
-    quantity: quantityByItemId.get(item.id) ?? 0,
+    ...item,
+    quantity: quantityByItemId.get(item.itemId) ?? 0,
   }));
 }
 
@@ -156,7 +162,7 @@ export type SandwichDayItemTotals = { date: string; items: SandwichDailyItemTota
 export async function getSandwichWeekDailyItemTotals(weekStart: string): Promise<SandwichDayItemTotals[]> {
   const weekEndExclusive = addDaysStr(weekStart, 5); // Saturday, exclusive upper bound
   const [catalog, orders] = await Promise.all([
-    prisma.sandwichItem.findMany({ where: { archived: false }, orderBy: [{ order: "asc" }, { name: "asc" }] }),
+    getActiveSandwichCatalog(),
     prisma.sandwichOrder.findMany({
       where: { orderDate: { gte: parseDay(weekStart), lt: parseDay(weekEndExclusive) } },
       include: { lines: true },
@@ -178,12 +184,7 @@ export async function getSandwichWeekDailyItemTotals(weekStart: string): Promise
     const dayMap = quantityByDay.get(date);
     return {
       date,
-      items: catalog.map((item) => ({
-        itemId: item.id,
-        itemName: item.name,
-        itemOrder: item.order,
-        quantity: dayMap?.get(item.id) ?? 0,
-      })),
+      items: catalog.map((item) => ({ ...item, quantity: dayMap?.get(item.itemId) ?? 0 })),
     };
   });
 }

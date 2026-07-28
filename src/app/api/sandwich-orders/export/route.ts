@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSandwichExportDay } from "@/lib/sandwichDates";
-import { getSandwichOrdersForDay } from "@/lib/sandwichOrdersSummary";
+import { getActiveSandwichCatalog, getSandwichOrdersForDay } from "@/lib/sandwichOrdersSummary";
 import { generateSandwichOrdersXlsx } from "@/lib/generateSandwichOrdersXlsx";
 import { withApiErrorHandling } from "@/lib/apiRoute";
 
@@ -9,8 +9,13 @@ import { withApiErrorHandling } from "@/lib/apiRoute";
 // printout, same convention as the ready-meal export.
 export const GET = withApiErrorHandling(async () => {
   const { date, dayName } = getSandwichExportDay(new Date());
-  const rows = await getSandwichOrdersForDay(date);
-  const buffer = await generateSandwichOrdersXlsx(date, dayName, rows);
+  const [rows, catalog] = await Promise.all([getSandwichOrdersForDay(date), getActiveSandwichCatalog()]);
+  const catalogItems = catalog.map((item) => ({
+    itemId: item.itemId,
+    name: item.itemName,
+    order: item.itemOrder,
+  }));
+  const buffer = await generateSandwichOrdersXlsx(date, dayName, rows, catalogItems);
 
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
