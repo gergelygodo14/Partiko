@@ -23,7 +23,7 @@ type MeatPrep = {
   dayName: string;
   rantottHusDb: number;
   tortillaHusDb: number;
-  grillHusDb: number;
+  grillHusDkg: number;
 };
 
 function formatDate(dateStr: string) {
@@ -134,8 +134,8 @@ function MeatPrepSection({ meatPrep }: { meatPrep: MeatPrep }) {
           <div className="text-xs text-neutral-500 mt-1">db tortilla hús</div>
         </div>
         <div className="p-4 text-center">
-          <div className="text-2xl font-semibold">{meatPrep.grillHusDb}</div>
-          <div className="text-xs text-neutral-500 mt-1">db grill hús</div>
+          <div className="text-2xl font-semibold">{meatPrep.grillHusDkg}</div>
+          <div className="text-xs text-neutral-500 mt-1">dkg grill hús</div>
         </div>
       </div>
     </section>

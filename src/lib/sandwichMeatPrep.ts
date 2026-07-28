@@ -13,7 +13,12 @@ const MEAT_MULTIPLIERS: Record<string, { rantottHus?: number; tortillaHus?: numb
   "Fetasajtos bigkifli": { grillHus: 1 },
 };
 
-export type MeatPrepTotals = { rantottHusDb: number; tortillaHusDb: number; grillHusDb: number };
+// Grill hús isn't prepped as discrete portions like the other two meats - it's
+// raw chicken breast weighed out per sandwich, confirmed with the owner as
+// 4dkg per portion.
+const GRILL_HUS_DKG_PER_PORTION = 4;
+
+export type MeatPrepTotals = { rantottHusDb: number; tortillaHusDb: number; grillHusDkg: number };
 
 // Kitchen-prep quantities ("how much raw meat to cook") derived from a
 // period's per-item order totals - not a stored value, always recomputed
@@ -21,13 +26,13 @@ export type MeatPrepTotals = { rantottHusDb: number; tortillaHusDb: number; gril
 export function computeMeatPrep(byItem: { itemName: string; quantity: number }[]): MeatPrepTotals {
   let rantottHusDb = 0;
   let tortillaHusDb = 0;
-  let grillHusDb = 0;
+  let grillHusPortions = 0;
   for (const item of byItem) {
     const multiplier = MEAT_MULTIPLIERS[item.itemName];
     if (!multiplier) continue;
     rantottHusDb += (multiplier.rantottHus ?? 0) * item.quantity;
     tortillaHusDb += (multiplier.tortillaHus ?? 0) * item.quantity;
-    grillHusDb += (multiplier.grillHus ?? 0) * item.quantity;
+    grillHusPortions += (multiplier.grillHus ?? 0) * item.quantity;
   }
-  return { rantottHusDb, tortillaHusDb, grillHusDb };
+  return { rantottHusDb, tortillaHusDb, grillHusDkg: grillHusPortions * GRILL_HUS_DKG_PER_PORTION };
 }
