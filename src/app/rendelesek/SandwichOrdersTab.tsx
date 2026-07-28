@@ -134,8 +134,10 @@ function MeatPrepSection({ meatPrep }: { meatPrep: MeatPrep }) {
           <div className="text-xs text-neutral-500 mt-1">db tortilla hús</div>
         </div>
         <div className="p-4 text-center">
-          <div className="text-2xl font-semibold">{meatPrep.grillHusDkg}</div>
-          <div className="text-xs text-neutral-500 mt-1">dkg grill hús</div>
+          <div className="text-2xl font-semibold">
+            {(meatPrep.grillHusDkg / 100).toLocaleString("hu-HU", { maximumFractionDigits: 2 })}
+          </div>
+          <div className="text-xs text-neutral-500 mt-1">kg grill hús</div>
         </div>
       </div>
     </section>
