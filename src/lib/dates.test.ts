@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   addDaysStr,
+  addMonthsStr,
   budapestTodayStr,
   dayRange,
   getActiveOrderWeek,
@@ -118,6 +119,28 @@ describe("monthEndOf", () => {
 
   it("returns the last day of February in a non-leap year", () => {
     expect(monthEndOf("2026-02-10")).toBe("2026-02-28");
+  });
+});
+
+describe("addMonthsStr", () => {
+  it("moves forward within the same year", () => {
+    expect(addMonthsStr("2026-07-17", 1)).toBe("2026-08-01");
+  });
+
+  it("moves backward within the same year", () => {
+    expect(addMonthsStr("2026-07-17", -1)).toBe("2026-06-01");
+  });
+
+  it("rolls over to the next year", () => {
+    expect(addMonthsStr("2026-12-05", 1)).toBe("2027-01-01");
+  });
+
+  it("rolls back to the previous year", () => {
+    expect(addMonthsStr("2026-01-05", -1)).toBe("2025-12-01");
+  });
+
+  it("always returns the 1st of the target month, regardless of the input day", () => {
+    expect(addMonthsStr("2026-07-31", 0)).toBe("2026-07-01");
   });
 });
 

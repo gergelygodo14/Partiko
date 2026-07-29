@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { addDaysStr } from "@/lib/dates";
+import { addDaysStr, addMonthsStr } from "@/lib/dates";
 
 type ItemTotal = { itemId: string; itemName: string; quantity: number; valueFt: number };
 type CustomerTotal = { customerId: string; storeName: string; quantity: number; valueFt: number };
@@ -21,7 +21,16 @@ type DailyItemTotal = { itemId: string; itemName: string; itemOrder: number; qua
 type DayItemTotals = { date: string; items: DailyItemTotal[] };
 type DayBreakdown = { weekStart: string; days: DayItemTotals[] };
 
-type View = "week" | "day" | "month";
+type MonthlyItemBreakdown = {
+  itemId: string;
+  itemName: string;
+  itemOrder: number;
+  totalQuantity: number;
+  byDate: Record<string, number>;
+};
+type MonthGrid = { monthStart: string; monthEnd: string; businessDays: string[]; items: MonthlyItemBreakdown[] };
+
+type View = "week" | "day" | "monthGrid" | "month";
 
 type MeatPrep = {
   date: string;
@@ -193,6 +202,69 @@ function DayItemsTable({ day, dayIndex }: { day: DayItemTotals; dayIndex: number
   );
 }
 
+function MonthGridTable({ grid }: { grid: MonthGrid }) {
+  const dayTotals = grid.businessDays.map((day) =>
+    grid.items.reduce((sum, item) => sum + item.byDate[day], 0)
+  );
+  const grandTotal = grid.items.reduce((sum, item) => sum + item.totalQuantity, 0);
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-lg font-semibold capitalize">
+        Havi bontás{" "}
+        <span className="text-neutral-400 font-normal text-sm normal-case">
+          ({formatMonthLabel(grid.monthStart)})
+        </span>
+      </h2>
+      {grid.items.every((item) => item.totalQuantity === 0) ? (
+        <p className="text-neutral-500">Még nincs leadott szendvics-rendelés erre a hónapra.</p>
+      ) : (
+        <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
+          <table className="text-sm">
+            <thead className="bg-neutral-100 text-neutral-600">
+              <tr>
+                <th className="sticky left-0 z-10 bg-neutral-100 text-left px-3 py-3">Szendvics</th>
+                {grid.businessDays.map((day) => (
+                  <th key={day} className="text-right px-2 py-3 whitespace-nowrap">
+                    {formatDate(day)}
+                  </th>
+                ))}
+                <th className="text-right px-3 py-3 whitespace-nowrap">Összesen</th>
+              </tr>
+            </thead>
+            <tbody>
+              {grid.items.map((item) => (
+                <tr key={item.itemId} className="border-t border-neutral-100">
+                  <td className="sticky left-0 z-10 bg-white px-3 py-2.5 whitespace-nowrap">
+                    {item.itemName}
+                  </td>
+                  {grid.businessDays.map((day) => (
+                    <td key={day} className="text-right px-2 py-2.5">
+                      {item.byDate[day]}
+                    </td>
+                  ))}
+                  <td className="text-right px-3 py-2.5 font-medium">{item.totalQuantity}</td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr className="border-t border-neutral-300 font-semibold">
+                <td className="sticky left-0 z-10 bg-white px-3 py-3">Összesen</td>
+                {dayTotals.map((total, i) => (
+                  <td key={grid.businessDays[i]} className="text-right px-2 py-3">
+                    {total}
+                  </td>
+                ))}
+                <td className="text-right px-3 py-3">{grandTotal}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
+
 export default function SandwichOrdersTab() {
   const [weekSummary, setWeekSummary] = useState<WeekSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -204,6 +276,9 @@ export default function SandwichOrdersTab() {
   const [dayWeekStart, setDayWeekStart] = useState<string | null>(null);
   const [dayBreakdown, setDayBreakdown] = useState<DayBreakdown | null>(null);
   const [dayBreakdownLoading, setDayBreakdownLoading] = useState(false);
+  const [monthGridMonth, setMonthGridMonth] = useState<string | null>(null);
+  const [monthGrid, setMonthGrid] = useState<MonthGrid | null>(null);
+  const [monthGridLoading, setMonthGridLoading] = useState(false);
   const [selectedDayIndex, setSelectedDayIndex] = useState(() => {
     const jsWeekday = new Date().getDay(); // 0=Sun..6=Sat
     return Math.min(jsWeekday === 0 ? 6 : jsWeekday - 1, 4);
@@ -250,6 +325,22 @@ export default function SandwichOrdersTab() {
       setDayBreakdownLoading(false);
     })();
   }, [view, dayWeekStart]);
+
+  // Same "default once known, then re-fetch on every nav click" pattern as
+  // the weekly day-breakdown above, one level up (months instead of weeks).
+  useEffect(() => {
+    if (weekSummary && monthGridMonth === null) setMonthGridMonth(weekSummary.weekStart);
+  }, [weekSummary, monthGridMonth]);
+
+  useEffect(() => {
+    if (view !== "monthGrid" || !monthGridMonth) return;
+    setMonthGridLoading(true);
+    (async () => {
+      const res = await fetch(`/api/sandwich-orders/monthly-item-breakdown?month=${monthGridMonth}`);
+      setMonthGrid(await res.json());
+      setMonthGridLoading(false);
+    })();
+  }, [view, monthGridMonth]);
 
   // Same blob-download pattern as the ready-meal export - required because
   // the app runs as an iOS home-screen PWA, where a plain <a href> would
@@ -313,10 +404,10 @@ export default function SandwichOrdersTab() {
 
       {meatPrep && <MeatPrepSection meatPrep={meatPrep} />}
 
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <button
           onClick={() => setView("week")}
-          className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base ${
+          className={`flex-1 min-w-[45%] px-4 py-3 rounded-xl font-semibold text-base ${
             view === "week"
               ? "bg-yellow-400 text-black"
               : "border border-neutral-300 active:bg-neutral-100"
@@ -326,7 +417,7 @@ export default function SandwichOrdersTab() {
         </button>
         <button
           onClick={() => setView("day")}
-          className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base ${
+          className={`flex-1 min-w-[45%] px-4 py-3 rounded-xl font-semibold text-base ${
             view === "day"
               ? "bg-yellow-400 text-black"
               : "border border-neutral-300 active:bg-neutral-100"
@@ -335,8 +426,18 @@ export default function SandwichOrdersTab() {
           Napi bontás
         </button>
         <button
+          onClick={() => setView("monthGrid")}
+          className={`flex-1 min-w-[45%] px-4 py-3 rounded-xl font-semibold text-base ${
+            view === "monthGrid"
+              ? "bg-yellow-400 text-black"
+              : "border border-neutral-300 active:bg-neutral-100"
+          }`}
+        >
+          Havi bontás
+        </button>
+        <button
           onClick={() => setView("month")}
-          className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base ${
+          className={`flex-1 min-w-[45%] px-4 py-3 rounded-xl font-semibold text-base ${
             view === "month"
               ? "bg-yellow-400 text-black"
               : "border border-neutral-300 active:bg-neutral-100"
@@ -397,6 +498,32 @@ export default function SandwichOrdersTab() {
             <p className="text-neutral-500">Betöltés...</p>
           ) : (
             <DayItemsTable day={dayBreakdown.days[selectedDayIndex]} dayIndex={selectedDayIndex} />
+          )}
+        </>
+      ) : view === "monthGrid" ? (
+        <>
+          <div className="flex items-center justify-between gap-2">
+            <button
+              onClick={() => monthGridMonth && setMonthGridMonth(addMonthsStr(monthGridMonth, -1))}
+              className="px-3 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold active:bg-neutral-100"
+            >
+              ◀ Előző hónap
+            </button>
+            <span className="text-sm text-neutral-500 capitalize">
+              {monthGridMonth && formatMonthLabel(monthGridMonth)}
+            </span>
+            <button
+              onClick={() => monthGridMonth && setMonthGridMonth(addMonthsStr(monthGridMonth, 1))}
+              className="px-3 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold active:bg-neutral-100"
+            >
+              Következő hónap ▶
+            </button>
+          </div>
+
+          {monthGridLoading || !monthGrid ? (
+            <p className="text-neutral-500">Betöltés...</p>
+          ) : (
+            <MonthGridTable grid={monthGrid} />
           )}
         </>
       ) : monthLoading || !monthSummary ? (

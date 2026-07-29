@@ -189,6 +189,59 @@ export async function getSandwichWeekDailyItemTotals(weekStart: string): Promise
   });
 }
 
+export type SandwichMonthlyItemBreakdown = SandwichCatalogItem & {
+  totalQuantity: number;
+  byDate: Record<string, number>;
+};
+
+// Item x business-day matrix for a whole calendar month - mirrors the "havi
+// július" tab in the owner's own reference workbook (rendelések.xlsx):
+// sandwiches down the rows, one column per weekday of the month, so the
+// owner can see at a glance how a given item's daily volume moved across the
+// month. Weekend dates are skipped entirely since no ordering happens then.
+export async function getSandwichMonthDailyItemTotals(
+  monthStart: string,
+  monthEnd: string
+): Promise<{ businessDays: string[]; items: SandwichMonthlyItemBreakdown[] }> {
+  const [catalog, orders] = await Promise.all([
+    getActiveSandwichCatalog(),
+    prisma.sandwichOrder.findMany({
+      where: { orderDate: { gte: parseDay(monthStart), lt: parseDay(addDaysStr(monthEnd, 1)) } },
+      include: { lines: true },
+    }),
+  ]);
+
+  const businessDays: string[] = [];
+  for (let day = monthStart; day <= monthEnd; day = addDaysStr(day, 1)) {
+    const weekday = parseDay(day).getUTCDay(); // 0=Sun..6=Sat
+    if (weekday >= 1 && weekday <= 5) businessDays.push(day);
+  }
+
+  const quantityByItemAndDay = new Map<string, Map<string, number>>();
+  for (const order of orders) {
+    const dayStr = toDayStr(order.orderDate);
+    for (const line of order.lines) {
+      if (!quantityByItemAndDay.has(line.itemId)) quantityByItemAndDay.set(line.itemId, new Map());
+      const dayMap = quantityByItemAndDay.get(line.itemId)!;
+      dayMap.set(dayStr, (dayMap.get(dayStr) ?? 0) + line.quantity);
+    }
+  }
+
+  const items = catalog.map((item) => {
+    const dayMap = quantityByItemAndDay.get(item.itemId);
+    const byDate: Record<string, number> = {};
+    let totalQuantity = 0;
+    for (const day of businessDays) {
+      const qty = dayMap?.get(day) ?? 0;
+      byDate[day] = qty;
+      totalQuantity += qty;
+    }
+    return { ...item, totalQuantity, byDate };
+  });
+
+  return { businessDays, items };
+}
+
 export type SandwichHistoryEntry = {
   orderDate: string;
   lines: { itemId: string; itemName: string; quantity: number }[];

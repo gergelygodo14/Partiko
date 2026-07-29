@@ -17,6 +17,7 @@ const {
   getSandwichCustomerHistory,
   getSandwichItemTotalsForDay,
   getSandwichWeekDailyItemTotals,
+  getSandwichMonthDailyItemTotals,
 } = await import("@/lib/sandwichOrdersSummary");
 
 beforeEach(() => {
@@ -232,5 +233,55 @@ describe("getSandwichWeekDailyItemTotals", () => {
 
     const days = await getSandwichWeekDailyItemTotals("2026-07-27");
     expect(days.every((d) => d.items.every((i) => i.quantity === 0))).toBe(true);
+  });
+});
+
+describe("getSandwichMonthDailyItemTotals", () => {
+  it("only includes business days (Mon-Fri), skipping the weekend in between", async () => {
+    findManySandwichItem.mockResolvedValue([{ id: "i1", name: "Hamburger", order: 4 }]);
+    findManySandwichOrder.mockResolvedValue([]);
+
+    // 2026-07-01 (Wed) .. 2026-07-06 (Mon): Sat 07-04 / Sun 07-05 excluded.
+    const { businessDays } = await getSandwichMonthDailyItemTotals("2026-07-01", "2026-07-06");
+
+    expect(businessDays).toEqual(["2026-07-01", "2026-07-02", "2026-07-03", "2026-07-06"]);
+  });
+
+  it("places quantities on the right item/day and sums a total across the month", async () => {
+    findManySandwichItem.mockResolvedValue([
+      { id: "i1", name: "Sonkás bagel", order: 1 },
+      { id: "i2", name: "Hamburger", order: 4 },
+    ]);
+    findManySandwichOrder.mockResolvedValue([
+      { orderDate: new Date("2026-07-01T00:00:00.000Z"), lines: [{ itemId: "i1", quantity: 4 }] },
+      { orderDate: new Date("2026-07-03T00:00:00.000Z"), lines: [{ itemId: "i1", quantity: 3 }] },
+      { orderDate: new Date("2026-07-06T00:00:00.000Z"), lines: [{ itemId: "i2", quantity: 5 }] },
+    ]);
+
+    const { items } = await getSandwichMonthDailyItemTotals("2026-07-01", "2026-07-06");
+
+    const bagel = items.find((i) => i.itemId === "i1")!;
+    expect(bagel.byDate).toEqual({
+      "2026-07-01": 4,
+      "2026-07-02": 0,
+      "2026-07-03": 3,
+      "2026-07-06": 0,
+    });
+    expect(bagel.totalQuantity).toBe(7);
+
+    const hamburger = items.find((i) => i.itemId === "i2")!;
+    expect(hamburger.byDate["2026-07-06"]).toBe(5);
+    expect(hamburger.totalQuantity).toBe(5);
+  });
+
+  it("sums multiple same-day orders for the same item", async () => {
+    findManySandwichItem.mockResolvedValue([{ id: "i1", name: "Hamburger", order: 4 }]);
+    findManySandwichOrder.mockResolvedValue([
+      { orderDate: new Date("2026-07-01T00:00:00.000Z"), lines: [{ itemId: "i1", quantity: 2 }] },
+      { orderDate: new Date("2026-07-01T00:00:00.000Z"), lines: [{ itemId: "i1", quantity: 3 }] },
+    ]);
+
+    const { items } = await getSandwichMonthDailyItemTotals("2026-07-01", "2026-07-06");
+    expect(items[0].byDate["2026-07-01"]).toBe(5);
   });
 });

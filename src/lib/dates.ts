@@ -85,6 +85,13 @@ export function monthEndOf(dateStr: string): string {
   return `${dateStr.slice(0, 7)}-${String(lastDay).padStart(2, "0")}`;
 }
 
+/** The 1st of the month `months` away from dateStr's month (negative goes back). */
+export function addMonthsStr(dateStr: string, months: number): string {
+  const [year, month] = dateStr.slice(0, 7).split("-").map(Number);
+  const d = new Date(Date.UTC(year, month - 1 + months, 1));
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-01`;
+}
+
 function mondayIndexOf(dateStr: string): number {
   const day = parseDay(dateStr).getUTCDay(); // 0=Sun..6=Sat
   return day === 0 ? 6 : day - 1; // 0=Mon..6=Sun
