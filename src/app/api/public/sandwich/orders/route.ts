@@ -8,8 +8,6 @@ import {
   isValidSandwichOrderItems,
   type SandwichOrderItemInput,
 } from "@/lib/sandwichOrders";
-import { buildSandwichOrderNotificationText } from "@/lib/sandwichOrderNotification";
-import { sendTelegramMessage } from "@/lib/telegram";
 import { withApiErrorHandling } from "@/lib/apiRoute";
 import { corsPreflight, withCors } from "@/lib/cors";
 
@@ -66,17 +64,10 @@ export const PUT = withCors(
 
     const catalogItems = await prisma.sandwichItem.findMany({ where: { archived: false } });
     const priceByItemId = new Map(catalogItems.map((item) => [item.id, item.price]));
-    const nameByItemId = new Map(catalogItems.map((item) => [item.id, item.name]));
     const lines = buildSandwichOrderLines(items, priceByItemId);
 
     const orderDateValue = parseDay(orderDate);
-    let isNewOrder = false;
     await prisma.$transaction(async (tx) => {
-      const existingOrder = await tx.sandwichOrder.findUnique({
-        where: { customerId_orderDate: { customerId, orderDate: orderDateValue } },
-      });
-      isNewOrder = !existingOrder;
-
       const order = await tx.sandwichOrder.upsert({
         where: { customerId_orderDate: { customerId, orderDate: orderDateValue } },
         update: {},
@@ -90,34 +81,6 @@ export const PUT = withCors(
         });
       }
     });
-
-    // Best-effort - a Telegram/notification failure must never fail the
-    // customer's order submission.
-    try {
-      const customer = await prisma.customer.findUnique({
-        where: { id: customerId },
-        select: { storeName: true },
-      });
-      if (customer) {
-        const text = buildSandwichOrderNotificationText({
-          storeName: customer.storeName,
-          orderDate,
-          dayName: target.dayName,
-          lines: lines.map((line) => ({
-            itemName: nameByItemId.get(line.itemId) ?? line.itemId,
-            quantity: line.quantity,
-            unitPriceFt: line.unitPriceFt,
-          })),
-          isNew: isNewOrder,
-        });
-        const result = await sendTelegramMessage(text);
-        if (!result.ok) {
-          console.error("Telegram sandwich order notification failed:", result.error);
-        }
-      }
-    } catch (e) {
-      console.error("Telegram sandwich order notification failed:", e);
-    }
 
     return NextResponse.json({
       orderDate,
