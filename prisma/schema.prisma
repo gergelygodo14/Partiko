@@ -186,6 +186,7 @@ model SandwichItem {
   id         String              @id @default(cuid())
   name       String
   price      Int
+  profitFt   Int                 @default(0)
   order      Int                 @default(0)
   archived   Boolean             @default(false)
   createdAt  DateTime            @default(now())

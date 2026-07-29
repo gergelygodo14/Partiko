@@ -8,13 +8,16 @@ export const PATCH = withApiErrorHandling(async (
 ) => {
   const { id } = await ctx.params;
   const body = await request.json();
-  const { name, price, order, archived } = body;
+  const { name, price, profitFt, order, archived } = body;
 
   if (name !== undefined && (typeof name !== "string" || !name)) {
     return NextResponse.json({ error: "Érvénytelen name" }, { status: 400 });
   }
   if (price !== undefined && !Number.isInteger(price)) {
     return NextResponse.json({ error: "Érvénytelen price" }, { status: 400 });
+  }
+  if (profitFt !== undefined && !Number.isInteger(profitFt)) {
+    return NextResponse.json({ error: "Érvénytelen profitFt" }, { status: 400 });
   }
   if (order !== undefined && !Number.isInteger(order)) {
     return NextResponse.json({ error: "Érvénytelen order" }, { status: 400 });
@@ -28,6 +31,7 @@ export const PATCH = withApiErrorHandling(async (
     data: {
       ...(name !== undefined ? { name } : {}),
       ...(price !== undefined ? { price } : {}),
+      ...(profitFt !== undefined ? { profitFt } : {}),
       ...(order !== undefined ? { order } : {}),
       ...(archived !== undefined ? { archived } : {}),
     },

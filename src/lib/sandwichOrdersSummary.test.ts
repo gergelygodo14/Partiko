@@ -18,6 +18,7 @@ const {
   getSandwichItemTotalsForDay,
   getSandwichWeekDailyItemTotals,
   getSandwichMonthDailyItemTotals,
+  getSandwichMonthProfit,
 } = await import("@/lib/sandwichOrdersSummary");
 
 beforeEach(() => {
@@ -283,5 +284,57 @@ describe("getSandwichMonthDailyItemTotals", () => {
 
     const { items } = await getSandwichMonthDailyItemTotals("2026-07-01", "2026-07-06");
     expect(items[0].byDate["2026-07-01"]).toBe(5);
+  });
+});
+
+describe("getSandwichMonthProfit", () => {
+  it("multiplies each item's monthly quantity by its own profit-per-unit", async () => {
+    findManySandwichItem.mockResolvedValue([
+      { id: "i1", name: "Sonkás bagel", order: 1, profitFt: 320 },
+      { id: "i2", name: "Hamburger", order: 4, profitFt: 280 },
+    ]);
+    findManySandwichOrder.mockResolvedValue([
+      { lines: [{ itemId: "i1", quantity: 5 }] },
+      { lines: [{ itemId: "i1", quantity: 3 }] },
+      { lines: [{ itemId: "i2", quantity: 2 }] },
+    ]);
+
+    const { items, totalProfitFt } = await getSandwichMonthProfit("2026-07-01", "2026-07-31");
+
+    expect(items[0]).toEqual({
+      itemId: "i1",
+      itemName: "Sonkás bagel",
+      itemOrder: 1,
+      quantity: 8,
+      profitPerUnitFt: 320,
+      totalProfitFt: 2560,
+    });
+    expect(items[1]).toEqual({
+      itemId: "i2",
+      itemName: "Hamburger",
+      itemOrder: 4,
+      quantity: 2,
+      profitPerUnitFt: 280,
+      totalProfitFt: 560,
+    });
+    expect(totalProfitFt).toBe(3120);
+  });
+
+  it("returns 0 profit for an item nobody ordered that month", async () => {
+    findManySandwichItem.mockResolvedValue([{ id: "i1", name: "Hamburger", order: 4, profitFt: 280 }]);
+    findManySandwichOrder.mockResolvedValue([]);
+
+    const { items, totalProfitFt } = await getSandwichMonthProfit("2026-07-01", "2026-07-31");
+    expect(items[0].totalProfitFt).toBe(0);
+    expect(totalProfitFt).toBe(0);
+  });
+
+  it("still returns 0 profit even with real orders if profitFt was never set (defaults to 0)", async () => {
+    findManySandwichItem.mockResolvedValue([{ id: "i1", name: "Hamburger", order: 4, profitFt: 0 }]);
+    findManySandwichOrder.mockResolvedValue([{ lines: [{ itemId: "i1", quantity: 10 }] }]);
+
+    const { items } = await getSandwichMonthProfit("2026-07-01", "2026-07-31");
+    expect(items[0].quantity).toBe(10);
+    expect(items[0].totalProfitFt).toBe(0);
   });
 });

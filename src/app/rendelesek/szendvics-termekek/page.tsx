@@ -7,10 +7,11 @@ type SandwichItem = {
   id: string;
   name: string;
   price: number;
+  profitFt: number;
   archived: boolean;
 };
 
-const emptyForm = { name: "", price: "" };
+const emptyForm = { name: "", price: "", profitFt: "" };
 
 export default function SandwichItemsPage() {
   const [items, setItems] = useState<SandwichItem[]>([]);
@@ -35,11 +36,12 @@ export default function SandwichItemsPage() {
     e.preventDefault();
     const price = parseInt(form.price, 10);
     if (!form.name.trim() || !price) return;
+    const profitFt = parseInt(form.profitFt, 10);
 
     await fetch("/api/sandwich-items", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: form.name.trim(), price }),
+      body: JSON.stringify({ name: form.name.trim(), price, profitFt: Number.isNaN(profitFt) ? 0 : profitFt }),
     });
     setForm(emptyForm);
     await load();
@@ -47,15 +49,20 @@ export default function SandwichItemsPage() {
 
   function startEdit(item: SandwichItem) {
     setEditingId(item.id);
-    setEditForm({ name: item.name, price: String(item.price) });
+    setEditForm({ name: item.name, price: String(item.price), profitFt: String(item.profitFt) });
   }
 
   async function saveEdit(id: string) {
     const price = parseInt(editForm.price, 10);
+    const profitFt = parseInt(editForm.profitFt, 10);
     await fetch(`/api/sandwich-items/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: editForm.name.trim(), price }),
+      body: JSON.stringify({
+        name: editForm.name.trim(),
+        price,
+        profitFt: Number.isNaN(profitFt) ? 0 : profitFt,
+      }),
     });
     setEditingId(null);
     await load();
@@ -104,6 +111,16 @@ export default function SandwichItemsPage() {
               placeholder="700"
             />
           </div>
+          <div>
+            <label className="block text-xs text-neutral-500 mb-1">Haszon (Ft/db)</label>
+            <input
+              type="number"
+              value={form.profitFt}
+              onChange={(e) => setForm((f) => ({ ...f, profitFt: e.target.value }))}
+              className="border border-neutral-300 rounded-xl px-3 py-2.5 text-base w-28"
+              placeholder="320"
+            />
+          </div>
           <button
             type="submit"
             className="bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500"
@@ -150,6 +167,13 @@ export default function SandwichItemsPage() {
                       onChange={(e) => setEditForm((f) => ({ ...f, price: e.target.value }))}
                       className="border border-neutral-300 rounded-xl px-3 py-2 text-base w-24"
                     />
+                    <input
+                      type="number"
+                      value={editForm.profitFt}
+                      onChange={(e) => setEditForm((f) => ({ ...f, profitFt: e.target.value }))}
+                      className="border border-neutral-300 rounded-xl px-3 py-2 text-base w-24"
+                      placeholder="Haszon"
+                    />
                     <button
                       onClick={() => saveEdit(item.id)}
                       className="bg-yellow-400 text-black font-semibold text-sm px-4 py-2.5 rounded-xl active:bg-yellow-500"
@@ -168,7 +192,8 @@ export default function SandwichItemsPage() {
                     <div>
                       <span className="font-semibold text-base">{item.name}</span>
                       <span className="text-xs text-neutral-500 ml-2">
-                        {item.price.toLocaleString("hu-HU")} Ft
+                        {item.price.toLocaleString("hu-HU")} Ft · haszon:{" "}
+                        {item.profitFt.toLocaleString("hu-HU")} Ft
                         {item.archived ? " · archiválva" : ""}
                       </span>
                     </div>

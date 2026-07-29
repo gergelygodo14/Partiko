@@ -13,7 +13,7 @@ export const GET = withApiErrorHandling(async (request: NextRequest) => {
 
 export const POST = withApiErrorHandling(async (request: NextRequest) => {
   const body = await request.json();
-  const { name, price } = body;
+  const { name, price, profitFt } = body;
 
   if (typeof name !== "string" || !name || !Number.isInteger(price)) {
     return NextResponse.json(
@@ -21,10 +21,13 @@ export const POST = withApiErrorHandling(async (request: NextRequest) => {
       { status: 400 }
     );
   }
+  if (profitFt !== undefined && !Number.isInteger(profitFt)) {
+    return NextResponse.json({ error: "Érvénytelen profitFt" }, { status: 400 });
+  }
 
   const last = await prisma.sandwichItem.findFirst({ orderBy: { order: "desc" } });
   const item = await prisma.sandwichItem.create({
-    data: { name, price, order: (last?.order ?? 0) + 1 },
+    data: { name, price, profitFt: profitFt ?? 0, order: (last?.order ?? 0) + 1 },
   });
   return NextResponse.json(item, { status: 201 });
 });

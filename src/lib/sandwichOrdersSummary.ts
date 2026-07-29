@@ -79,6 +79,53 @@ export async function getSandwichMonthSummary(monthStart: string, monthEnd: stri
   return summarizeSandwichOrders(monthStart, monthEnd);
 }
 
+export type SandwichMonthlyItemProfit = {
+  itemId: string;
+  itemName: string;
+  itemOrder: number;
+  quantity: number;
+  profitPerUnitFt: number;
+  totalProfitFt: number;
+};
+
+// Mirrors the reference workbook's "nyereség" column: a hand-entered
+// per-unit profit figure (SandwichItem.profitFt, owner-maintained, separate
+// from the sale price) multiplied by that month's quantity per item. Not
+// derived from real cost data - purely what the owner enters as their own
+// margin estimate per sandwich.
+export async function getSandwichMonthProfit(
+  monthStart: string,
+  monthEnd: string
+): Promise<{ items: SandwichMonthlyItemProfit[]; totalProfitFt: number }> {
+  const { gte, lt } = rangeBetween(monthStart, monthEnd);
+  const [catalog, orders] = await Promise.all([
+    prisma.sandwichItem.findMany({ where: { archived: false }, orderBy: [{ order: "asc" }, { name: "asc" }] }),
+    prisma.sandwichOrder.findMany({ where: { orderDate: { gte, lt } }, include: { lines: true } }),
+  ]);
+
+  const quantityByItemId = new Map<string, number>();
+  for (const order of orders) {
+    for (const line of order.lines) {
+      quantityByItemId.set(line.itemId, (quantityByItemId.get(line.itemId) ?? 0) + line.quantity);
+    }
+  }
+
+  const items = catalog.map((item) => {
+    const quantity = quantityByItemId.get(item.id) ?? 0;
+    return {
+      itemId: item.id,
+      itemName: item.name,
+      itemOrder: item.order,
+      quantity,
+      profitPerUnitFt: item.profitFt,
+      totalProfitFt: quantity * item.profitFt,
+    };
+  });
+
+  const totalProfitFt = items.reduce((sum, item) => sum + item.totalProfitFt, 0);
+  return { items, totalProfitFt };
+}
+
 export type SandwichDayCustomerOrder = {
   customerId: string;
   storeName: string;
