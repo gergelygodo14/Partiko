@@ -223,7 +223,7 @@ function MonthGridTable({ grid }: { grid: MonthGrid }) {
           <table className="text-sm">
             <thead className="bg-neutral-100 text-neutral-600">
               <tr>
-                <th className="sticky left-0 z-10 bg-neutral-100 text-left px-3 py-3">Szendvics</th>
+                <th className="sticky left-0 z-[1] bg-neutral-100 text-left px-3 py-3">Szendvics</th>
                 {grid.businessDays.map((day) => (
                   <th key={day} className="text-right px-2 py-3 whitespace-nowrap">
                     {formatDate(day)}
@@ -235,7 +235,7 @@ function MonthGridTable({ grid }: { grid: MonthGrid }) {
             <tbody>
               {grid.items.map((item) => (
                 <tr key={item.itemId} className="border-t border-neutral-100">
-                  <td className="sticky left-0 z-10 bg-white px-3 py-2.5 whitespace-nowrap">
+                  <td className="sticky left-0 z-[1] bg-white px-3 py-2.5 whitespace-nowrap">
                     {item.itemName}
                   </td>
                   {grid.businessDays.map((day) => (
@@ -249,7 +249,7 @@ function MonthGridTable({ grid }: { grid: MonthGrid }) {
             </tbody>
             <tfoot>
               <tr className="border-t border-neutral-300 font-semibold">
-                <td className="sticky left-0 z-10 bg-white px-3 py-3">Összesen</td>
+                <td className="sticky left-0 z-[1] bg-white px-3 py-3">Összesen</td>
                 {dayTotals.map((total, i) => (
                   <td key={grid.businessDays[i]} className="text-right px-2 py-3">
                     {total}
