@@ -160,10 +160,15 @@ export default function WeeklyMenuPage() {
       const avoidDishes = days.flatMap((d) => [d.a, d.b, d.c]);
       const otherLetters = (["a", "b", "c"] as const).filter((l) => l !== letter);
       const sameDayDishes = otherLetters.map((l) => days[dayIndex][l]);
+      // Every other already-decided dish across the whole week (not just the
+      // same day) - lets the model avoid thematic/word repetition (e.g.
+      // "Székelygulyás" one day, "Székelykáposzta" a couple days later),
+      // which exact-name exclusion alone can't catch since the names differ.
+      const weekDishes = avoidDishes.filter((d) => d.trim() !== "");
       const res = await fetch("/api/weekly-menu/suggest-dish", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ weekStart, avoidDishes, sameDayDishes }),
+        body: JSON.stringify({ weekStart, avoidDishes, sameDayDishes, weekDishes }),
       });
       const data = await res.json();
       if (typeof data.dish === "string") {

@@ -40,8 +40,13 @@ function shuffle<T>(items: T[]): T[] {
   return copy;
 }
 
-export function buildPickPrompt(candidates: string[], sameDayDishes: string[]): string {
+export function buildPickPrompt(
+  candidates: string[],
+  sameDayDishes: string[],
+  weekDishes: string[] = []
+): string {
   const sameDayText = sameDayDishes.map((d) => d.trim()).filter(Boolean).join(", ") || "nincs";
+  const weekText = weekDishes.map((d) => d.trim()).filter(Boolean).join(", ") || "nincs";
   return (
     "Egy magyarországi gyorsétteremhez (Partiko, csirke-alapú házias ételek) EGY fogást kell " +
     "kiválasztani az alábbi, ténylegesen létező, korábban már használt fogások listájából " +
@@ -52,6 +57,11 @@ export function buildPickPrompt(candidates: string[], sameDayDishes: string[]): 
     "olyat válassz, aminek NEM ugyanaz a köret/alapja. Ha pl. már van egy rizses és egy " +
     "burgonyás/krumplis fogás, válassz inkább tésztaalapút vagy egytálételt, hogy a napi három fogás " +
     "köret szerint is változatos legyen.\n\n" +
+    `A hét többi napján eddig ezek a fogások szerepelnek: ${weekText}\n\n` +
+    "Ne válassz olyat, aminek a neve vagy alapötlete (pl. ugyanaz a régió/konyha stílusa, mint " +
+    '"székelyes") már megjelenik ebben a listában, még akkor sem, ha a pontos név különbözik ' +
+    '(pl. ha már szerepel "Székelygulyás", ne válassz "Székelykáposztát" se ugyanerre a hétre) - ' +
+    "kerüld a szóismétlést és a tartalmi/témabeli hasonlóságot is, ne csak a pontos névegyezést.\n\n" +
     "Kizárólag a fenti listából választhatsz - ne találj ki új fogást. Csak a választott fogás " +
     "sorszámát (index) add vissza, semmi mást."
   );
@@ -71,8 +81,9 @@ export async function suggestDish(params: {
   weekStart: string;
   avoidDishes: string[];
   sameDayDishes?: string[];
+  weekDishes?: string[];
 }): Promise<string> {
-  const { weekStart, avoidDishes, sameDayDishes = [] } = params;
+  const { weekStart, avoidDishes, sameDayDishes = [], weekDishes = [] } = params;
 
   const [allDishes, recentDishes] = await Promise.all([
     prisma.dish.findMany({ select: { name: true } }),
@@ -89,7 +100,7 @@ export async function suggestDish(params: {
     throw new Error("Nincs elérhető fogás a katalógusban, ami megfelelne a feltételeknek");
   }
 
-  const prompt = buildPickPrompt(candidates, sameDayDishes);
+  const prompt = buildPickPrompt(candidates, sameDayDishes, weekDishes);
 
   const response = await anthropic.messages.create({
     model: MODEL,

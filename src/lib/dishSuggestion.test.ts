@@ -75,4 +75,25 @@ describe("buildPickPrompt", () => {
     const prompt = buildPickPrompt(["Csirkemell rizzsel"], []);
     expect(prompt).toContain("Ugyanerre a napra a másik két fogás már el van döntve: nincs");
   });
+
+  it("includes the rest of the week's already-decided dishes when given", () => {
+    const prompt = buildPickPrompt(
+      ["Csirkemell rizzsel"],
+      [],
+      ["Székelygulyás", "Rakott karfiol"]
+    );
+    expect(prompt).toContain(
+      "A hét többi napján eddig ezek a fogások szerepelnek: Székelygulyás, Rakott karfiol"
+    );
+  });
+
+  it("falls back to 'nincs' when no other dish is decided yet this week", () => {
+    const prompt = buildPickPrompt(["Csirkemell rizzsel"], []);
+    expect(prompt).toContain("A hét többi napján eddig ezek a fogások szerepelnek: nincs");
+  });
+
+  it("instructs the model to avoid thematic/word repetition across the week, not just exact names", () => {
+    const prompt = buildPickPrompt(["Csirkemell rizzsel"], [], ["Székelygulyás"]);
+    expect(prompt).toContain("kerüld a szóismétlést és a tartalmi/témabeli hasonlóságot is");
+  });
 });
