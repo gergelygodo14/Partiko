@@ -1,0 +1,4747 @@
+{
+  "generatedAt": "2026-07-30T11:27:44.017Z",
+  "sourceFile": "partiko-szendvics/reference/rendelések.xlsx",
+  "newStores": [
+    "KISSZÁLLÁS",
+    "Ital depó",
+    "Coop Retek"
+  ],
+  "warnings": [],
+  "weekdays": [
+    {
+      "weekday": 0,
+      "sheets": [
+        " HÉTFŐ FAVORIT",
+        "HÉTFŐ1",
+        "HÉTFŐ2",
+        "HÉTFŐ DU VIDÉK"
+      ],
+      "stores": [
+        {
+          "rawName": "Doma",
+          "storeName": "FAv doma",
+          "sheet": " HÉTFŐ FAVORIT",
+          "column": "D",
+          "sheetCode": "152",
+          "sheetTotal": 17,
+          "computedTotal": 17,
+          "storeOrder": 1,
+          "lines": [
+            {
+              "excelLabel": "fasírtos-pfeff",
+              "itemName": "Fasírtos-pfefferonis szendvics",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "PÖTYI",
+              "itemName": "Pötyi pogi (dupla rántott húsos pogácsa)",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Szegedi sonkás",
+              "itemName": "Szegedi sonkás vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "PICCANTE",
+              "itemName": "Piccante szalámis (olasz, csípős)",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Csirkés panini",
+              "itemName": "Csirkés panini",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Dettre",
+          "storeName": "FAV dettre",
+          "sheet": " HÉTFŐ FAVORIT",
+          "column": "E",
+          "sheetCode": "146",
+          "sheetTotal": 18,
+          "computedTotal": 18,
+          "storeOrder": 2,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "fasírtos-pfeff",
+              "itemName": "Fasírtos-pfefferonis szendvics",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "grill papucs",
+              "itemName": "Grillezett csirkemell papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "pleskavica",
+              "itemName": "Pleskavica",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "PICCANTE",
+              "itemName": "Piccante szalámis (olasz, csípős)",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Kukovecz",
+          "storeName": "Fav kukovecz",
+          "sheet": " HÉTFŐ FAVORIT",
+          "column": "F",
+          "sheetCode": "129",
+          "sheetTotal": 13,
+          "computedTotal": 13,
+          "storeOrder": 3,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "nagyi",
+              "itemName": "Nagyi kifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "pleskavica",
+              "itemName": "Pleskavica",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Csirkés panini",
+              "itemName": "Csirkés panini",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Vedres",
+          "storeName": "Fav vedres",
+          "sheet": " HÉTFŐ FAVORIT",
+          "column": "G",
+          "sheetCode": "43",
+          "sheetTotal": 17,
+          "computedTotal": 17,
+          "storeOrder": 4,
+          "lines": [
+            {
+              "excelLabel": "grill papucs",
+              "itemName": "Grillezett csirkemell papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "PICCANTE",
+              "itemName": "Piccante szalámis (olasz, csípős)",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Csirkés panini",
+              "itemName": "Csirkés panini",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Vadas- park",
+          "storeName": "Fav Vadaspark",
+          "sheet": " HÉTFŐ FAVORIT",
+          "column": "H",
+          "sheetCode": "132",
+          "sheetTotal": 20,
+          "computedTotal": 20,
+          "storeOrder": 5,
+          "lines": [
+            {
+              "excelLabel": "fasírtos-pfeff",
+              "itemName": "Fasírtos-pfefferonis szendvics",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "RHZS TK",
+              "itemName": "Rántott húsos vekni (teljes kiőrlésű)",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "CSILLAG",
+          "storeName": "Fav Csillag",
+          "sheet": " HÉTFŐ FAVORIT",
+          "column": "I",
+          "sheetCode": "47",
+          "sheetTotal": 13,
+          "computedTotal": 13,
+          "storeOrder": 6,
+          "lines": [
+            {
+              "excelLabel": "fasírtos-pfeff",
+              "itemName": "Fasírtos-pfefferonis szendvics",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "MARS",
+          "storeName": "FAV Mars",
+          "sheet": " HÉTFŐ FAVORIT",
+          "column": "J",
+          "sheetCode": "324",
+          "sheetTotal": 8,
+          "computedTotal": 8,
+          "storeOrder": 7,
+          "lines": [
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "Szegedi sonkás",
+              "itemName": "Szegedi sonkás vekni",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "DESZK",
+          "storeName": "Fav Deszk",
+          "sheet": " HÉTFŐ FAVORIT",
+          "column": "K",
+          "sheetCode": "62",
+          "sheetTotal": 6,
+          "computedTotal": 6,
+          "storeOrder": 8,
+          "lines": [
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "pleskavica",
+              "itemName": "Pleskavica",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "RHZS TK",
+              "itemName": "Rántott húsos vekni (teljes kiőrlésű)",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "Röszke",
+          "storeName": "Fav Röszke",
+          "sheet": " HÉTFŐ FAVORIT",
+          "column": "L",
+          "sheetCode": "91",
+          "sheetTotal": 22,
+          "computedTotal": 22,
+          "storeOrder": 9,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "Szegedi sonkás",
+              "itemName": "Szegedi sonkás vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Csirkés panini",
+              "itemName": "Csirkés panini",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "ÁG U.",
+          "storeName": "Fav Ág u",
+          "sheet": " HÉTFŐ FAVORIT",
+          "column": "M",
+          "sheetCode": "197",
+          "sheetTotal": 14,
+          "computedTotal": 14,
+          "storeOrder": 10,
+          "lines": [
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 3
+            }
+          ]
+        },
+        {
+          "rawName": "MIHÁLY TELEK",
+          "storeName": "Fav Szentmihály",
+          "sheet": " HÉTFŐ FAVORIT",
+          "column": "N",
+          "sheetCode": "328",
+          "sheetTotal": 6,
+          "computedTotal": 6,
+          "storeOrder": 11,
+          "lines": [
+            {
+              "excelLabel": "nagyi",
+              "itemName": "Nagyi kifli",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 3
+            }
+          ]
+        },
+        {
+          "rawName": "Retek",
+          "storeName": "Fav Retek",
+          "sheet": " HÉTFŐ FAVORIT",
+          "column": "O",
+          "sheetCode": "48",
+          "sheetTotal": 23,
+          "computedTotal": 23,
+          "storeOrder": 12,
+          "lines": [
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 4
+            }
+          ]
+        },
+        {
+          "rawName": "CSIRKE 10db",
+          "storeName": "Csirke",
+          "sheet": " HÉTFŐ FAVORIT",
+          "column": "Q",
+          "sheetCode": "",
+          "sheetTotal": 10,
+          "computedTotal": 10,
+          "storeOrder": 13,
+          "lines": [
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 8
+            }
+          ]
+        },
+        {
+          "rawName": "Székely",
+          "storeName": "Székelysor",
+          "sheet": "HÉTFŐ1",
+          "column": "E",
+          "sheetCode": "",
+          "sheetTotal": 15,
+          "computedTotal": 15,
+          "storeOrder": 14,
+          "lines": [
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "ÚJ KL",
+          "storeName": "ÚJ KL",
+          "sheet": "HÉTFŐ1",
+          "column": "I",
+          "sheetCode": "18",
+          "sheetTotal": 34,
+          "computedTotal": 34,
+          "storeOrder": 15,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 10
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 15
+            }
+          ]
+        },
+        {
+          "rawName": "GYEREK KLINIKA",
+          "storeName": "Gyerekklinika",
+          "sheet": "HÉTFŐ1",
+          "column": "K",
+          "sheetCode": "",
+          "sheetTotal": 18,
+          "computedTotal": 18,
+          "storeOrder": 16,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 6
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 6
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 3
+            }
+          ]
+        },
+        {
+          "rawName": "Smart Market",
+          "storeName": "Smart",
+          "sheet": "HÉTFŐ1",
+          "column": "M",
+          "sheetCode": "453",
+          "sheetTotal": 25,
+          "computedTotal": 25,
+          "storeOrder": 17,
+          "lines": [
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 6
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "RHZS TK",
+              "itemName": "Rántott húsos vekni (teljes kiőrlésű)",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 5
+            }
+          ]
+        },
+        {
+          "rawName": "Mars Taxi",
+          "storeName": "Mars taxi",
+          "sheet": "HÉTFŐ1",
+          "column": "O",
+          "sheetCode": "",
+          "sheetTotal": 19,
+          "computedTotal": 19,
+          "storeOrder": 18,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "nagyi",
+              "itemName": "Nagyi kifli",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "pleskavica",
+              "itemName": "Pleskavica",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "pogácsa",
+              "itemName": "Dupla szalámis pogácsa",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "Csirkés panini",
+              "itemName": "Csirkés panini",
+              "quantity": 3
+            }
+          ]
+        },
+        {
+          "rawName": "Ital depó",
+          "storeName": "Ital depó",
+          "sheet": "HÉTFŐ1",
+          "column": "Q",
+          "sheetCode": "70",
+          "sheetTotal": 35,
+          "computedTotal": 35,
+          "storeOrder": 19,
+          "lines": [
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "PÖTYI",
+              "itemName": "Pötyi pogi (dupla rántott húsos pogácsa)",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 6
+            },
+            {
+              "excelLabel": "PICCANTE",
+              "itemName": "Piccante szalámis (olasz, csípős)",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "Csirkés panini",
+              "itemName": "Csirkés panini",
+              "quantity": 10
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 4
+            }
+          ]
+        },
+        {
+          "rawName": "NÁ",
+          "storeName": "NÁ",
+          "sheet": "HÉTFŐ2",
+          "column": "D",
+          "sheetCode": "1",
+          "sheetTotal": 19,
+          "computedTotal": 19,
+          "storeOrder": 20,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 5
+            }
+          ]
+        },
+        {
+          "rawName": "Coop 116",
+          "storeName": "Coop 116",
+          "sheet": "HÉTFŐ2",
+          "column": "E",
+          "sheetCode": "8",
+          "sheetTotal": 15,
+          "computedTotal": 15,
+          "storeOrder": 21,
+          "lines": [
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 6
+            }
+          ]
+        },
+        {
+          "rawName": "Coop 103",
+          "storeName": "Coop 103",
+          "sheet": "HÉTFŐ2",
+          "column": "F",
+          "sheetCode": "2",
+          "sheetTotal": 17,
+          "computedTotal": 17,
+          "storeOrder": 22,
+          "lines": [
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 6
+            }
+          ]
+        },
+        {
+          "rawName": "Coop Retek",
+          "storeName": "Coop Retek",
+          "sheet": "HÉTFŐ2",
+          "column": "G",
+          "sheetCode": "10",
+          "sheetTotal": 14,
+          "computedTotal": 14,
+          "storeOrder": 23,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 3
+            }
+          ]
+        },
+        {
+          "rawName": "ZÁKÁNYSZÉK",
+          "storeName": "Zákányszék",
+          "sheet": "HÉTFŐ2",
+          "column": "I",
+          "sheetCode": "",
+          "sheetTotal": 44,
+          "computedTotal": 44,
+          "storeOrder": 24,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "nagyi",
+              "itemName": "Nagyi kifli",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "pogácsa",
+              "itemName": "Dupla szalámis pogácsa",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "Szegedi sonkás",
+              "itemName": "Szegedi sonkás vekni",
+              "quantity": 4
+            }
+          ]
+        },
+        {
+          "rawName": "Ruzsa Fincsi",
+          "storeName": "Ruzsa Fincsi",
+          "sheet": "HÉTFŐ2",
+          "column": "K",
+          "sheetCode": "",
+          "sheetTotal": 25,
+          "computedTotal": 25,
+          "storeOrder": 25,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 6
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 6
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 3
+            }
+          ]
+        },
+        {
+          "rawName": "NS Diszkont",
+          "storeName": "NS Diszkont",
+          "sheet": "HÉTFŐ2",
+          "column": "N",
+          "sheetCode": "391",
+          "sheetTotal": 12,
+          "computedTotal": 12,
+          "storeOrder": 26,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "pogácsa",
+              "itemName": "Dupla szalámis pogácsa",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "PICCANTE",
+              "itemName": "Piccante szalámis (olasz, csípős)",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "LILIOM ABC",
+          "storeName": "LILIOM ABC",
+          "sheet": "HÉTFŐ2",
+          "column": "O",
+          "sheetCode": "169",
+          "sheetTotal": 15,
+          "computedTotal": 15,
+          "storeOrder": 27,
+          "lines": [
+            {
+              "excelLabel": "fasírtos-pfeff",
+              "itemName": "Fasírtos-pfefferonis szendvics",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "grill papucs",
+              "itemName": "Grillezett csirkemell papucs",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 4
+            }
+          ]
+        },
+        {
+          "rawName": "PETŐFI",
+          "storeName": "Petőfi",
+          "sheet": "HÉTFŐ2",
+          "column": "Q",
+          "sheetCode": "370",
+          "sheetTotal": 39,
+          "computedTotal": 39,
+          "storeOrder": 28,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "grill papucs",
+              "itemName": "Grillezett csirkemell papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 7
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 7
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 7
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "pleskavica",
+              "itemName": "Pleskavica",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "Szegedi sonkás",
+              "itemName": "Szegedi sonkás vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Csirkés panini",
+              "itemName": "Csirkés panini",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "KISSZÁLLÁS",
+          "storeName": "KISSZÁLLÁS",
+          "sheet": "HÉTFŐ DU VIDÉK",
+          "column": "E",
+          "sheetCode": "",
+          "sheetTotal": 35,
+          "computedTotal": 35,
+          "storeOrder": 29,
+          "lines": [
+            {
+              "excelLabel": "fasírtos-pfeff",
+              "itemName": "Fasírtos-pfefferonis szendvics",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "grill papucs",
+              "itemName": "Grillezett csirkemell papucs",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 5
+            }
+          ]
+        },
+        {
+          "rawName": "COOP MÓRA",
+          "storeName": "coop móra",
+          "sheet": "HÉTFŐ DU VIDÉK",
+          "column": "G",
+          "sheetCode": "35",
+          "sheetTotal": 43,
+          "computedTotal": 43,
+          "storeOrder": 30,
+          "lines": [
+            {
+              "excelLabel": "fasírtos-pfeff",
+              "itemName": "Fasírtos-pfefferonis szendvics",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "grill papucs",
+              "itemName": "Grillezett csirkemell papucs",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 8
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 10
+            }
+          ]
+        },
+        {
+          "rawName": "HATÁR",
+          "storeName": "határ",
+          "sheet": "HÉTFŐ DU VIDÉK",
+          "column": "I",
+          "sheetCode": "162",
+          "sheetTotal": 101,
+          "computedTotal": 101,
+          "storeOrder": 31,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 10
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 10
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 10
+            },
+            {
+              "excelLabel": "nagyi",
+              "itemName": "Nagyi kifli",
+              "quantity": 10
+            },
+            {
+              "excelLabel": "pleskavica",
+              "itemName": "Pleskavica",
+              "quantity": 10
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 10
+            },
+            {
+              "excelLabel": "PICCANTE",
+              "itemName": "Piccante szalámis (olasz, csípős)",
+              "quantity": 10
+            },
+            {
+              "excelLabel": "Csirkés panini",
+              "itemName": "Csirkés panini",
+              "quantity": 8
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 8
+            }
+          ]
+        },
+        {
+          "rawName": "KIRÁLY ZSÓKA",
+          "storeName": "király zsóka",
+          "sheet": "HÉTFŐ DU VIDÉK",
+          "column": "K",
+          "sheetCode": "",
+          "sheetTotal": 18,
+          "computedTotal": 18,
+          "storeOrder": 32,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "grill papucs",
+              "itemName": "Grillezett csirkemell papucs",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 5
+            }
+          ]
+        },
+        {
+          "rawName": "OMW",
+          "storeName": "OMV",
+          "sheet": "HÉTFŐ DU VIDÉK",
+          "column": "M",
+          "sheetCode": "373",
+          "sheetTotal": 11,
+          "computedTotal": 11,
+          "storeOrder": 33,
+          "lines": [
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "weekday": 1,
+      "sheets": [
+        "KEDD",
+        "KEDD (2)"
+      ],
+      "stores": [
+        {
+          "rawName": "NÁ",
+          "storeName": "NÁ",
+          "sheet": "KEDD",
+          "column": "D",
+          "sheetCode": "1",
+          "sheetTotal": 19,
+          "computedTotal": 19,
+          "storeOrder": 1,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 5
+            }
+          ]
+        },
+        {
+          "rawName": "Coop 103",
+          "storeName": "Coop 103",
+          "sheet": "KEDD",
+          "column": "E",
+          "sheetCode": "2",
+          "sheetTotal": 15,
+          "computedTotal": 15,
+          "storeOrder": 2,
+          "lines": [
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 6
+            }
+          ]
+        },
+        {
+          "rawName": "Coop Zsombó",
+          "storeName": "Coop Zsombó",
+          "sheet": "KEDD",
+          "column": "F",
+          "sheetCode": "4",
+          "sheetTotal": 21,
+          "computedTotal": 21,
+          "storeOrder": 3,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "grill papucs",
+              "itemName": "Grillezett csirkemell papucs",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "Coop 116",
+          "storeName": "Coop 116",
+          "sheet": "KEDD",
+          "column": "G",
+          "sheetCode": "8",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 4,
+          "lines": []
+        },
+        {
+          "rawName": "ZÁKÁNYSZÉK",
+          "storeName": "Zákányszék",
+          "sheet": "KEDD",
+          "column": "I",
+          "sheetCode": "",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 5,
+          "lines": []
+        },
+        {
+          "rawName": "Vadas- park",
+          "storeName": "Fav Vadaspark",
+          "sheet": "KEDD",
+          "column": "N",
+          "sheetCode": "132",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 6,
+          "lines": []
+        },
+        {
+          "rawName": "Vedres FAV",
+          "storeName": "Fav vedres",
+          "sheet": "KEDD",
+          "column": "O",
+          "sheetCode": "43",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 7,
+          "lines": []
+        },
+        {
+          "rawName": "Dettre FAV",
+          "storeName": "FAV dettre",
+          "sheet": "KEDD",
+          "column": "P",
+          "sheetCode": "146",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 8,
+          "lines": []
+        },
+        {
+          "rawName": "Deszk FAV",
+          "storeName": "Fav Deszk",
+          "sheet": "KEDD",
+          "column": "Q",
+          "sheetCode": "62",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 9,
+          "lines": []
+        },
+        {
+          "rawName": "Röszke FAV",
+          "storeName": "Fav Röszke",
+          "sheet": "KEDD",
+          "column": "R",
+          "sheetCode": "91",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 10,
+          "lines": []
+        },
+        {
+          "rawName": "ÁG U. FAV",
+          "storeName": "Fav Ág u",
+          "sheet": "KEDD",
+          "column": "S",
+          "sheetCode": "197",
+          "sheetTotal": 14,
+          "computedTotal": 14,
+          "storeOrder": 11,
+          "lines": [
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 3
+            }
+          ]
+        },
+        {
+          "rawName": "CSIRKE 10db",
+          "storeName": "Csirke",
+          "sheet": "KEDD (2)",
+          "column": "D",
+          "sheetCode": "",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 12,
+          "lines": []
+        },
+        {
+          "rawName": "ÚJ KL",
+          "storeName": "ÚJ KL",
+          "sheet": "KEDD (2)",
+          "column": "F",
+          "sheetCode": "",
+          "sheetTotal": 24,
+          "computedTotal": 24,
+          "storeOrder": 13,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 15
+            }
+          ]
+        },
+        {
+          "rawName": "Smart Market",
+          "storeName": "Smart",
+          "sheet": "KEDD (2)",
+          "column": "G",
+          "sheetCode": "453",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 14,
+          "lines": []
+        },
+        {
+          "rawName": "Mars Taxi",
+          "storeName": "Mars taxi",
+          "sheet": "KEDD (2)",
+          "column": "H",
+          "sheetCode": "",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 15,
+          "lines": []
+        },
+        {
+          "rawName": "PETŐFI",
+          "storeName": "Petőfi",
+          "sheet": "KEDD (2)",
+          "column": "J",
+          "sheetCode": "370",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 16,
+          "lines": []
+        },
+        {
+          "rawName": "Tisza Palota",
+          "storeName": "Tisza Palota Pékáru",
+          "sheet": "KEDD (2)",
+          "column": "K",
+          "sheetCode": "",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 17,
+          "lines": []
+        },
+        {
+          "rawName": "Székelysor",
+          "storeName": "Székelysor",
+          "sheet": "KEDD (2)",
+          "column": "M",
+          "sheetCode": "18",
+          "sheetTotal": 8,
+          "computedTotal": 8,
+          "storeOrder": 18,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "GYEREK KLINIKA",
+          "storeName": "Gyerekklinika",
+          "sheet": "KEDD (2)",
+          "column": "O",
+          "sheetCode": "",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 19,
+          "lines": []
+        },
+        {
+          "rawName": "NS Diszkont",
+          "storeName": "NS Diszkont",
+          "sheet": "KEDD (2)",
+          "column": "P",
+          "sheetCode": "391",
+          "sheetTotal": 19,
+          "computedTotal": 19,
+          "storeOrder": 20,
+          "lines": [
+            {
+              "excelLabel": "fasírtos-pfeff",
+              "itemName": "Fasírtos-pfefferonis szendvics",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "PÖTYI",
+              "itemName": "Pötyi pogi (dupla rántott húsos pogácsa)",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "Szegedi sonkás",
+              "itemName": "Szegedi sonkás vekni",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "LILIOM ABC",
+          "storeName": "LILIOM ABC",
+          "sheet": "KEDD (2)",
+          "column": "S",
+          "sheetCode": "169",
+          "sheetTotal": 12,
+          "computedTotal": 12,
+          "storeOrder": 21,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "weekday": 2,
+      "sheets": [
+        "SZERDA",
+        "SZERDA (2)",
+        "SZERDA VIDÉK "
+      ],
+      "stores": [
+        {
+          "rawName": "NÁ",
+          "storeName": "NÁ",
+          "sheet": "SZERDA",
+          "column": "D",
+          "sheetCode": "1",
+          "sheetTotal": 19,
+          "computedTotal": 19,
+          "storeOrder": 1,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 5
+            }
+          ]
+        },
+        {
+          "rawName": "Coop 103",
+          "storeName": "Coop 103",
+          "sheet": "SZERDA",
+          "column": "E",
+          "sheetCode": "2",
+          "sheetTotal": 17,
+          "computedTotal": 17,
+          "storeOrder": 2,
+          "lines": [
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 6
+            }
+          ]
+        },
+        {
+          "rawName": "Coop 116",
+          "storeName": "Coop 116",
+          "sheet": "SZERDA",
+          "column": "F",
+          "sheetCode": "8",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 3,
+          "lines": []
+        },
+        {
+          "rawName": "CSILLAG FAV",
+          "storeName": "Fav Csillag",
+          "sheet": "SZERDA",
+          "column": "K",
+          "sheetCode": "47",
+          "sheetTotal": 12,
+          "computedTotal": 12,
+          "storeOrder": 4,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "Szőreg FAV",
+          "storeName": "Fav szőreg",
+          "sheet": "SZERDA",
+          "column": "L",
+          "sheetCode": "199",
+          "sheetTotal": 5,
+          "computedTotal": 5,
+          "storeOrder": 5,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Szegedi sonkás",
+              "itemName": "Szegedi sonkás vekni",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Retek FAV",
+          "storeName": "Fav Retek",
+          "sheet": "SZERDA",
+          "column": "M",
+          "sheetCode": "48",
+          "sheetTotal": 26,
+          "computedTotal": 26,
+          "storeOrder": 6,
+          "lines": [
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 6
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 4
+            }
+          ]
+        },
+        {
+          "rawName": "Dettre FAV",
+          "storeName": "FAV dettre",
+          "sheet": "SZERDA",
+          "column": "N",
+          "sheetCode": "146",
+          "sheetTotal": 16,
+          "computedTotal": 16,
+          "storeOrder": 7,
+          "lines": [
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "pleskavica",
+              "itemName": "Pleskavica",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "PICCANTE",
+              "itemName": "Piccante szalámis (olasz, csípős)",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Vadas- park",
+          "storeName": "Fav Vadaspark",
+          "sheet": "SZERDA",
+          "column": "O",
+          "sheetCode": "132",
+          "sheetTotal": 20,
+          "computedTotal": 20,
+          "storeOrder": 8,
+          "lines": [
+            {
+              "excelLabel": "fasírtos-pfeff",
+              "itemName": "Fasírtos-pfefferonis szendvics",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "RHZS TK",
+              "itemName": "Rántott húsos vekni (teljes kiőrlésű)",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Deszk FAV",
+          "storeName": "Fav Deszk",
+          "sheet": "SZERDA",
+          "column": "P",
+          "sheetCode": "62",
+          "sheetTotal": 8,
+          "computedTotal": 8,
+          "storeOrder": 9,
+          "lines": [
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "RHZS TK",
+              "itemName": "Rántott húsos vekni (teljes kiőrlésű)",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Röszke FAV",
+          "storeName": "Fav Röszke",
+          "sheet": "SZERDA",
+          "column": "Q",
+          "sheetCode": "91",
+          "sheetTotal": 16,
+          "computedTotal": 16,
+          "storeOrder": 10,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "nagyi",
+              "itemName": "Nagyi kifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "Szegedi sonkás",
+              "itemName": "Szegedi sonkás vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "Csirkés panini",
+              "itemName": "Csirkés panini",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "ÁG U. FAV",
+          "storeName": "Fav Ág u",
+          "sheet": "SZERDA",
+          "column": "R",
+          "sheetCode": "197",
+          "sheetTotal": 14,
+          "computedTotal": 14,
+          "storeOrder": 11,
+          "lines": [
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 3
+            }
+          ]
+        },
+        {
+          "rawName": "Smart Market",
+          "storeName": "Smart",
+          "sheet": "SZERDA (2)",
+          "column": "D",
+          "sheetCode": "453",
+          "sheetTotal": 17,
+          "computedTotal": 17,
+          "storeOrder": 12,
+          "lines": [
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "RHZS TK",
+              "itemName": "Rántott húsos vekni (teljes kiőrlésű)",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 4
+            }
+          ]
+        },
+        {
+          "rawName": "PETŐFI",
+          "storeName": "Petőfi",
+          "sheet": "SZERDA (2)",
+          "column": "E",
+          "sheetCode": "370",
+          "sheetTotal": 20,
+          "computedTotal": 20,
+          "storeOrder": 13,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Csirkés panini",
+              "itemName": "Csirkés panini",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "LILIOM ABC",
+          "storeName": "LILIOM ABC",
+          "sheet": "SZERDA (2)",
+          "column": "G",
+          "sheetCode": "169",
+          "sheetTotal": 14,
+          "computedTotal": 14,
+          "storeOrder": 14,
+          "lines": [
+            {
+              "excelLabel": "grill papucs",
+              "itemName": "Grillezett csirkemell papucs",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 5
+            }
+          ]
+        },
+        {
+          "rawName": "GYEREK KLINIKA",
+          "storeName": "Gyerekklinika",
+          "sheet": "SZERDA (2)",
+          "column": "H",
+          "sheetCode": "",
+          "sheetTotal": 16,
+          "computedTotal": 16,
+          "storeOrder": 15,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 3
+            }
+          ]
+        },
+        {
+          "rawName": "Mars Taxi",
+          "storeName": "Mars taxi",
+          "sheet": "SZERDA (2)",
+          "column": "L",
+          "sheetCode": "",
+          "sheetTotal": 10,
+          "computedTotal": 10,
+          "storeOrder": 16,
+          "lines": [
+            {
+              "excelLabel": "nagyi",
+              "itemName": "Nagyi kifli",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "pleskavica",
+              "itemName": "Pleskavica",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "Csirkés panini",
+              "itemName": "Csirkés panini",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "Székely",
+          "storeName": "Székelysor",
+          "sheet": "SZERDA (2)",
+          "column": "N",
+          "sheetCode": "",
+          "sheetTotal": 15,
+          "computedTotal": 15,
+          "storeOrder": 17,
+          "lines": [
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "ÚJ KL",
+          "storeName": "ÚJ KL",
+          "sheet": "SZERDA (2)",
+          "column": "Q",
+          "sheetCode": "18",
+          "sheetTotal": 24,
+          "computedTotal": 24,
+          "storeOrder": 18,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 15
+            }
+          ]
+        },
+        {
+          "rawName": "CSIRKE 10db",
+          "storeName": "Csirke",
+          "sheet": "SZERDA (2)",
+          "column": "S",
+          "sheetCode": "",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 19,
+          "lines": []
+        },
+        {
+          "rawName": "COOP MÓRA",
+          "storeName": "coop móra",
+          "sheet": "SZERDA VIDÉK ",
+          "column": "E",
+          "sheetCode": "35",
+          "sheetTotal": 43,
+          "computedTotal": 43,
+          "storeOrder": 20,
+          "lines": [
+            {
+              "excelLabel": "fasírtos-pfeff",
+              "itemName": "Fasírtos-pfefferonis szendvics",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "grill papucs",
+              "itemName": "Grillezett csirkemell papucs",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 8
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 10
+            }
+          ]
+        },
+        {
+          "rawName": "HATÁR",
+          "storeName": "határ",
+          "sheet": "SZERDA VIDÉK ",
+          "column": "H",
+          "sheetCode": "162",
+          "sheetTotal": 101,
+          "computedTotal": 101,
+          "storeOrder": 21,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 10
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 10
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 10
+            },
+            {
+              "excelLabel": "nagyi",
+              "itemName": "Nagyi kifli",
+              "quantity": 10
+            },
+            {
+              "excelLabel": "pleskavica",
+              "itemName": "Pleskavica",
+              "quantity": 10
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 10
+            },
+            {
+              "excelLabel": "PICCANTE",
+              "itemName": "Piccante szalámis (olasz, csípős)",
+              "quantity": 10
+            },
+            {
+              "excelLabel": "Csirkés panini",
+              "itemName": "Csirkés panini",
+              "quantity": 8
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 8
+            }
+          ]
+        },
+        {
+          "rawName": "KIRÁLY ZSÓKA",
+          "storeName": "király zsóka",
+          "sheet": "SZERDA VIDÉK ",
+          "column": "J",
+          "sheetCode": "",
+          "sheetTotal": 18,
+          "computedTotal": 18,
+          "storeOrder": 22,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "grill papucs",
+              "itemName": "Grillezett csirkemell papucs",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 5
+            }
+          ]
+        },
+        {
+          "rawName": "OMW",
+          "storeName": "OMV",
+          "sheet": "SZERDA VIDÉK ",
+          "column": "L",
+          "sheetCode": "373",
+          "sheetTotal": 11,
+          "computedTotal": 11,
+          "storeOrder": 23,
+          "lines": [
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "weekday": 3,
+      "sheets": [
+        "CSÜT",
+        "CSÜT (2)"
+      ],
+      "stores": [
+        {
+          "rawName": "NÁ",
+          "storeName": "NÁ",
+          "sheet": "CSÜT",
+          "column": "D",
+          "sheetCode": "1",
+          "sheetTotal": 19,
+          "computedTotal": 19,
+          "storeOrder": 1,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 5
+            }
+          ]
+        },
+        {
+          "rawName": "Coop 116",
+          "storeName": "Coop 116",
+          "sheet": "CSÜT",
+          "column": "F",
+          "sheetCode": "8",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 2,
+          "lines": []
+        },
+        {
+          "rawName": "Vedres FAV",
+          "storeName": "Fav vedres",
+          "sheet": "CSÜT",
+          "column": "J",
+          "sheetCode": "43",
+          "sheetTotal": 17,
+          "computedTotal": 17,
+          "storeOrder": 3,
+          "lines": [
+            {
+              "excelLabel": "grill papucs",
+              "itemName": "Grillezett csirkemell papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "PICCANTE",
+              "itemName": "Piccante szalámis (olasz, csípős)",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Csirkés panini",
+              "itemName": "Csirkés panini",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Vadas- park",
+          "storeName": "Fav Vadaspark",
+          "sheet": "CSÜT",
+          "column": "K",
+          "sheetCode": "132",
+          "sheetTotal": 20,
+          "computedTotal": 20,
+          "storeOrder": 4,
+          "lines": [
+            {
+              "excelLabel": "fasírtos-pfeff",
+              "itemName": "Fasírtos-pfefferonis szendvics",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "RHZS TK",
+              "itemName": "Rántott húsos vekni (teljes kiőrlésű)",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Deszk FAV",
+          "storeName": "Fav Deszk",
+          "sheet": "CSÜT",
+          "column": "L",
+          "sheetCode": "62",
+          "sheetTotal": 13,
+          "computedTotal": 13,
+          "storeOrder": 5,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "pleskavica",
+              "itemName": "Pleskavica",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "RHZS TK",
+              "itemName": "Rántott húsos vekni (teljes kiőrlésű)",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "Doma FAV",
+          "storeName": "FAv doma",
+          "sheet": "CSÜT",
+          "column": "M",
+          "sheetCode": "152",
+          "sheetTotal": 11,
+          "computedTotal": 11,
+          "storeOrder": 6,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "grill papucs",
+              "itemName": "Grillezett csirkemell papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "pleskavica",
+              "itemName": "Pleskavica",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "RHZS TK",
+              "itemName": "Rántott húsos vekni (teljes kiőrlésű)",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "PÖTYI",
+              "itemName": "Pötyi pogi (dupla rántott húsos pogácsa)",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Szegedi sonkás",
+              "itemName": "Szegedi sonkás vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Mars FAV",
+          "storeName": "FAV Mars",
+          "sheet": "CSÜT",
+          "column": "N",
+          "sheetCode": "324",
+          "sheetTotal": 5,
+          "computedTotal": 5,
+          "storeOrder": 7,
+          "lines": [
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "Szegedi sonkás",
+              "itemName": "Szegedi sonkás vekni",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Retek FAV",
+          "storeName": "Fav Retek",
+          "sheet": "CSÜT",
+          "column": "O",
+          "sheetCode": "48",
+          "sheetTotal": 12,
+          "computedTotal": 12,
+          "storeOrder": 8,
+          "lines": [
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "MIHÁLY TELEK",
+          "storeName": "Fav Szentmihály",
+          "sheet": "CSÜT",
+          "column": "P",
+          "sheetCode": "328",
+          "sheetTotal": 7,
+          "computedTotal": 7,
+          "storeOrder": 9,
+          "lines": [
+            {
+              "excelLabel": "nagyi",
+              "itemName": "Nagyi kifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Dettre FAV",
+          "storeName": "FAV dettre",
+          "sheet": "CSÜT",
+          "column": "Q",
+          "sheetCode": "146",
+          "sheetTotal": 8,
+          "computedTotal": 8,
+          "storeOrder": 10,
+          "lines": [
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "pleskavica",
+              "itemName": "Pleskavica",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Röszke FAV",
+          "storeName": "Fav Röszke",
+          "sheet": "CSÜT",
+          "column": "R",
+          "sheetCode": "91",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 11,
+          "lines": []
+        },
+        {
+          "rawName": "ÁG U. FAV",
+          "storeName": "Fav Ág u",
+          "sheet": "CSÜT",
+          "column": "S",
+          "sheetCode": "197",
+          "sheetTotal": 4,
+          "computedTotal": 4,
+          "storeOrder": 12,
+          "lines": [
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 3
+            }
+          ]
+        },
+        {
+          "rawName": "CSIRKE 10 db",
+          "storeName": "Csirke",
+          "sheet": "CSÜT (2)",
+          "column": "D",
+          "sheetCode": "",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 13,
+          "lines": []
+        },
+        {
+          "rawName": "NS Diszkont",
+          "storeName": "NS Diszkont",
+          "sheet": "CSÜT (2)",
+          "column": "E",
+          "sheetCode": "391",
+          "sheetTotal": 24,
+          "computedTotal": 24,
+          "storeOrder": 14,
+          "lines": [
+            {
+              "excelLabel": "fasírtos-pfeff",
+              "itemName": "Fasírtos-pfefferonis szendvics",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "PÖTYI",
+              "itemName": "Pötyi pogi (dupla rántott húsos pogácsa)",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "Szegedi sonkás",
+              "itemName": "Szegedi sonkás vekni",
+              "quantity": 3
+            }
+          ]
+        },
+        {
+          "rawName": "LILIOM ABC",
+          "storeName": "LILIOM ABC",
+          "sheet": "CSÜT (2)",
+          "column": "F",
+          "sheetCode": "169",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 15,
+          "lines": []
+        },
+        {
+          "rawName": "Tisza Palota",
+          "storeName": "Tisza Palota Pékáru",
+          "sheet": "CSÜT (2)",
+          "column": "G",
+          "sheetCode": "",
+          "sheetTotal": 3,
+          "computedTotal": 3,
+          "storeOrder": 16,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "Mars Taxi",
+          "storeName": "Mars taxi",
+          "sheet": "CSÜT (2)",
+          "column": "I",
+          "sheetCode": "",
+          "sheetTotal": 10,
+          "computedTotal": 10,
+          "storeOrder": 17,
+          "lines": [
+            {
+              "excelLabel": "nagyi",
+              "itemName": "Nagyi kifli",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Csirkés panini",
+              "itemName": "Csirkés panini",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "Smart Market",
+          "storeName": "Smart",
+          "sheet": "CSÜT (2)",
+          "column": "J",
+          "sheetCode": "453",
+          "sheetTotal": 14,
+          "computedTotal": 14,
+          "storeOrder": 18,
+          "lines": [
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 6
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 4
+            }
+          ]
+        },
+        {
+          "rawName": "ÚJ KL",
+          "storeName": "ÚJ KL",
+          "sheet": "CSÜT (2)",
+          "column": "L",
+          "sheetCode": "18",
+          "sheetTotal": 15,
+          "computedTotal": 15,
+          "storeOrder": 19,
+          "lines": [
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 15
+            }
+          ]
+        },
+        {
+          "rawName": "PETŐFI",
+          "storeName": "Petőfi",
+          "sheet": "CSÜT (2)",
+          "column": "M",
+          "sheetCode": "370",
+          "sheetTotal": 32,
+          "computedTotal": 32,
+          "storeOrder": 20,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "pleskavica",
+              "itemName": "Pleskavica",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "Csirkés panini",
+              "itemName": "Csirkés panini",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "GYEREK KLINIKA",
+          "storeName": "Gyerekklinika",
+          "sheet": "CSÜT (2)",
+          "column": "P",
+          "sheetCode": "",
+          "sheetTotal": 16,
+          "computedTotal": 16,
+          "storeOrder": 21,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 3
+            }
+          ]
+        },
+        {
+          "rawName": "ZÁKÁNYSZÉK",
+          "storeName": "Zákányszék",
+          "sheet": "CSÜT (2)",
+          "column": "R",
+          "sheetCode": "",
+          "sheetTotal": 44,
+          "computedTotal": 44,
+          "storeOrder": 22,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "nagyi",
+              "itemName": "Nagyi kifli",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "pogácsa",
+              "itemName": "Dupla szalámis pogácsa",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "Szegedi sonkás",
+              "itemName": "Szegedi sonkás vekni",
+              "quantity": 4
+            }
+          ]
+        },
+        {
+          "rawName": "Ruzsa Fincsi",
+          "storeName": "Ruzsa Fincsi",
+          "sheet": "CSÜT (2)",
+          "column": "S",
+          "sheetCode": "",
+          "sheetTotal": 25,
+          "computedTotal": 25,
+          "storeOrder": 23,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 6
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 6
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "weekday": 4,
+      "sheets": [
+        "PÉNTEK",
+        "PÉNTEK (2)"
+      ],
+      "stores": [
+        {
+          "rawName": "NÁ",
+          "storeName": "NÁ",
+          "sheet": "PÉNTEK",
+          "column": "D",
+          "sheetCode": "1",
+          "sheetTotal": 17,
+          "computedTotal": 17,
+          "storeOrder": 1,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 3
+            }
+          ]
+        },
+        {
+          "rawName": "Coop 116",
+          "storeName": "Coop 116",
+          "sheet": "PÉNTEK",
+          "column": "E",
+          "sheetCode": "8",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 2,
+          "lines": []
+        },
+        {
+          "rawName": "Kukovecz FAV",
+          "storeName": "Fav kukovecz",
+          "sheet": "PÉNTEK",
+          "column": "G",
+          "sheetCode": "129",
+          "sheetTotal": 6,
+          "computedTotal": 6,
+          "storeOrder": 3,
+          "lines": [
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "nagyi",
+              "itemName": "Nagyi kifli",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "DETTRE FAV",
+          "storeName": "FAV dettre",
+          "sheet": "PÉNTEK",
+          "column": "H",
+          "sheetCode": "146",
+          "sheetTotal": 20,
+          "computedTotal": 20,
+          "storeOrder": 4,
+          "lines": [
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "pleskavica",
+              "itemName": "Pleskavica",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "PICCANTE",
+              "itemName": "Piccante szalámis (olasz, csípős)",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Mars FAV",
+          "storeName": "FAV Mars",
+          "sheet": "PÉNTEK",
+          "column": "I",
+          "sheetCode": "324",
+          "sheetTotal": 5,
+          "computedTotal": 5,
+          "storeOrder": 5,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Szegedi sonkás",
+              "itemName": "Szegedi sonkás vekni",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Röszke FAV",
+          "storeName": "Fav Röszke",
+          "sheet": "PÉNTEK",
+          "column": "J",
+          "sheetCode": "91",
+          "sheetTotal": 24,
+          "computedTotal": 24,
+          "storeOrder": 6,
+          "lines": [
+            {
+              "excelLabel": "hamburger",
+              "itemName": "Hamburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "nagyi",
+              "itemName": "Nagyi kifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Csirkés panini",
+              "itemName": "Csirkés panini",
+              "quantity": 3
+            }
+          ]
+        },
+        {
+          "rawName": "Vadas- park",
+          "storeName": "Fav Vadaspark",
+          "sheet": "PÉNTEK",
+          "column": "K",
+          "sheetCode": "132",
+          "sheetTotal": 11,
+          "computedTotal": 11,
+          "storeOrder": 7,
+          "lines": [
+            {
+              "excelLabel": "fasírtos-pfeff",
+              "itemName": "Fasírtos-pfefferonis szendvics",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "rawName": "Retek FAV",
+          "storeName": "Fav Retek",
+          "sheet": "PÉNTEK",
+          "column": "L",
+          "sheetCode": "48",
+          "sheetTotal": 21,
+          "computedTotal": 21,
+          "storeOrder": 8,
+          "lines": [
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI",
+              "itemName": "Csirkemelles bigkifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 5
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "Karajos vekni",
+              "itemName": "Mediterrán karajos vekni",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "MIHÁLY TELEK",
+          "storeName": "Fav Szentmihály",
+          "sheet": "PÉNTEK",
+          "column": "M",
+          "sheetCode": "328",
+          "sheetTotal": 6,
+          "computedTotal": 6,
+          "storeOrder": 9,
+          "lines": [
+            {
+              "excelLabel": "BAGEL",
+              "itemName": "Sonkás bagel",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "nagyi",
+              "itemName": "Nagyi kifli",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "miniburger",
+              "itemName": "Mini burger",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "Zákányszék",
+          "storeName": "Zákányszék",
+          "sheet": "PÉNTEK (2)",
+          "column": "D",
+          "sheetCode": "",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 10,
+          "lines": []
+        },
+        {
+          "rawName": "Smart Market",
+          "storeName": "Smart",
+          "sheet": "PÉNTEK (2)",
+          "column": "H",
+          "sheetCode": "453",
+          "sheetTotal": 18,
+          "computedTotal": 18,
+          "storeOrder": 11,
+          "lines": [
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 6
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "RHZS TK",
+              "itemName": "Rántott húsos vekni (teljes kiőrlésű)",
+              "quantity": 4
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 4
+            }
+          ]
+        },
+        {
+          "rawName": "ÚJ KL",
+          "storeName": "ÚJ KL",
+          "sheet": "PÉNTEK (2)",
+          "column": "K",
+          "sheetCode": "18",
+          "sheetTotal": 15,
+          "computedTotal": 15,
+          "storeOrder": 12,
+          "lines": [
+            {
+              "excelLabel": "EXTRA",
+              "itemName": "Extra szendvics",
+              "quantity": 15
+            }
+          ]
+        },
+        {
+          "rawName": "GYEREK KLINIKA",
+          "storeName": "Gyerekklinika",
+          "sheet": "PÉNTEK (2)",
+          "column": "L",
+          "sheetCode": "",
+          "sheetTotal": 4,
+          "computedTotal": 4,
+          "storeOrder": 13,
+          "lines": [
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "Tépett húsos",
+              "itemName": "Tépett húsos szendvics",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "PETŐFI",
+          "storeName": "Petőfi",
+          "sheet": "PÉNTEK (2)",
+          "column": "M",
+          "sheetCode": "370",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 14,
+          "lines": []
+        },
+        {
+          "rawName": "LILIOM ABC",
+          "storeName": "LILIOM ABC",
+          "sheet": "PÉNTEK (2)",
+          "column": "O",
+          "sheetCode": "169",
+          "sheetTotal": 9,
+          "computedTotal": 9,
+          "storeOrder": 15,
+          "lines": [
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 3
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 3
+            }
+          ]
+        },
+        {
+          "rawName": "Mars Taxi",
+          "storeName": "Mars taxi",
+          "sheet": "PÉNTEK (2)",
+          "column": "P",
+          "sheetCode": "",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 16,
+          "lines": []
+        },
+        {
+          "rawName": "Székely",
+          "storeName": "Székelysor",
+          "sheet": "PÉNTEK (2)",
+          "column": "R",
+          "sheetCode": "",
+          "sheetTotal": 15,
+          "computedTotal": 15,
+          "storeOrder": 17,
+          "lines": [
+            {
+              "excelLabel": "molnárka,kolb",
+              "itemName": "Molnárka (kicsi) kolbászos",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka,sonkás",
+              "itemName": "Molnárka (kicsi) sonkás",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "molnárka szalámis",
+              "itemName": "Molnárka (kicsi) szalámis",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "BIGKIFLI fetás",
+              "itemName": "Fetasajtos bigkifli",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "rántott húsos",
+              "itemName": "Rántott húsos vekni",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "sajtburger",
+              "itemName": "Sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "RHZS PAPUCS",
+              "itemName": "Rántott húsos papucs",
+              "quantity": 1
+            },
+            {
+              "excelLabel": "DUPLA SAJTBURG",
+              "itemName": "Dupla sajtburger",
+              "quantity": 2
+            },
+            {
+              "excelLabel": "TORTILLA",
+              "itemName": "Csirkés tortilla",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "rawName": "CSIRKE 10 db",
+          "storeName": "Csirke",
+          "sheet": "PÉNTEK (2)",
+          "column": "T",
+          "sheetCode": "",
+          "sheetTotal": null,
+          "computedTotal": 0,
+          "storeOrder": 18,
+          "lines": []
+        }
+      ]
+    }
+  ]
+}

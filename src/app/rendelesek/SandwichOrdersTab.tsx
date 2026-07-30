@@ -502,6 +502,15 @@ export default function SandwichOrdersTab() {
           formátumában.
         </p>
         <Link
+          href="/rendelesfelvetel"
+          className="block w-full text-center bg-yellow-400 text-black font-semibold px-5 py-3 rounded-xl active:bg-yellow-500"
+        >
+          Rendelésfelvétel megnyitása
+        </Link>
+        <p className="text-xs text-neutral-500 text-center">
+          Telefonon leadott rendelések rögzítése naponként, boltonként — az Excel helyett.
+        </p>
+        <Link
           href="/rendelesek/szendvics-termekek"
           className="block text-center text-sm text-neutral-500 underline"
         >
