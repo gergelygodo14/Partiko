@@ -51,15 +51,33 @@ model WeeklyMenu {
   updatedAt   DateTime  @updatedAt
 }
 
+// Szállítási kör szerinti csoportosítás, korábban két helyen volt hardkódolva:
+// sandwichVidekStores.ts (5 szó szerinti név) és a groupFavAndCoopAdjacent()
+// név-regexe a generateSandwichOrdersXlsx.ts-ben. A VIDEK erősebb a COOP-nál:
+// a "COOP MÓRA" vidéki bolt a Coop előtag ellenére, és a régi kód csak azért
+// kezelte helyesen, mert a vidéket szűrte ki előbb.
+enum StoreGroup {
+  FAV
+  COOP
+  EGYEB
+  VIDEK
+}
+
 model Customer {
   id             String          @id @default(cuid())
   storeName      String
   companyName    String
+  // Szendvics-kiszállítási metaadat. A csak-készétel ügyfelek az EGYEB/0
+  // alapértéken maradnak; a szendvics-képernyőkön kívül semmi nem olvassa.
+  storeGroup     StoreGroup      @default(EGYEB)
+  storeOrder     Int             @default(0)
   createdAt      DateTime        @default(now())
   orders         Order[]
   sandwichOrders SandwichOrder[]
+  sandwichFixOrders SandwichFixOrder[]
 
   @@index([storeName, companyName])
+  @@index([storeGroup, storeOrder])
 }
 
 model Order {
@@ -183,14 +201,50 @@ model Dish {
 }
 
 model SandwichItem {
-  id         String              @id @default(cuid())
-  name       String
-  price      Int
-  profitFt   Int                 @default(0)
-  order      Int                 @default(0)
-  archived   Boolean             @default(false)
-  createdAt  DateTime            @default(now())
-  orderLines SandwichOrderLine[]
+  id            String                 @id @default(cuid())
+  name          String
+  price         Int
+  profitFt      Int                    @default(0)
+  order         Int                    @default(0)
+  archived      Boolean                @default(false)
+  createdAt     DateTime               @default(now())
+  orderLines    SandwichOrderLine[]
+  fixOrderLines SandwichFixOrderLine[]
+}
+
+// "Fix rendelés" - amit egy bolt szokásosan rendel egy adott hétköznapon.
+// Egyszer betöltve a rendelések.xlsx napi füleiből, utána a felületen
+// szerkeszthető. Szándékosan NEM SandwichOrder: nincs dátuma, nincs
+// ár-pillanatképe, és egyetlen összesítésben/exportban sem jelenik meg.
+// A nulla soros rekord értelmes állapot: a bolt rajta van az adott nap
+// körén, csak nincs beállított mennyisége.
+model SandwichFixOrder {
+  id         String                 @id @default(cuid())
+  customerId String
+  customer   Customer               @relation(fields: [customerId], references: [id])
+  weekday    Int // 0=hétfő .. 4=péntek
+  active     Boolean                @default(true)
+  createdAt  DateTime               @default(now())
+  updatedAt  DateTime               @updatedAt
+  lines      SandwichFixOrderLine[]
+
+  @@unique([customerId, weekday])
+  @@index([weekday, active])
+}
+
+// Itt szándékosan NINCS unitPriceFt (a SandwichOrderLine-nal ellentétben):
+// a sablon nem eladás, nincs mit pillanatképezni. Az ár-pillanatkép csak
+// akkor keletkezik, amikor a sablonból valódi SandwichOrder lesz.
+model SandwichFixOrderLine {
+  id         String           @id @default(cuid())
+  fixOrderId String
+  fixOrder   SandwichFixOrder @relation(fields: [fixOrderId], references: [id], onDelete: Cascade)
+  itemId     String
+  item       SandwichItem     @relation(fields: [itemId], references: [id])
+  quantity   Int
+
+  @@unique([fixOrderId, itemId])
+  @@index([fixOrderId])
 }
 
 model SandwichOrder {

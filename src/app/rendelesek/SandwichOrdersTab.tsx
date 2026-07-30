@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { addDaysStr, addMonthsStr } from "@/lib/dates";
+import { FULL_DAY_NAMES, SHORT_DAY_NAMES } from "@/lib/weekdays";
 
 type ItemTotal = { itemId: string; itemName: string; quantity: number; valueFt: number };
 type CustomerTotal = { customerId: string; storeName: string; quantity: number; valueFt: number };
@@ -42,16 +43,16 @@ type ProfitReport = { monthStart: string; monthEnd: string; items: MonthlyItemPr
 
 type View = "week" | "day" | "monthGrid" | "profit" | "month";
 
-type MeatPrep = {
-  date: string;
-  dayName: string;
+type MeatPrepTotals = {
   rantottHusDb: number;
   tortillaHusDb: number;
   grillHusDkg: number;
 };
-
-const SHORT_DAY_NAMES = ["H", "K", "Sze", "Cs", "P"];
-const FULL_DAY_NAMES = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek"];
+type MeatPrep = MeatPrepTotals & {
+  date: string;
+  dayName: string;
+  previousWeek: MeatPrepTotals & { date: string; dayName: string };
+};
 
 function formatDate(dateStr: string) {
   return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString("hu-HU", {
@@ -167,6 +168,12 @@ function MeatPrepSection({ meatPrep }: { meatPrep: MeatPrep }) {
           <div className="text-xs text-neutral-500 mt-1">kg grill hús</div>
         </div>
       </div>
+      <p className="text-xs text-neutral-500">
+        Előző héten ({meatPrep.previousWeek.dayName} {formatDate(meatPrep.previousWeek.date)}):{" "}
+        {meatPrep.previousWeek.rantottHusDb} db rántott hús, {meatPrep.previousWeek.tortillaHusDb} db tortilla hús,{" "}
+        {(meatPrep.previousWeek.grillHusDkg / 100).toLocaleString("hu-HU", { maximumFractionDigits: 2 })} kg grill
+        hús
+      </p>
     </section>
   );
 }

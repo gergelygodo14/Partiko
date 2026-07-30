@@ -1,3 +1,4 @@
+import type { StoreGroup } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db";
 import { addDaysStr, parseDay, rangeBetween, toDayStr } from "@/lib/dates";
 import { sandwichOrderTotalCount, sandwichOrderValueFt } from "@/lib/sandwichOrders";
@@ -129,6 +130,10 @@ export async function getSandwichMonthProfit(
 export type SandwichDayCustomerOrder = {
   customerId: string;
   storeName: string;
+  // Delivery-round grouping, read from the column rather than re-derived from
+  // the store name - the kitchen export uses it to keep the vidék round on its
+  // own sheet and FAV/Coop stores adjacent.
+  storeGroup: StoreGroup;
   lines: { itemId: string; itemName: string; itemOrder: number; quantity: number }[];
   totalQuantity: number;
 };
@@ -153,6 +158,7 @@ export async function getSandwichOrdersForDay(date: string): Promise<SandwichDay
     return {
       customerId: order.customerId,
       storeName: order.customer.storeName,
+      storeGroup: order.customer.storeGroup,
       lines,
       totalQuantity: lines.reduce((sum, l) => sum + l.quantity, 0),
     };

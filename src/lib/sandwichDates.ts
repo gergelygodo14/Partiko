@@ -34,7 +34,7 @@ function isWeekend(dateStr: string): boolean {
 
 export type SandwichTargetDay = { date: string; dayName: string };
 
-function toTargetDay(dateStr: string): SandwichTargetDay {
+export function toTargetDay(dateStr: string): SandwichTargetDay {
   return { date: dateStr, dayName: DAY_NAMES_HU[parseDay(dateStr).getUTCDay()] };
 }
 

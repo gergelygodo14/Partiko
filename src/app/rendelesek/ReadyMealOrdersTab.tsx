@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { formatCell, type OrderDayQuantities } from "@/lib/orders";
+import { FULL_DAY_NAMES, SHORT_DAY_NAMES } from "@/lib/weekdays";
 
 type CustomerRow = {
   customerId: string;
@@ -54,9 +55,6 @@ type MonthSummary = {
 };
 
 type View = "week" | "day" | "month";
-
-const SHORT_DAY_NAMES = ["H", "K", "Sze", "Cs", "P"];
-const FULL_DAY_NAMES = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek"];
 
 function formatDate(dateStr: string) {
   return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString("hu-HU", {

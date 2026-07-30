@@ -1,6 +1,6 @@
 import ExcelJS from "exceljs";
 import type { SandwichDailyItemTotal } from "@/lib/sandwichOrdersSummary";
-import { EXCEL_LABEL_BY_ITEM_NAME } from "@/lib/generateSandwichOrdersXlsx";
+import { excelLabelFor } from "@/lib/sandwichItemLabels";
 
 const MAX_SHEET_NAME_LENGTH = 31;
 
@@ -36,7 +36,7 @@ export async function generateSandwichDailySummaryXlsx(
   );
   sorted.forEach((item) => {
     sheet.addRow({
-      itemName: EXCEL_LABEL_BY_ITEM_NAME[item.itemName] ?? item.itemName,
+      itemName: excelLabelFor(item.itemName),
       quantity: item.quantity,
     });
   });
