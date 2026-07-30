@@ -13,22 +13,40 @@ export const STORE_GROUP_LABELS: Record<StoreGroup, string> = {
   VIDEK: "Vidék (külön kör)",
 };
 
+// Stores whose group cannot be read off the name at all - the owner told us
+// what they are. Same class of fact as the vidék list: "NÁ" is a Coop store
+// despite carrying nothing Coop-ish in its name (confirmed 2026-07-30).
+//
+// This has to live here rather than only in the database, because
+// backfill-store-groups.ts and import-fix-orders.ts both write
+// suggestStoreGroup()'s result over Customer.storeGroup - without the override
+// a later re-run would silently revert the correction.
+const STORE_GROUP_OVERRIDES = new Map<string, StoreGroup>([["ná", "COOP"]]);
+
 /** Which group a store name *looks* like it belongs to. Only a suggestion:
  *  Customer.storeGroup is the authority once set, and the owner can override
  *  it. Used to seed the column during backfill/import and to pre-select the
  *  dropdown when adding a new store.
  *
- *  Vidék is checked FIRST and wins: "COOP MÓRA" is a countryside store
- *  despite the Coop prefix. The old hardcoded logic got this right only
- *  because generateSandwichOrdersXlsx filtered vidék out before ever calling
- *  groupFavAndCoopAdjacent - here the precedence has to be explicit. */
+ *  Order matters. Explicit overrides win outright; then vidék, because
+ *  "COOP MÓRA" is a countryside store despite the Coop prefix. The old
+ *  hardcoded logic got the vidék precedence right only because
+ *  generateSandwichOrdersXlsx filtered vidék out before ever calling
+ *  groupFavAndCoopAdjacent - here it has to be explicit. */
 export function suggestStoreGroup(storeName: string): StoreGroup {
+  const override = STORE_GROUP_OVERRIDES.get(storeName.trim().toLowerCase());
+  if (override) return override;
   if (isVidekStore(storeName)) return "VIDEK";
   const name = storeName.trim();
   if (/^fav\b/i.test(name)) return "FAV";
   if (/^coop\b/i.test(name)) return "COOP";
   return "EGYEB";
 }
+
+/** Store names whose group is set by explicit owner instruction rather than by
+ *  the name pattern - exposed so the parity test can assert the divergence
+ *  from the pre-column behavior is exactly this list and nothing more. */
+export const OVERRIDDEN_STORE_NAMES = [...STORE_GROUP_OVERRIDES.keys()];
 
 export type GroupedStore = { storeGroup: StoreGroup; storeOrder: number; storeName: string };
 

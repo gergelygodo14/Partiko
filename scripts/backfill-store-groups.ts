@@ -16,7 +16,7 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, type StoreGroup } from "../src/generated/prisma/client";
-import { suggestStoreGroup } from "../src/lib/sandwichStoreGroups";
+import { OVERRIDDEN_STORE_NAMES, suggestStoreGroup } from "../src/lib/sandwichStoreGroups";
 import { isVidekStore } from "../src/lib/sandwichVidekStores";
 
 // The pre-column rules, inlined verbatim as a reference implementation. The
@@ -55,7 +55,14 @@ async function main() {
       };
     });
 
-    const disagreements = rows.filter((row) => row.target !== row.legacy);
+    // Explicit owner overrides are *expected* to diverge from the old
+    // name-pattern logic - that is the whole point of them. Everything else
+    // diverging means suggestStoreGroup() drifted and the printout would
+    // silently change, so the write is refused.
+    const overridden = new Set(OVERRIDDEN_STORE_NAMES);
+    const disagreements = rows.filter(
+      (row) => row.target !== row.legacy && !overridden.has(row.storeName.trim().toLowerCase())
+    );
     if (disagreements.length > 0) {
       console.error(
         `\n✗ suggestStoreGroup() nem egyezik a régi hardkódolt logikával ${disagreements.length} boltnál:`
@@ -66,6 +73,16 @@ async function main() {
       console.error("\nÍrás megtagadva - ezt előbb tisztázni kell.");
       process.exitCode = 1;
       return;
+    }
+
+    const intentional = rows.filter(
+      (row) => row.target !== row.legacy && overridden.has(row.storeName.trim().toLowerCase())
+    );
+    if (intentional.length > 0) {
+      console.log("\nSzándékos felülbírálás (tulajdonosi döntés, nem a névből következik):");
+      for (const row of intentional) {
+        console.log(`   ${row.storeName}: ${row.legacy} → ${row.target}`);
+      }
     }
 
     const byGroup = new Map<StoreGroup, string[]>();

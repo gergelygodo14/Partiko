@@ -4,6 +4,7 @@ import { MONDAY_REFERENCE_ORDERS } from "@/lib/mondayReferenceOrders";
 import {
   compareStoresForGrid,
   groupStoresForGrid,
+  OVERRIDDEN_STORE_NAMES,
   STORE_GROUP_ORDER,
   suggestStoreGroup,
 } from "@/lib/sandwichStoreGroups";
@@ -32,8 +33,33 @@ describe("suggestStoreGroup", () => {
     expect(realStoreNames.length).toBeGreaterThanOrEqual(30);
   });
 
-  it.each(realStoreNames)("matches the legacy hardcoded grouping for %s", (storeName) => {
+  // Parity holds for every store EXCEPT the explicit owner overrides. Those are
+  // deliberate divergences from the old name-pattern behavior, and the
+  // exclusion is driven off OVERRIDDEN_STORE_NAMES so a new override cannot be
+  // added without this test noticing.
+  const patternStoreNames = realStoreNames.filter(
+    (name) => !OVERRIDDEN_STORE_NAMES.includes(name.trim().toLowerCase())
+  );
+
+  it.each(patternStoreNames)("matches the legacy hardcoded grouping for %s", (storeName) => {
     expect(suggestStoreGroup(storeName)).toBe(legacyGroupOf(storeName));
+  });
+
+  it("diverges from the legacy grouping only for the documented overrides", () => {
+    const diverging = realStoreNames.filter(
+      (name) => suggestStoreGroup(name) !== legacyGroupOf(name)
+    );
+    expect(diverging.map((name) => name.trim().toLowerCase()).sort()).toEqual(
+      [...OVERRIDDEN_STORE_NAMES].sort()
+    );
+  });
+
+  // "NÁ" carries nothing Coop-ish in its name, so only the override can put it
+  // in the Coop block - on the entry grid and on the kitchen printout alike.
+  it("puts NÁ in the Coop group by explicit override", () => {
+    expect(legacyGroupOf("NÁ")).toBe("EGYEB");
+    expect(suggestStoreGroup("NÁ")).toBe("COOP");
+    expect(suggestStoreGroup(" ná ")).toBe("COOP");
   });
 
   // The one case where group precedence actually matters: a Coop-prefixed name
