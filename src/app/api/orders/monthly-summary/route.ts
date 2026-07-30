@@ -10,9 +10,9 @@ export const GET = withApiErrorHandling(async () => {
   const monthStart = monthStartOf(today);
   const monthEnd = monthEndOf(today);
 
-  const byCustomer = await getMonthlyOrderSummary(monthStart, monthEnd);
+  const { weekStarts, byCustomer } = await getMonthlyOrderSummary(monthStart, monthEnd);
   const totalMeals = byCustomer.reduce((sum, c) => sum + c.totalMeals, 0);
   const totalValue = byCustomer.reduce((sum, c) => sum + c.totalValue, 0);
 
-  return NextResponse.json({ monthStart, monthEnd, byCustomer, totalMeals, totalValue });
+  return NextResponse.json({ monthStart, monthEnd, weekStarts, byCustomer, totalMeals, totalValue });
 });

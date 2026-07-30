@@ -39,16 +39,20 @@ type Summary = {
   week: WeekSummary;
 };
 
+type MonthCustomerWeekRow = { weekStart: string; meals: number; value: number };
+
 type MonthCustomerRow = {
   customerId: string;
   storeName: string;
   totalMeals: number;
   totalValue: number;
+  byWeek: MonthCustomerWeekRow[];
 };
 
 type MonthSummary = {
   monthStart: string;
   monthEnd: string;
+  weekStarts: string[];
   byCustomer: MonthCustomerRow[];
   totalMeals: number;
   totalValue: number;
@@ -348,7 +352,12 @@ export default function ReadyMealOrdersTab() {
                 <table className="w-full text-sm">
                   <thead className="bg-neutral-100 text-neutral-600">
                     <tr>
-                      <th className="text-left px-3 py-3">Üzlet</th>
+                      <th className="text-left px-3 py-3 sticky left-0 z-[1] bg-neutral-100">Üzlet</th>
+                      {monthSummary.weekStarts.map((weekStart) => (
+                        <th key={weekStart} className="text-right px-3 py-3 whitespace-nowrap">
+                          {formatDate(weekStart)} hete
+                        </th>
+                      ))}
                       <th className="text-right px-3 py-3">Összesen</th>
                       <th className="text-right px-3 py-3">Fizetendő</th>
                     </tr>
@@ -356,7 +365,22 @@ export default function ReadyMealOrdersTab() {
                   <tbody>
                     {monthSummary.byCustomer.map((c) => (
                       <tr key={c.customerId} className="border-t border-neutral-100">
-                        <td className="px-3 py-3">{c.storeName}</td>
+                        <td className="px-3 py-3 sticky left-0 z-[1] bg-white">{c.storeName}</td>
+                        {c.byWeek.map((w) => (
+                          <td key={w.weekStart} className="px-3 py-3 text-right whitespace-nowrap">
+                            {w.meals > 0 ? (
+                              <>
+                                {w.meals}
+                                <span className="text-neutral-400 text-xs">
+                                  {" "}
+                                  ({w.value.toLocaleString("hu-HU")} Ft)
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-neutral-300">–</span>
+                            )}
+                          </td>
+                        ))}
                         <td className="px-3 py-3 text-right">{c.totalMeals}</td>
                         <td className="px-3 py-3 text-right font-medium">
                           {c.totalValue.toLocaleString("hu-HU")} Ft
@@ -366,7 +390,31 @@ export default function ReadyMealOrdersTab() {
                   </tbody>
                   <tfoot>
                     <tr className="border-t border-neutral-300 font-semibold">
-                      <td className="px-3 py-3">Összesen</td>
+                      <td className="px-3 py-3 sticky left-0 z-[1] bg-white">Összesen</td>
+                      {monthSummary.weekStarts.map((weekStart) => {
+                        const meals = monthSummary.byCustomer.reduce(
+                          (sum, c) => sum + (c.byWeek.find((w) => w.weekStart === weekStart)?.meals ?? 0),
+                          0
+                        );
+                        const value = monthSummary.byCustomer.reduce(
+                          (sum, c) => sum + (c.byWeek.find((w) => w.weekStart === weekStart)?.value ?? 0),
+                          0
+                        );
+                        return (
+                          <td key={weekStart} className="px-3 py-3 text-right whitespace-nowrap">
+                            {meals > 0 ? (
+                              <>
+                                {meals}{" "}
+                                <span className="text-neutral-500 text-xs font-normal">
+                                  ({value.toLocaleString("hu-HU")} Ft)
+                                </span>
+                              </>
+                            ) : (
+                              "–"
+                            )}
+                          </td>
+                        );
+                      })}
                       <td className="px-3 py-3 text-right">{monthSummary.totalMeals}</td>
                       <td className="px-3 py-3 text-right">
                         {monthSummary.totalValue.toLocaleString("hu-HU")} Ft

@@ -196,11 +196,19 @@ export async function getWeekTotalValue(weekStart: string): Promise<number> {
   return dayTotals.reduce((sum, d) => sum + orderValue(d), 0);
 }
 
+export type CustomerMonthlyWeekRow = { weekStart: string; meals: number; value: number };
+
 export type CustomerMonthlyRow = {
   customerId: string;
   storeName: string;
   totalMeals: number;
   totalValue: number;
+  byWeek: CustomerMonthlyWeekRow[];
+};
+
+export type MonthlyOrderSummary = {
+  weekStarts: string[];
+  byCustomer: CustomerMonthlyRow[];
 };
 
 // Billing runs calendar-month, 1st through the last day, independent of the
@@ -208,10 +216,15 @@ export type CustomerMonthlyRow = {
 // `weekStart` weeks, so this pulls every week that could contain a day
 // within [monthStart, monthEnd] and then filters line-by-line to the exact
 // calendar dates, rather than assuming whole weeks fall inside the month.
+// The per-customer `byWeek` split (added for reconciling a customer who pays
+// in one lump sum for several weeks at once, e.g. a store paying for a whole
+// group) reuses the same in-month date filter, so a week straddling the
+// month boundary only counts the days that actually fall in this month -
+// consistent with the totals above.
 export async function getMonthlyOrderSummary(
   monthStart: string,
   monthEnd: string
-): Promise<CustomerMonthlyRow[]> {
+): Promise<MonthlyOrderSummary> {
   const weekStarts: string[] = [];
   for (let ws = mondayOf(monthStart); ws <= monthEnd; ws = addDaysStr(ws, 7)) {
     weekStarts.push(ws);
@@ -235,17 +248,23 @@ export async function getMonthlyOrderSummary(
           storeName: order.customer.storeName,
           totalMeals: 0,
           totalValue: 0,
+          byWeek: weekStarts.map((weekStart) => ({ weekStart, meals: 0, value: 0 })),
         });
       }
       const row = byCustomer.get(order.customerId)!;
+      const value = line.quantity * (line.isXl ? MEAL_PRICE_XL_FT : MEAL_PRICE_FT);
       row.totalMeals += line.quantity;
-      row.totalValue += line.quantity * (line.isXl ? MEAL_PRICE_XL_FT : MEAL_PRICE_FT);
+      row.totalValue += value;
+      const weekRow = row.byWeek.find((w) => w.weekStart === weekStartStr)!;
+      weekRow.meals += line.quantity;
+      weekRow.value += value;
     }
   }
 
   // Biggest orderer first, not alphabetical - same convention as the weekly
   // and daily breakdowns.
-  return Array.from(byCustomer.values()).sort(
+  const sorted = Array.from(byCustomer.values()).sort(
     (a, b) => b.totalValue - a.totalValue || a.storeName.localeCompare(b.storeName, "hu")
   );
+  return { weekStarts, byCustomer: sorted };
 }

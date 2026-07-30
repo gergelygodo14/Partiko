@@ -297,14 +297,39 @@ describe("getMonthlyOrderSummary", () => {
       },
     ]);
 
-    const [row] = await getMonthlyOrderSummary("2026-07-01", "2026-07-31");
+    const { byCustomer } = await getMonthlyOrderSummary("2026-07-01", "2026-07-31");
+    const [row] = byCustomer;
 
-    expect(row).toEqual({
-      customerId: "c1",
-      storeName: "Alma Büfé",
-      totalMeals: 3,
-      totalValue: 2 * 1200 + 1 * 1500,
-    });
+    expect(row.customerId).toBe("c1");
+    expect(row.storeName).toBe("Alma Büfé");
+    expect(row.totalMeals).toBe(3);
+    expect(row.totalValue).toBe(2 * 1200 + 1 * 1500);
+  });
+
+  it("splits each customer's totals into a per-week breakdown", async () => {
+    findManyOrder.mockResolvedValue([
+      {
+        customerId: "c1",
+        weekStart: new Date("2026-07-06T00:00:00.000Z"),
+        customer: { storeName: "Alma Büfé" },
+        lines: [{ dayIndex: 0, letter: "a", quantity: 2, isXl: false }], // 2026-07-06
+      },
+      {
+        customerId: "c1",
+        weekStart: new Date("2026-07-13T00:00:00.000Z"),
+        customer: { storeName: "Alma Büfé" },
+        lines: [{ dayIndex: 0, letter: "a", quantity: 5, isXl: false }], // 2026-07-13
+      },
+    ]);
+
+    const { byCustomer } = await getMonthlyOrderSummary("2026-07-01", "2026-07-31");
+    const [row] = byCustomer;
+
+    expect(row.byWeek).toContainEqual({ weekStart: "2026-07-06", meals: 2, value: 2 * 1200 });
+    expect(row.byWeek).toContainEqual({ weekStart: "2026-07-13", meals: 5, value: 5 * 1200 });
+    // Weeks the customer didn't order in still appear, at zero - so every
+    // customer row has an entry for every column in the table.
+    expect(row.byWeek).toContainEqual({ weekStart: "2026-06-29", meals: 0, value: 0 });
   });
 
   it("excludes days that fall in a different month, even within a week that's mostly inside it", async () => {
@@ -325,7 +350,8 @@ describe("getMonthlyOrderSummary", () => {
       },
     ]);
 
-    const [row] = await getMonthlyOrderSummary("2026-07-01", "2026-07-31");
+    const { byCustomer } = await getMonthlyOrderSummary("2026-07-01", "2026-07-31");
+    const [row] = byCustomer;
 
     expect(row.totalMeals).toBe(5);
     expect(row.totalValue).toBe(5 * 1200);
@@ -347,24 +373,26 @@ describe("getMonthlyOrderSummary", () => {
       },
     ]);
 
-    const rows = await getMonthlyOrderSummary("2026-07-01", "2026-07-31");
+    const { byCustomer } = await getMonthlyOrderSummary("2026-07-01", "2026-07-31");
 
-    expect(rows.map((r) => r.storeName)).toEqual(["Alma Büfé", "Zöld Bolt"]);
+    expect(byCustomer.map((r) => r.storeName)).toEqual(["Alma Büfé", "Zöld Bolt"]);
   });
 
   it("queries every weekStart Monday that could overlap the month", async () => {
     findManyOrder.mockResolvedValue([]);
-    await getMonthlyOrderSummary("2026-07-01", "2026-07-31");
+    const { weekStarts } = await getMonthlyOrderSummary("2026-07-01", "2026-07-31");
+
+    // July 2026: 1st is a Wednesday, so the first relevant Monday is 2026-06-29;
+    // last Monday whose week can still touch July 31 is 2026-07-27.
+    expect(weekStarts).toEqual(["2026-06-29", "2026-07-06", "2026-07-13", "2026-07-20", "2026-07-27"]);
 
     const arg = findManyOrder.mock.calls[0][0];
     const queriedWeeks = arg.where.weekStart.in.map((d) => d.toISOString().slice(0, 10));
-    // July 2026: 1st is a Wednesday, so the first relevant Monday is 2026-06-29;
-    // last Monday whose week can still touch July 31 is 2026-07-27.
-    expect(queriedWeeks).toEqual(["2026-06-29", "2026-07-06", "2026-07-13", "2026-07-20", "2026-07-27"]);
+    expect(queriedWeeks).toEqual(weekStarts);
   });
 
-  it("returns an empty array when nothing was ordered", async () => {
+  it("returns an empty customer list when nothing was ordered", async () => {
     findManyOrder.mockResolvedValue([]);
-    expect(await getMonthlyOrderSummary("2026-07-01", "2026-07-31")).toEqual([]);
+    expect((await getMonthlyOrderSummary("2026-07-01", "2026-07-31")).byCustomer).toEqual([]);
   });
 });
