@@ -7,6 +7,7 @@ import {
   quantityField,
   MEAL_PRICE_FT,
   MEAL_PRICE_XL_FT,
+  MEAL_PROFIT_FT,
   ORDER_QUANTITY_FIELDS,
   type OrderDayQuantities,
   type OrderLetter,
@@ -267,4 +268,96 @@ export async function getMonthlyOrderSummary(
     (a, b) => b.totalValue - a.totalValue || a.storeName.localeCompare(b.storeName, "hu")
   );
   return { weekStarts, byCustomer: sorted };
+}
+
+// Total portion count x the flat per-portion profit figure - reuses
+// getMonthlyOrderSummary rather than re-querying, since it already sums
+// every OrderLine's quantity into totalMeals per customer for this exact
+// month range.
+export async function getMonthlyMealProfit(
+  monthStart: string,
+  monthEnd: string
+): Promise<{ totalMeals: number; totalProfitFt: number }> {
+  const { byCustomer } = await getMonthlyOrderSummary(monthStart, monthEnd);
+  const totalMeals = byCustomer.reduce((sum, c) => sum + c.totalMeals, 0);
+  return { totalMeals, totalProfitFt: totalMeals * MEAL_PROFIT_FT };
+}
+
+export type DishQuantityRow = { name: string; quantity: number };
+
+// Ready meals have no stable per-dish catalog row (unlike SandwichItem) -
+// each week's menu is free text in WeeklyMenu.days, so "how much of dish X
+// sold" has to be built by resolving each OrderLine's dayIndex+letter
+// against that week's menu text and grouping by the resulting name
+// (case/whitespace-normalized, since the same dish can be retyped slightly
+// differently week to week). Same week-iteration + in-month day filter as
+// getMonthlyOrderSummary, but grouped by dish name instead of customer.
+export async function getMonthlyDishBreakdown(
+  monthStart: string,
+  monthEnd: string
+): Promise<DishQuantityRow[]> {
+  const weekStarts: string[] = [];
+  for (let ws = mondayOf(monthStart); ws <= monthEnd; ws = addDaysStr(ws, 7)) {
+    weekStarts.push(ws);
+  }
+
+  const [orders, menus] = await Promise.all([
+    prisma.order.findMany({
+      where: { weekStart: { in: weekStarts.map(parseDay) } },
+      include: { lines: true },
+    }),
+    prisma.weeklyMenu.findMany({
+      where: { weekStart: { in: weekStarts.map(parseDay) } },
+    }),
+  ]);
+
+  const menuDaysByWeek = new Map<string, MenuDay[]>();
+  for (const menu of menus) {
+    menuDaysByWeek.set(toDayStr(menu.weekStart), (menu.days as MenuDay[]) ?? []);
+  }
+
+  const quantityByKey = new Map<string, DishQuantityRow>();
+  for (const order of orders) {
+    const weekStartStr = toDayStr(order.weekStart);
+    const menuDays = menuDaysByWeek.get(weekStartStr);
+    if (!menuDays) continue;
+    for (const line of order.lines) {
+      const date = addDaysStr(weekStartStr, line.dayIndex);
+      if (date < monthStart || date > monthEnd) continue;
+      const day = menuDays[line.dayIndex];
+      const rawName = day?.[line.letter as OrderLetter]?.trim();
+      if (!rawName) continue;
+      const key = rawName.toLowerCase();
+      if (!quantityByKey.has(key)) quantityByKey.set(key, { name: rawName, quantity: 0 });
+      quantityByKey.get(key)!.quantity += line.quantity;
+    }
+  }
+
+  return Array.from(quantityByKey.values()).sort(
+    (a, b) => b.quantity - a.quantity || a.name.localeCompare(b.name, "hu")
+  );
+}
+
+export type DishAverageRow = DishQuantityRow & { aboveAverage: boolean; belowAverage: boolean };
+
+// Pure - split out from getMonthlyDishBreakdown so it's testable without a
+// DB mock. "Average" is the mean quantity across every distinct dish name
+// that appeared in the period, not a per-catalog-item average (ready meals
+// have no fixed catalog), so a month with mostly one-off dishes and a
+// handful of repeats will naturally skew the average toward the repeats.
+export function computeDishAverageFlags(rows: DishQuantityRow[]): {
+  averageQuantity: number;
+  rows: DishAverageRow[];
+} {
+  if (rows.length === 0) return { averageQuantity: 0, rows: [] };
+  const total = rows.reduce((sum, r) => sum + r.quantity, 0);
+  const averageQuantity = total / rows.length;
+  return {
+    averageQuantity,
+    rows: rows.map((r) => ({
+      ...r,
+      aboveAverage: r.quantity > averageQuantity,
+      belowAverage: r.quantity < averageQuantity,
+    })),
+  };
 }

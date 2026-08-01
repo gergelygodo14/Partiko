@@ -3,12 +3,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const findManyOrderLine = vi.fn();
 const findManyOrder = vi.fn();
 const findUniqueWeeklyMenu = vi.fn();
+const findManyWeeklyMenu = vi.fn();
 
 vi.mock("@/lib/db", () => ({
   prisma: {
     orderLine: { findMany: (...args: unknown[]) => findManyOrderLine(...args) },
     order: { findMany: (...args: unknown[]) => findManyOrder(...args) },
-    weeklyMenu: { findUnique: (...args: unknown[]) => findUniqueWeeklyMenu(...args) },
+    weeklyMenu: {
+      findUnique: (...args: unknown[]) => findUniqueWeeklyMenu(...args),
+      findMany: (...args: unknown[]) => findManyWeeklyMenu(...args),
+    },
   },
 }));
 
@@ -21,12 +25,16 @@ const {
   getWeekTotalMeals,
   getWeekTotalValue,
   getMonthlyOrderSummary,
+  getMonthlyMealProfit,
+  getMonthlyDishBreakdown,
+  computeDishAverageFlags,
 } = await import("@/lib/ordersSummary");
 
 beforeEach(() => {
   findManyOrderLine.mockReset();
   findManyOrder.mockReset();
   findUniqueWeeklyMenu.mockReset();
+  findManyWeeklyMenu.mockReset();
 });
 
 const EMPTY_DAY = { a: 0, b: 0, c: 0, aXl: 0, bXl: 0, cXl: 0 };
@@ -394,5 +402,133 @@ describe("getMonthlyOrderSummary", () => {
   it("returns an empty customer list when nothing was ordered", async () => {
     findManyOrder.mockResolvedValue([]);
     expect((await getMonthlyOrderSummary("2026-07-01", "2026-07-31")).byCustomer).toEqual([]);
+  });
+});
+
+describe("getMonthlyMealProfit", () => {
+  it("multiplies total portions (regular + XL alike) by the flat per-portion profit", async () => {
+    findManyOrder.mockResolvedValue([
+      {
+        customerId: "c1",
+        weekStart: new Date("2026-07-06T00:00:00.000Z"),
+        customer: { storeName: "Alma Büfé" },
+        lines: [
+          { dayIndex: 0, letter: "a", quantity: 2, isXl: false },
+          { dayIndex: 0, letter: "a", quantity: 1, isXl: true },
+        ],
+      },
+    ]);
+
+    const { totalMeals, totalProfitFt } = await getMonthlyMealProfit("2026-07-01", "2026-07-31");
+    expect(totalMeals).toBe(3);
+    expect(totalProfitFt).toBe(3 * 500);
+  });
+
+  it("is zero when nothing was ordered", async () => {
+    findManyOrder.mockResolvedValue([]);
+    expect(await getMonthlyMealProfit("2026-07-01", "2026-07-31")).toEqual({
+      totalMeals: 0,
+      totalProfitFt: 0,
+    });
+  });
+});
+
+describe("getMonthlyDishBreakdown", () => {
+  it("resolves each order line's dish name from that week's menu and sums quantity", async () => {
+    findManyOrder.mockResolvedValue([
+      {
+        weekStart: new Date("2026-07-06T00:00:00.000Z"),
+        lines: [
+          { dayIndex: 0, letter: "a", quantity: 3, isXl: false }, // Mon 07-06, letter a
+          { dayIndex: 1, letter: "b", quantity: 2, isXl: false }, // Tue 07-07, letter b
+        ],
+      },
+    ]);
+    findManyWeeklyMenu.mockResolvedValue([
+      {
+        weekStart: new Date("2026-07-06T00:00:00.000Z"),
+        days: [
+          { a: "Rántott szelet", aGM: false, b: "Gulyás", bGM: false, c: "Saláta", cGM: false },
+          { a: "Rántott szelet", aGM: false, b: "Lecsó", bGM: false, c: "Saláta", cGM: false },
+        ],
+      },
+    ]);
+
+    const rows = await getMonthlyDishBreakdown("2026-07-01", "2026-07-31");
+    expect(rows).toContainEqual({ name: "Rántott szelet", quantity: 3 });
+    expect(rows).toContainEqual({ name: "Lecsó", quantity: 2 });
+  });
+
+  it("merges the same dish name across different weeks (case/whitespace-insensitive)", async () => {
+    findManyOrder.mockResolvedValue([
+      {
+        weekStart: new Date("2026-07-06T00:00:00.000Z"),
+        lines: [{ dayIndex: 0, letter: "a", quantity: 4, isXl: false }],
+      },
+      {
+        weekStart: new Date("2026-07-13T00:00:00.000Z"),
+        lines: [{ dayIndex: 0, letter: "a", quantity: 6, isXl: false }],
+      },
+    ]);
+    findManyWeeklyMenu.mockResolvedValue([
+      {
+        weekStart: new Date("2026-07-06T00:00:00.000Z"),
+        days: [{ a: "Gulyásleves", aGM: false, b: "X", bGM: false, c: "Y", cGM: false }],
+      },
+      {
+        weekStart: new Date("2026-07-13T00:00:00.000Z"),
+        days: [{ a: "  gulyásleves  ", aGM: false, b: "X", bGM: false, c: "Y", cGM: false }],
+      },
+    ]);
+
+    const rows = await getMonthlyDishBreakdown("2026-07-01", "2026-07-31");
+    expect(rows).toEqual([{ name: "Gulyásleves", quantity: 10 }]);
+  });
+
+  it("skips a day/letter with no menu text and days outside the month", async () => {
+    findManyOrder.mockResolvedValue([
+      {
+        weekStart: new Date("2026-07-27T00:00:00.000Z"), // Mon 07-27..Fri 07-31
+        lines: [
+          { dayIndex: 0, letter: "a", quantity: 5, isXl: false }, // Mon 07-27, inside July
+          { dayIndex: 4, letter: "b", quantity: 9, isXl: false }, // Fri 07-31, still inside July
+        ],
+      },
+    ]);
+    findManyWeeklyMenu.mockResolvedValue([
+      {
+        weekStart: new Date("2026-07-27T00:00:00.000Z"),
+        days: [
+          { a: "Csirkepaprikás", aGM: false, b: "", bGM: false, c: "Z", cGM: false },
+          {},
+          {},
+          {},
+          { a: "W", aGM: false, b: "", bGM: false, c: "Z", cGM: false },
+        ],
+      },
+    ]);
+
+    const rows = await getMonthlyDishBreakdown("2026-07-01", "2026-07-31");
+    // The Friday line's letter "b" has empty menu text -> skipped, not a
+    // zero-quantity "" entry.
+    expect(rows).toEqual([{ name: "Csirkepaprikás", quantity: 5 }]);
+  });
+});
+
+describe("computeDishAverageFlags", () => {
+  it("computes the mean quantity across distinct dishes and flags above/below it", () => {
+    const { averageQuantity, rows } = computeDishAverageFlags([
+      { name: "A", quantity: 10 },
+      { name: "B", quantity: 2 },
+      { name: "C", quantity: 6 },
+    ]);
+    expect(averageQuantity).toBe(6);
+    expect(rows).toContainEqual({ name: "A", quantity: 10, aboveAverage: true, belowAverage: false });
+    expect(rows).toContainEqual({ name: "B", quantity: 2, aboveAverage: false, belowAverage: true });
+    expect(rows).toContainEqual({ name: "C", quantity: 6, aboveAverage: false, belowAverage: false });
+  });
+
+  it("returns an empty report for no dishes", () => {
+    expect(computeDishAverageFlags([])).toEqual({ averageQuantity: 0, rows: [] });
   });
 });

@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { budapestTodayStr, monthEndOf, monthStartOf } from "@/lib/dates";
-import { getSandwichMonthSummary } from "@/lib/sandwichOrdersSummary";
+import { getMonthlyMealProfit } from "@/lib/ordersSummary";
 import { isValidDateStr } from "@/lib/validate";
 import { withApiErrorHandling } from "@/lib/apiRoute";
 
-// Defaults to the current calendar month (1st through the last day), same
-// convention as the ready-meal monthly summary - but browsable via ?month=
-// for the Riportok page's month-over-month trend comparison, which needs
-// last month's byItem alongside this month's.
+// Browsable-by-month ready-meal profit report (defaults to the current
+// month) - flat MEAL_PROFIT_FT per portion, since ready meals have no
+// per-dish profit field like sandwiches do.
 export const GET = withApiErrorHandling(async (request: NextRequest) => {
   const monthParam = request.nextUrl.searchParams.get("month") ?? budapestTodayStr(new Date());
   if (!isValidDateStr(monthParam)) {
@@ -15,7 +14,6 @@ export const GET = withApiErrorHandling(async (request: NextRequest) => {
   }
   const monthStart = monthStartOf(monthParam);
   const monthEnd = monthEndOf(monthParam);
-
-  const summary = await getSandwichMonthSummary(monthStart, monthEnd);
-  return NextResponse.json({ monthStart, monthEnd, ...summary });
+  const { totalMeals, totalProfitFt } = await getMonthlyMealProfit(monthStart, monthEnd);
+  return NextResponse.json({ monthStart, monthEnd, totalMeals, totalProfitFt });
 });

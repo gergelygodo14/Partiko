@@ -13,6 +13,11 @@ export type OrderLineInput = { dayIndex: number; letter: string; quantity: numbe
 export const MEAL_PRICE_FT = 1200;
 export const MEAL_PRICE_XL_FT = 1500;
 
+// Flat profit per portion (owner-confirmed figure, 2026-08-01) - unlike the
+// sandwich side there's no per-dish profit field, and no XL-specific split
+// was given, so this applies the same regardless of portion size.
+export const MEAL_PROFIT_FT = 500;
+
 export const ORDER_QUANTITY_FIELDS = ["a", "b", "c", "aXl", "bXl", "cXl"] as const;
 
 // Ft value of one day's quantities, XL portions priced at MEAL_PRICE_XL_FT.

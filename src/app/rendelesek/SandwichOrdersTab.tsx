@@ -32,17 +32,7 @@ type MonthlyItemBreakdown = {
 };
 type MonthGrid = { monthStart: string; monthEnd: string; businessDays: string[]; items: MonthlyItemBreakdown[] };
 
-type MonthlyItemProfit = {
-  itemId: string;
-  itemName: string;
-  itemOrder: number;
-  quantity: number;
-  profitPerUnitFt: number;
-  totalProfitFt: number;
-};
-type ProfitReport = { monthStart: string; monthEnd: string; items: MonthlyItemProfit[]; totalProfitFt: number };
-
-type View = "week" | "day" | "monthGrid" | "profit" | "month";
+type View = "week" | "day" | "monthGrid" | "month";
 
 type MeatPrepTotals = {
   rantottHusDb: number;
@@ -283,77 +273,6 @@ function MonthGridTable({ grid }: { grid: MonthGrid }) {
   );
 }
 
-function ProfitTable({ report }: { report: ProfitReport }) {
-  const totalQuantity = report.items.reduce((sum, item) => sum + item.quantity, 0);
-  const noProfitConfigured = report.items.every((item) => item.profitPerUnitFt === 0);
-
-  return (
-    <section className="space-y-3">
-      <h2 className="text-lg font-semibold capitalize">
-        Havi nyereség{" "}
-        <span className="text-faint font-normal text-sm normal-case">
-          ({formatMonthLabel(report.monthStart)})
-        </span>
-      </h2>
-      {noProfitConfigured && (
-        <p className="text-xs text-amber-600 dark:text-amber-400">
-          Egyik szendvicshez sincs beállítva haszon, ezért minden érték 0 — állítsd be a{" "}
-          <Link href="/rendelesek/szendvics-termekek" className="underline">
-            szendvics-katalógusban
-          </Link>
-          .
-        </p>
-      )}
-      {report.items.every((item) => item.quantity === 0) ? (
-        <p className="text-muted">Még nincs leadott szendvics-rendelés erre a hónapra.</p>
-      ) : (
-        <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-surface-alt text-muted">
-              <tr>
-                <th className="text-left px-3 py-3">Szendvics</th>
-                <th className="text-right px-3 py-3">Db</th>
-                <th className="text-right px-3 py-3">Haszon/db</th>
-                <th className="text-right px-3 py-3">Összesen</th>
-              </tr>
-            </thead>
-            <tbody>
-              {report.items.map((item) => (
-                <tr key={item.itemId} className="border-t border-surface-border">
-                  <td className="px-3 py-3">{item.itemName}</td>
-                  <td className="px-3 py-3 text-right">{item.quantity}</td>
-                  <td className="px-3 py-3 text-right">
-                    {item.profitPerUnitFt.toLocaleString("hu-HU")} Ft
-                  </td>
-                  <td className="px-3 py-3 text-right font-medium">
-                    {item.totalProfitFt.toLocaleString("hu-HU")} Ft
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr className="border-t border-strong font-semibold">
-                <td className="px-3 py-3">Összesen</td>
-                <td className="px-3 py-3 text-right">{totalQuantity}</td>
-                <td></td>
-                <td className="px-3 py-3 text-right">
-                  {report.totalProfitFt.toLocaleString("hu-HU")} Ft
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      )}
-      <div className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm flex items-center justify-between">
-        <span className="text-muted text-sm">Havi nyereség összesen</span>
-        <span className="font-semibold text-lg">
-          {report.totalProfitFt.toLocaleString("hu-HU")} Ft
-        </span>
-      </div>
-    </section>
-  );
-}
-
 export default function SandwichOrdersTab() {
   const [weekSummary, setWeekSummary] = useState<WeekSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -368,9 +287,6 @@ export default function SandwichOrdersTab() {
   const [monthGridMonth, setMonthGridMonth] = useState<string | null>(null);
   const [monthGrid, setMonthGrid] = useState<MonthGrid | null>(null);
   const [monthGridLoading, setMonthGridLoading] = useState(false);
-  const [profitMonth, setProfitMonth] = useState<string | null>(null);
-  const [profitReport, setProfitReport] = useState<ProfitReport | null>(null);
-  const [profitLoading, setProfitLoading] = useState(false);
   const [bakeryOrderOpen, setBakeryOrderOpen] = useState(false);
   const [selectedDayIndex, setSelectedDayIndex] = useState(() => {
     const jsWeekday = new Date().getDay(); // 0=Sun..6=Sat
@@ -434,22 +350,6 @@ export default function SandwichOrdersTab() {
       setMonthGridLoading(false);
     })();
   }, [view, monthGridMonth]);
-
-  // Same pattern again, independent month-browsing state from the item x
-  // day grid above - navigating one doesn't move the other.
-  useEffect(() => {
-    if (weekSummary && profitMonth === null) setProfitMonth(weekSummary.weekStart);
-  }, [weekSummary, profitMonth]);
-
-  useEffect(() => {
-    if (view !== "profit" || !profitMonth) return;
-    setProfitLoading(true);
-    (async () => {
-      const res = await fetch(`/api/sandwich-orders/monthly-profit?month=${profitMonth}`);
-      setProfitReport(await res.json());
-      setProfitLoading(false);
-    })();
-  }, [view, profitMonth]);
 
   // Same blob-download pattern as the ready-meal export - required because
   // the app runs as an iOS home-screen PWA, where a plain <a href> would
@@ -560,16 +460,6 @@ export default function SandwichOrdersTab() {
           Havi bontás
         </button>
         <button
-          onClick={() => setView("profit")}
-          className={`flex-1 min-w-[45%] px-4 py-3 rounded-xl font-semibold text-base ${
-            view === "profit"
-              ? "bg-gold text-ink"
-              : "border bg-umber/8 border-umber/40 active:bg-umber/15"
-          }`}
-        >
-          Havi nyereség
-        </button>
-        <button
           onClick={() => setView("month")}
           className={`flex-1 min-w-[45%] px-4 py-3 rounded-xl font-semibold text-base ${
             view === "month"
@@ -658,32 +548,6 @@ export default function SandwichOrdersTab() {
             <p className="text-muted">Betöltés...</p>
           ) : (
             <MonthGridTable grid={monthGrid} />
-          )}
-        </>
-      ) : view === "profit" ? (
-        <>
-          <div className="flex items-center justify-between gap-2">
-            <button
-              onClick={() => profitMonth && setProfitMonth(addMonthsStr(profitMonth, -1))}
-              className="px-3 py-2.5 rounded-xl border bg-umber/8 border-umber/40 text-sm font-semibold active:bg-umber/15"
-            >
-              ◀ Előző hónap
-            </button>
-            <span className="text-sm text-muted capitalize">
-              {profitMonth && formatMonthLabel(profitMonth)}
-            </span>
-            <button
-              onClick={() => profitMonth && setProfitMonth(addMonthsStr(profitMonth, 1))}
-              className="px-3 py-2.5 rounded-xl border bg-umber/8 border-umber/40 text-sm font-semibold active:bg-umber/15"
-            >
-              Következő hónap ▶
-            </button>
-          </div>
-
-          {profitLoading || !profitReport ? (
-            <p className="text-muted">Betöltés...</p>
-          ) : (
-            <ProfitTable report={profitReport} />
           )}
         </>
       ) : monthLoading || !monthSummary ? (
