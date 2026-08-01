@@ -134,7 +134,7 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
                     onChange={(e) =>
                       setLeftovers((prev) => ({ ...prev, [row.key]: e.target.value }))
                     }
-                    className="w-20 border border-neutral-300 rounded-lg px-2 py-1.5 text-right text-sm"
+                    className="w-24 border border-neutral-300 rounded-lg px-2.5 py-1.5 text-right text-sm"
                   />
                   <div className="w-20 text-right">
                     <div className="font-semibold">{row.toOrder}</div>
