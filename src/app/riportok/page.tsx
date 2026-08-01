@@ -24,7 +24,8 @@ type SandwichProfitReport = {
 
 type MealProfitReport = { totalMeals: number; totalProfitFt: number };
 
-type SandwichMonthSummary = { byItem: ItemQuantityRow[] };
+type SandwichMonthSummary = { byItem: ItemQuantityRow[]; totalValueFt: number };
+type MealMonthSummary = { totalMeals: number; totalValue: number };
 
 type DishAverageRow = { name: string; quantity: number; aboveAverage: boolean; belowAverage: boolean };
 type DishBreakdownReport = { averageQuantity: number; dishes: DishAverageRow[] };
@@ -38,6 +39,39 @@ function formatMonthLabel(dateStr: string) {
 
 function formatFt(value: number) {
   return `${value.toLocaleString("hu-HU")} Ft`;
+}
+
+function TurnoverCard({
+  sandwichValueFt,
+  mealValue,
+}: {
+  sandwichValueFt: number | null;
+  mealValue: number | null;
+}) {
+  const combined = (sandwichValueFt ?? 0) + (mealValue ?? 0);
+  return (
+    <section className="space-y-3">
+      <h2 className="text-lg font-semibold">Forgalom</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-1">
+          <div className="text-sm text-muted">Szendvics</div>
+          <div className="text-2xl font-semibold">
+            {sandwichValueFt !== null ? formatFt(sandwichValueFt) : "…"}
+          </div>
+        </div>
+        <div className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-1">
+          <div className="text-sm text-muted">Készétel</div>
+          <div className="text-2xl font-semibold">
+            {mealValue !== null ? formatFt(mealValue) : "…"}
+          </div>
+        </div>
+      </div>
+      <div className="border border-gold bg-gold/10 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+        <span className="text-sm font-medium">Összesen</span>
+        <span className="font-semibold text-lg">{formatFt(combined)}</span>
+      </div>
+    </section>
+  );
 }
 
 function ProfitCards({
@@ -263,6 +297,8 @@ function DishAnalytics({ report, loading }: { report: DishBreakdownReport | null
 export default function RiportokPage() {
   const [reportMonth, setReportMonth] = useState(() => monthStartOf(todayStr()));
 
+  const [sandwichSummary, setSandwichSummary] = useState<SandwichMonthSummary | null>(null);
+  const [mealSummary, setMealSummary] = useState<MealMonthSummary | null>(null);
   const [sandwichProfit, setSandwichProfit] = useState<SandwichProfitReport | null>(null);
   const [mealProfit, setMealProfit] = useState<MealProfitReport | null>(null);
   const [dishBreakdown, setDishBreakdown] = useState<DishBreakdownReport | null>(null);
@@ -272,6 +308,8 @@ export default function RiportokPage() {
   const [trends, setTrends] = useState<ItemTrendRow[]>([]);
 
   useEffect(() => {
+    setSandwichSummary(null);
+    setMealSummary(null);
     setSandwichProfit(null);
     setMealProfit(null);
     setDishBreakdown(null);
@@ -288,6 +326,11 @@ export default function RiportokPage() {
     })();
 
     (async () => {
+      const res = await fetch(`/api/orders/monthly-summary?month=${reportMonth}`);
+      setMealSummary(await res.json());
+    })();
+
+    (async () => {
       const res = await fetch(`/api/orders/dish-breakdown?month=${reportMonth}`);
       setDishBreakdown(await res.json());
     })();
@@ -300,6 +343,7 @@ export default function RiportokPage() {
       ]);
       const current = (await currentRes.json()) as SandwichMonthSummary;
       const previous = (await previousRes.json()) as SandwichMonthSummary;
+      setSandwichSummary(current);
       const { topItems: top, bottomItems: bottom } = rankSandwichItems(current.byItem);
       setTopItems(top);
       setBottomItems(bottom);
@@ -326,6 +370,10 @@ export default function RiportokPage() {
         </button>
       </div>
 
+      <TurnoverCard
+        sandwichValueFt={sandwichSummary?.totalValueFt ?? null}
+        mealValue={mealSummary?.totalValue ?? null}
+      />
       <ProfitCards sandwichProfit={sandwichProfit} mealProfit={mealProfit} />
       <SandwichAnalytics
         topItems={topItems}

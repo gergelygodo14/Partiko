@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Geist, Geist_Mono, Poppins } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import UpdateNotifier from "@/components/UpdateNotifier";
 import BottomNav from "@/components/BottomNav";
 import LogoutButton from "@/components/LogoutButton";
@@ -23,12 +23,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const poppins = Poppins({
-  variable: "--font-poppins",
-  weight: "800",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
   title: "Partiko",
   description: "Alapanyag-nyilvántartó",
@@ -42,7 +36,7 @@ export default function RootLayout({
   return (
     <html
       lang="hu"
-      className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
@@ -51,19 +45,21 @@ export default function RootLayout({
         <header className="bg-ink sticky top-0 z-10">
           <div className="max-w-3xl mx-auto px-4 py-2 grid grid-cols-[1fr_auto_1fr] items-center">
             <Image
-              src="/logo-penguin-yellow.png"
+              src="/logo-icon.png"
               alt=""
-              width={661}
-              height={680}
+              width={2924}
+              height={3540}
               priority
               className="h-9 w-auto justify-self-start"
             />
-            <span
-              className="text-gold text-2xl leading-none tracking-tight"
-              style={{ fontFamily: "var(--font-poppins)" }}
-            >
-              Partiko
-            </span>
+            <Image
+              src="/logo-wordmark.png"
+              alt="Partiko"
+              width={3510}
+              height={530}
+              priority
+              className="h-8 w-auto"
+            />
             <div className="flex items-center gap-3 justify-self-end">
               <ThemeToggle />
               <LogoutButton />

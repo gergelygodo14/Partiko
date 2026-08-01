@@ -23,8 +23,11 @@
    flip - see the [data-theme="dark"] block. */
 :root {
   --ink: #010400;
-  --gold: #d8ca31;
-  --gold-dark: #ad9f27;
+  /* Sampled directly from the official logo files (2026-08-01, Drive
+     "Partiko" folder, EREDETI SZIN/INVERZ SZIN) - the halo and the
+     "PARTIKO" wordmark both use this exact gold. */
+  --gold: #d5aa41;
+  --gold-dark: #aa8834;
   --umber: #895737;
 
   /* Flipping tokens - light values here, dark overrides below. */
