@@ -21,14 +21,6 @@ const DATA_FONT = { name: "Comic Sans MS", bold: true, size: 11 };
 // together) - 6 rules, verified cell-by-cell against the KEDD tab.
 const GROUP_DIVIDER_AFTER_ORDER = new Set([4, 9, 12, 17, 21, 24]);
 
-// A handful of extra blank store-columns for stores that phoned in an order
-// too late to be in the system - deliberately small (unlike the ready-meal
-// sheet's MIN_PRINTABLE_ROWS padding, which pads the cheap, unbounded-length
-// axis). Here columns are the unbounded axis on a landscape page, so heavy
-// padding would eat directly into the page's limited width budget instead
-// of just extending the sheet downward.
-const EXTRA_BLANK_STORE_COLUMNS = 4;
-
 // Thin grid throughout, with a thick rule under the header row and under
 // each group boundary - same border convention as the reference sheet.
 function applyGridBorders(
@@ -111,9 +103,6 @@ function buildSheet(
   rows.forEach((row) => {
     columns.push({ header: row.storeName, key: row.customerId, width: 14, style: centered });
   });
-  for (let i = 0; i < EXTRA_BLANK_STORE_COLUMNS; i++) {
-    columns.push({ header: "", key: `blank${i}`, width: 14, style: centered });
-  }
   columns.push({ header: "Összesen", key: "total", width: 10, style: centered });
   sheet.columns = columns;
 
