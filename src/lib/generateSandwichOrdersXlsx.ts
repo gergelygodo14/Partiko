@@ -11,9 +11,29 @@ const MAX_SHEET_NAME_LENGTH = 31;
 // Matches the kitchen's own hand-built reference sheet
 // (partiko-szendvics/reference/rendelések.xlsx, KEDD tab) so the printed
 // export looks like what they're already used to: item names in Arial
-// bold italic, store names/quantities in Comic Sans MS bold.
-const ITEM_FONT = { name: "Arial", bold: true, italic: true, size: 12 };
-const DATA_FONT = { name: "Comic Sans MS", bold: true, size: 11 };
+// bold italic, store names/quantities in Comic Sans MS bold. Size bumped
+// 12/11 -> 22 on 2026-08-03 to match the owner's own manual edit of the
+// FAV sheet (large print, readable from across the kitchen).
+const ITEM_FONT = { name: "Arial", bold: true, italic: true, size: 22 };
+const DATA_FONT = { name: "Comic Sans MS", bold: true, size: 22 };
+
+// Row heights, also lifted from the owner's manual FAV-sheet edit - the
+// catalog (and so row count) is essentially fixed across every sheet, so a
+// single pair of heights works everywhere.
+const HEADER_ROW_HEIGHT = 60;
+const DATA_ROW_HEIGHT = 62;
+
+// Column widths, calibrated against the owner's manually-edited FAV sheet
+// (12 stores, widths 42.44 / 25.78x12 / 20.78 - a scale of 32% there filled
+// the page in both directions). The label and total columns stay fixed;
+// the store-columns budget is held constant and divided across however
+// many store columns a given sheet actually has, so the total printed
+// width (and so the fit-to-width scale Excel computes) stays the same
+// regardless of store count - which is what makes a 5-store sheet fill the
+// page exactly as fully as a 12-store one, instead of leaving blank space.
+const LABEL_COLUMN_WIDTH = 42.44;
+const TOTAL_COLUMN_WIDTH = 20.78;
+const STORE_COLUMNS_WIDTH_BUDGET = 12 * 25.78;
 
 // The reference sheet draws a thick horizontal rule after these catalog
 // `order` values (its own hand-drawn grouping of similar items - e.g. all
@@ -96,30 +116,39 @@ function buildSheet(
   const centered = { alignment: { horizontal: "center" as const }, font: DATA_FONT };
   const itemNameStyle = { font: ITEM_FONT };
 
+  const storeColumnWidth = STORE_COLUMNS_WIDTH_BUDGET / Math.max(rows.length, 1);
+
   const columns: Partial<ExcelJS.Column>[] = [
-    { header: columnHeaderLabel, key: "itemName", width: 30, style: itemNameStyle },
+    { header: columnHeaderLabel, key: "itemName", width: LABEL_COLUMN_WIDTH, style: itemNameStyle },
   ];
   // rows arrives pre-sorted biggest-orderer-first (see getSandwichOrdersForDay).
   rows.forEach((row) => {
-    columns.push({ header: row.storeName, key: row.customerId, width: 14, style: centered });
+    columns.push({
+      header: row.storeName,
+      key: row.customerId,
+      width: storeColumnWidth,
+      style: centered,
+    });
   });
-  columns.push({ header: "Összesen", key: "total", width: 10, style: centered });
+  columns.push({ header: "Összesen", key: "total", width: TOTAL_COLUMN_WIDTH, style: centered });
   sheet.columns = columns;
 
-  // Store names can be long; let the header wrap instead of getting cut off
-  // (Excel auto-sizes the row height to fit).
+  // Store names can be long; let the header wrap instead of getting cut off.
   sheet.getRow(1).alignment = { wrapText: true, vertical: "middle", horizontal: "center" };
+  sheet.getRow(1).height = HEADER_ROW_HEIGHT;
   sheet.pageSetup = {
     paperSize: 9,
     orientation: "landscape",
-    // Opposite choice from the ready-meal sheet on purpose: there the risk
-    // was an already-narrow table getting stretched wide, here it's an
-    // already-wide (many stores) table needing to be compressed to fit one
-    // page's width on a busy day.
+    // fitToWidth AND fitToHeight both constrain to exactly one page - Excel
+    // applies the smaller of the two scales uniformly. Since row height/count
+    // is fixed and the store-column width budget above is held constant
+    // regardless of store count, that scale lands the same on every sheet,
+    // so the printed table always fills the full page in both directions
+    // instead of shrinking to a small block for busy days (2026-08-03 fix).
     fitToPage: true,
     fitToWidth: 1,
-    fitToHeight: 0,
-    margins: { left: 0.4, right: 0.4, top: 0.5, bottom: 0.5, header: 0.2, footer: 0.2 },
+    fitToHeight: 1,
+    margins: { left: 0, right: 0, top: 0, bottom: 0, header: 0, footer: 0 },
     // The item-name column repeats on every printed page if a very busy day
     // still spills past one landscape page width.
     printTitlesColumn: "A:A",
@@ -136,7 +165,7 @@ function buildSheet(
       itemTotal += qty;
     });
     rowData.total = itemTotal;
-    sheet.addRow(rowData);
+    sheet.addRow(rowData).height = DATA_ROW_HEIGHT;
   });
 
   const totalsRowData: Record<string, string | number> = { itemName: "Összesen" };
@@ -148,6 +177,7 @@ function buildSheet(
   totalsRowData.total = grandTotal;
   sheet.addRow(totalsRowData);
   const totalsRow = sheet.getRow(sheet.rowCount);
+  totalsRow.height = DATA_ROW_HEIGHT;
 
   // Item rows start at sheet row 2 (row 1 is the header); a divider drawn
   // "after" a given item lands on that same item's own row (its bottom
