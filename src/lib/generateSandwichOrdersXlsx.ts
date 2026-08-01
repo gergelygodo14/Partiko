@@ -52,10 +52,13 @@ function quantityFor(row: SandwichDayCustomerOrder, itemId: string): number {
   return row.lines.find((line) => line.itemId === itemId)?.quantity ?? 0;
 }
 
-// Keeps every FAV store next to every other FAV store (and likewise for
-// Coop), since the owner packs those together for the same run - a stable
-// group-by that otherwise preserves the incoming biggest-orderer-first order
-// untouched.
+// Keeps every Coop store next to every other Coop store, since the owner
+// packs those together for the same run - a stable group-by that otherwise
+// preserves the incoming biggest-orderer-first order untouched. FAV rows are
+// filtered out by the caller before this runs (they get their own sheet
+// entirely, see generateSandwichOrdersXlsx below) - this still groups FAV
+// too if ever called with FAV rows in it (exercised directly by the parity
+// test), it's just that the export itself no longer does.
 //
 // Reads Customer.storeGroup rather than re-deriving the group from the store
 // name (which is what this did before that column existed). Only the group KEY
@@ -194,20 +197,36 @@ export async function generateSandwichOrdersXlsx(
   // Countryside ("vidék") stores go out with a different driver, so they
   // must never share a page with an in-town store - pulled out into their
   // own dedicated sheet(s) entirely, before any other grouping/splitting.
+  // FAV stores get the same treatment (2026-08-01, owner request) - they used
+  // to just be grouped adjacent within the regular sheet(s), but the owner
+  // packs FAV stores as a fully separate run, same as vidék.
   const videkRows = rows.filter((row) => row.storeGroup === "VIDEK");
-  const regularRows = groupAdjacentByStoreGroup(rows.filter((row) => row.storeGroup !== "VIDEK"));
+  const favRows = rows.filter((row) => row.storeGroup === "FAV");
+  const regularRows = groupAdjacentByStoreGroup(
+    rows.filter((row) => row.storeGroup !== "VIDEK" && row.storeGroup !== "FAV")
+  );
 
   // Chunk stores into as many sheets as needed so each one still prints
   // readably on one A4 landscape page - not just a single split into two,
-  // since a big enough day would still overflow a second sheet too. 8
+  // since a big enough day would still overflow a second sheet too. 12
   // stores (+ the blank phone-order columns) is about what still prints
-  // readably on one page.
-  const STORES_PER_SHEET = 8;
+  // readably on one page (raised from 8 on 2026-08-01 - there was still
+  // room).
+  const STORES_PER_SHEET = 12;
   const label = dayName || date;
   const sheetCount = Math.max(1, Math.ceil(regularRows.length / STORES_PER_SHEET));
   for (let i = 0; i < sheetCount; i++) {
     const chunk = regularRows.slice(i * STORES_PER_SHEET, (i + 1) * STORES_PER_SHEET);
     buildSheet(workbook, `SZENDVICS ${label} ${i + 1}`, label, items, chunk);
+  }
+
+  if (favRows.length > 0) {
+    const favSheetCount = Math.ceil(favRows.length / STORES_PER_SHEET);
+    for (let i = 0; i < favSheetCount; i++) {
+      const chunk = favRows.slice(i * STORES_PER_SHEET, (i + 1) * STORES_PER_SHEET);
+      const suffix = favSheetCount > 1 ? ` ${i + 1}` : "";
+      buildSheet(workbook, `SZENDVICS ${label} FAV${suffix}`, label, items, chunk);
+    }
   }
 
   if (videkRows.length > 0) {
