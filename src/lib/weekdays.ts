@@ -13,6 +13,15 @@ import { addDaysStr, mondayOf, parseDay } from "@/lib/dates";
 export const SHORT_DAY_NAMES = ["H", "K", "Sze", "Cs", "P"] as const;
 export const FULL_DAY_NAMES = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek"] as const;
 
+// Hungarian inflections for UI copy. Written out rather than derived from
+// FULL_DAY_NAMES because the suffixes are irregular ("szerdára" but "keddre",
+// "csütörtöki" but "pénteki") and a lowercase + suffix concat produces wrong
+// forms like "szerdare".
+/** "a szerdai listáról" */
+export const DAY_ADJECTIVES = ["hétfői", "keddi", "szerdai", "csütörtöki", "pénteki"] as const;
+/** "csak szerdára" */
+export const DAY_ONTO = ["hétfőre", "keddre", "szerdára", "csütörtökre", "péntekre"] as const;
+
 export const WEEKDAY_COUNT = FULL_DAY_NAMES.length;
 
 /** 0=Mon..4=Fri, or null for a Saturday/Sunday date (no delivery day). */

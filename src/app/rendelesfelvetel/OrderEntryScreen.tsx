@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { StoreGroup } from "@/generated/prisma/client";
 import { addDaysStr, budapestTodayStr, mondayOf } from "@/lib/dates";
 import { getSandwichExportDay } from "@/lib/sandwichDates";
 import {
@@ -21,6 +22,7 @@ import {
   SHORT_DAY_NAMES,
   weekdayIndexOf,
 } from "@/lib/weekdays";
+import AddStoreDialog from "./AddStoreDialog";
 import OrderGrid from "./OrderGrid";
 import StoreColumnEditor from "./StoreColumnEditor";
 import StoreList from "./StoreList";
@@ -51,6 +53,25 @@ function readStoredDrafts(): StoredDrafts | null {
   }
 }
 
+/** Drops a removed store from the persisted drafts, synchronously.
+ *
+ *  Has to happen before the day is reloaded: loadDay() restores the stored
+ *  draft whenever the server's savedAt is unchanged, and removing a store that
+ *  had no order for this date leaves savedAt exactly where it was - so a stale
+ *  quantity would come straight back for a column nothing renders any more. */
+function purgeCustomerFromStoredDrafts(customerId: string): void {
+  const stored = readStoredDrafts();
+  if (!stored) return;
+  for (const quantities of Object.values(stored.draftsByDate)) {
+    delete quantities[customerId];
+  }
+  try {
+    window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(stored));
+  } catch {
+    // Same as the write path: an unavailable localStorage is not fatal here.
+  }
+}
+
 export default function OrderEntryScreen() {
   const today = budapestTodayStr();
   const [date, setDate] = useState(() => defaultEntryDate(today));
@@ -67,6 +88,7 @@ export default function OrderEntryScreen() {
 
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [openStoreId, setOpenStoreId] = useState<string | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
 
   const [sending, setSending] = useState(false);
   const [sendResult, setSendResult] = useState<DaySaveResult | null>(null);
@@ -269,6 +291,53 @@ export default function OrderEntryScreen() {
     [date, draft]
   );
 
+  // --- roster edits (add / remove / regroup a store) ---------------------------
+  const handleStoreAdded = useCallback(async () => {
+    setAddOpen(false);
+    // Nothing about an order changed, so savedAt is unchanged and loadDay
+    // restores the unsent draft as usual - adding a column never costs work.
+    await loadDay(date);
+  }, [date, loadDay]);
+
+  const handleStoreRemoved = useCallback(
+    async (customerId: string) => {
+      // A removed store must not survive anywhere in client state: a leftover
+      // quantity would count as an unsaved change for a column nothing renders,
+      // making the send bar claim work that cannot be reviewed, and PUT /day
+      // would write the order straight back.
+      purgeCustomerFromStoredDrafts(customerId);
+      const strip = (byDate: Record<string, GridQuantities>) =>
+        Object.fromEntries(
+          Object.entries(byDate).map(([key, quantities]) => {
+            const next = { ...quantities };
+            delete next[customerId];
+            return [key, next];
+          })
+        );
+      setDraftsByDate(strip);
+      setSavedByDate(strip);
+      setOpenStoreId(null);
+      setSendResult(null);
+      await loadDay(date);
+    },
+    [date, loadDay]
+  );
+
+  const handleGroupChanged = useCallback((customerId: string, storeGroup: StoreGroup) => {
+    // Patched in place rather than reloading: the column just moves to another
+    // block, and a reload would risk the stale-draft banner for no reason.
+    setGrid((prev) =>
+      prev === null
+        ? prev
+        : {
+            ...prev,
+            stores: prev.stores.map((store) =>
+              store.customerId === customerId ? { ...store, storeGroup } : store
+            ),
+          }
+    );
+  }, []);
+
   // --- derived UI bits --------------------------------------------------------
   const weekday = weekdayIndexOf(date) ?? 0;
   const dayLabel = `${FULL_DAY_NAMES[weekday]} (${formatShortDate(date)})`;
@@ -399,6 +468,14 @@ export default function OrderEntryScreen() {
         >
           Csak az üresekbe
         </button>
+        <button
+          type="button"
+          onClick={() => setAddOpen(true)}
+          disabled={!grid}
+          className="border border-neutral-300 text-sm rounded-xl px-3 py-2 active:bg-neutral-100 disabled:opacity-40"
+        >
+          + Bolt hozzáadása
+        </button>
         <div className="ml-auto flex rounded-xl border border-neutral-300 overflow-hidden text-sm">
           <button
             type="button"
@@ -438,7 +515,8 @@ export default function OrderEntryScreen() {
 
       {!loading && grid && grid.stores.length === 0 && (
         <p className="text-center text-neutral-500 py-10">
-          Erre a napra nincs bolt a körön, és rendelés sincs.
+          Erre a napra nincs bolt a listán, és rendelés sincs. A „Bolt hozzáadása” gombbal vehetsz
+          fel egyet.
         </p>
       )}
 
@@ -471,6 +549,8 @@ export default function OrderEntryScreen() {
           items={grid.items}
           column={draft[openStore.customerId] ?? {}}
           dayLabel={dayLabel}
+          date={date}
+          weekday={weekday}
           onSetQuantity={(itemId, quantity) =>
             handleSetQuantity(openStore.customerId, itemId, quantity)
           }
@@ -491,7 +571,18 @@ export default function OrderEntryScreen() {
           }
           onClear={() => updateDraft((current) => clearColumn(current, openStore.customerId))}
           onSaveAsFix={() => saveStoreAsFix(openStore.customerId)}
+          onGroupChanged={handleGroupChanged}
+          onRemoved={handleStoreRemoved}
           onClose={() => setOpenStoreId(null)}
+        />
+      )}
+
+      {addOpen && grid && (
+        <AddStoreDialog
+          weekday={weekday}
+          onDayStoreIds={new Set(grid.stores.map((store) => store.customerId))}
+          onAdded={handleStoreAdded}
+          onClose={() => setAddOpen(false)}
         />
       )}
 

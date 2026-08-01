@@ -11,6 +11,14 @@
 // Does NOT touch storeOrder - that is seeded from the reference workbook's
 // column order by import-fix-orders.ts.
 //
+// ⚠️ SINCE 2026-08-01 THE OWNER CAN CHANGE A STORE'S GROUP FROM THE UI
+// (/rendelesfelvetel -> tap a store -> "Bolt beállításai"). This script derives
+// the group from the store NAME, so re-running it with --apply would silently
+// revert every one of those hand-made corrections. Its job was the one-off
+// backfill and it is done. Read the dry-run output store by store before ever
+// applying it again, and treat anything listed under "Módosítandó" as a manual
+// decision you are about to overwrite - not as drift to be cleaned up.
+//
 //   npx tsx scripts/backfill-store-groups.ts            # dry run (default)
 //   npx tsx scripts/backfill-store-groups.ts --apply    # writes
 import "dotenv/config";

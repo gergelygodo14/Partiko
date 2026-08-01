@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import EditableQty from "@/components/EditableQty";
+import type { StoreGroup } from "@/generated/prisma/client";
 import { MIN_ORDER_VALUE_FT } from "@/lib/sandwichOrders";
 import { STORE_GROUP_LABELS } from "@/lib/sandwichStoreGroups";
+import StoreSettingsPanel from "./StoreSettingsPanel";
 import type { GridItem, GridStore, HistoryEntry } from "./types";
 import { formatFt, formatShortDate } from "./types";
 
@@ -12,11 +14,15 @@ type Props = {
   items: GridItem[];
   column: Record<string, number>;
   dayLabel: string;
+  date: string;
+  weekday: number;
   onSetQuantity: (itemId: string, quantity: number) => void;
   onApplyFix: () => void;
   onApplyHistory: (entry: HistoryEntry) => void;
   onClear: () => void;
   onSaveAsFix: () => Promise<void>;
+  onGroupChanged: (customerId: string, storeGroup: StoreGroup) => void;
+  onRemoved: (customerId: string) => void;
   onClose: () => void;
 };
 
@@ -28,11 +34,15 @@ export default function StoreColumnEditor({
   items,
   column,
   dayLabel,
+  date,
+  weekday,
   onSetQuantity,
   onApplyFix,
   onApplyHistory,
   onClear,
   onSaveAsFix,
+  onGroupChanged,
+  onRemoved,
   onClose,
 }: Props) {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
@@ -188,6 +198,14 @@ export default function StoreColumnEditor({
             );
           })}
         </div>
+
+        <StoreSettingsPanel
+          store={store}
+          date={date}
+          weekday={weekday}
+          onGroupChanged={(storeGroup) => onGroupChanged(store.customerId, storeGroup)}
+          onRemoved={onRemoved}
+        />
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 px-4 py-3">
