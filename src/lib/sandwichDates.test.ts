@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { getSandwichExportDay, getSandwichOrderTargetDay } from "@/lib/sandwichDates";
+import {
+  getSandwichExportDay,
+  getSandwichOrderTargetDay,
+  isTodaySaturdayInBudapest,
+} from "@/lib/sandwichDates";
 
 // `hour` is Budapest local time; construct the equivalent UTC instant by
 // subtracting the offset (CET=+1 in winter, CEST=+2 in summer).
@@ -90,5 +94,35 @@ describe("getSandwichExportDay", () => {
   it("Saturday exports Monday (weekend skipped)", () => {
     const now = budapestInstant("2026-07-04", 9, 2);
     expect(getSandwichExportDay(now)).toEqual({ date: "2026-07-06", dayName: "Hétfő" });
+  });
+});
+
+describe("isTodaySaturdayInBudapest", () => {
+  it("is true on Saturday, at any hour", () => {
+    expect(isTodaySaturdayInBudapest(budapestInstant("2026-07-04", 1, 2))).toBe(true);
+    expect(isTodaySaturdayInBudapest(budapestInstant("2026-07-04", 23, 2))).toBe(true);
+  });
+
+  it("is false on every other day of the week", () => {
+    for (const date of [
+      "2026-06-29", // Monday
+      "2026-06-30", // Tuesday
+      "2026-07-01", // Wednesday
+      "2026-07-02", // Thursday
+      "2026-07-03", // Friday
+      "2026-07-05", // Sunday
+    ]) {
+      expect(isTodaySaturdayInBudapest(budapestInstant(date, 12, 2))).toBe(false);
+    }
+  });
+
+  it("evaluates in Budapest local time, not UTC, near midnight", () => {
+    // 2026-07-04 23:30 Budapest (CEST, +2) is still 2026-07-04 in UTC minus
+    // the offset - but late enough it'd already be Sunday UTC+... this just
+    // pins that the Budapest wall-clock date, not the UTC one, decides it.
+    const fridayLateBudapest = budapestInstant("2026-07-03", 23, 2); // Friday 23:00 Budapest
+    expect(isTodaySaturdayInBudapest(fridayLateBudapest)).toBe(false);
+    const saturdayEarlyBudapest = budapestInstant("2026-07-04", 0, 2); // Saturday 00:00 Budapest
+    expect(isTodaySaturdayInBudapest(saturdayEarlyBudapest)).toBe(true);
   });
 });

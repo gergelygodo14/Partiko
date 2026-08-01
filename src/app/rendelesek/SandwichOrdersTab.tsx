@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { addDaysStr, addMonthsStr } from "@/lib/dates";
 import { FULL_DAY_NAMES, SHORT_DAY_NAMES } from "@/lib/weekdays";
+import BakeryOrderDialog from "./BakeryOrderDialog";
 
 type ItemTotal = { itemId: string; itemName: string; quantity: number; valueFt: number };
 type CustomerTotal = { customerId: string; storeName: string; quantity: number; valueFt: number };
@@ -370,6 +371,7 @@ export default function SandwichOrdersTab() {
   const [profitMonth, setProfitMonth] = useState<string | null>(null);
   const [profitReport, setProfitReport] = useState<ProfitReport | null>(null);
   const [profitLoading, setProfitLoading] = useState(false);
+  const [bakeryOrderOpen, setBakeryOrderOpen] = useState(false);
   const [selectedDayIndex, setSelectedDayIndex] = useState(() => {
     const jsWeekday = new Date().getDay(); // 0=Sun..6=Sat
     return Math.min(jsWeekday === 0 ? 6 : jsWeekday - 1, 4);
@@ -501,6 +503,12 @@ export default function SandwichOrdersTab() {
           Csak szendvicsenkénti darabszám, boltok nélkül - a rendelések excel "összesítés" fülének
           formátumában.
         </p>
+        <button
+          onClick={() => setBakeryOrderOpen(true)}
+          className="block w-full text-center border border-neutral-300 font-semibold text-base px-5 py-3 rounded-xl active:bg-neutral-100"
+        >
+          Pékáru rendelés összeállítása
+        </button>
         <Link
           href="/rendelesfelvetel"
           className="block w-full text-center bg-yellow-400 text-black font-semibold px-5 py-3 rounded-xl active:bg-yellow-500"
@@ -691,6 +699,8 @@ export default function SandwichOrdersTab() {
           <SummaryTables summary={monthSummary} />
         </>
       )}
+
+      {bakeryOrderOpen && <BakeryOrderDialog onClose={() => setBakeryOrderOpen(false)} />}
     </div>
   );
 }
