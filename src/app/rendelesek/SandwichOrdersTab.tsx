@@ -505,13 +505,13 @@ export default function SandwichOrdersTab() {
         </p>
         <button
           onClick={() => setBakeryOrderOpen(true)}
-          className="block w-full text-center border bg-umber/8 border-umber/40 font-semibold text-base px-5 py-3 rounded-xl active:bg-umber/15"
+          className="block w-full text-center bg-gold text-ink font-semibold text-base px-5 py-3 rounded-xl active:bg-gold-dark"
         >
           Pékáru rendelés összeállítása
         </button>
         <Link
           href="/rendelesfelvetel"
-          className="block w-full text-center bg-gold text-ink font-semibold px-5 py-3 rounded-xl active:bg-gold-dark"
+          className="block w-full text-center border bg-umber/8 border-umber/40 font-semibold px-5 py-3 rounded-xl active:bg-umber/15"
         >
           Rendelésfelvétel megnyitása
         </Link>

@@ -207,7 +207,7 @@ export default function DailyEntryPage() {
                     ).map((e) => (
                       <span
                         key={e.id}
-                        className="inline-flex items-center gap-1.5 bg-neutral-100 rounded-full pl-3 pr-1.5 py-1.5"
+                        className="inline-flex items-center gap-1.5 bg-umber/10 rounded-full pl-3 pr-1.5 py-1.5"
                       >
                         <span className="text-neutral-400 text-xs">{formatShort(e.date)}</span>
                         {e.quantity.toLocaleString("hu-HU")}
@@ -225,7 +225,7 @@ export default function DailyEntryPage() {
                         onClick={() =>
                           setExpanded((prev) => ({ ...prev, [ing.id]: !prev[ing.id] }))
                         }
-                        className="inline-flex items-center gap-1 bg-neutral-100 active:bg-neutral-200 rounded-full px-3 py-1.5 text-neutral-600"
+                        className="inline-flex items-center gap-1 bg-umber/10 active:bg-umber/20 rounded-full px-3 py-1.5 text-umber-dark"
                         aria-label={expanded[ing.id] ? "Összecsukás" : "Összes tétel mutatása"}
                       >
                         {expanded[ing.id] ? (
