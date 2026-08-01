@@ -99,10 +99,10 @@ function TrendIndicator({ point }: { point: SupplierPricePoint }) {
     };
   }, [open]);
 
-  if (trend === "same") return <span className="text-neutral-400">–</span>;
+  if (trend === "same") return <span className="text-faint">–</span>;
   if (trend !== "up" && trend !== "down") return null;
   if (previousPrice === null) {
-    return <span className={trend === "up" ? "text-red-600" : "text-green-600"}>{trend === "up" ? "▲" : "▼"}</span>;
+    return <span className={trend === "up" ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"}>{trend === "up" ? "▲" : "▼"}</span>;
   }
 
   const delta = price - previousPrice;
@@ -115,7 +115,7 @@ function TrendIndicator({ point }: { point: SupplierPricePoint }) {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className={`${trend === "up" ? "text-red-600" : "text-green-600"} cursor-pointer`}
+        className={`${trend === "up" ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"} cursor-pointer`}
         aria-label={label}
       >
         {trend === "up" ? "▲" : "▼"}
@@ -139,7 +139,7 @@ function PriceCell({ point }: { point: SupplierPricePoint }) {
     <>
       {point.price.toLocaleString("hu-HU")} Ft <TrendIndicator point={point} />
       {point.normalizedFrom && (
-        <div className="text-xs text-neutral-400">
+        <div className="text-xs text-faint">
           ({point.normalizedFrom.price.toLocaleString("hu-HU")} Ft/{point.normalizedFrom.unit} alapján)
         </div>
       )}
@@ -297,7 +297,7 @@ export default function SzamlakPage() {
       {latestHighlight && (
         <section className="border-2 border-gold bg-gold/10 rounded-2xl p-4 shadow-sm space-y-1">
           <h2 className="text-lg font-semibold">Árváltozás</h2>
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-muted">
             {SUPPLIER_LABEL[latestInvoice.supplier]} ·{" "}
             {new Date(latestInvoice.uploadedAt).toLocaleDateString("hu-HU")}
           </p>
@@ -309,11 +309,11 @@ export default function SzamlakPage() {
         <h2 className="text-lg font-semibold mb-3">Számla feltöltése</h2>
         <div className="flex flex-wrap gap-3 items-end">
           <div>
-            <label className="block text-xs text-neutral-500 mb-1">Beszállító</label>
+            <label className="block text-xs text-muted mb-1">Beszállító</label>
             <select
               value={supplier}
               onChange={(e) => setSupplier(e.target.value as Supplier)}
-              className="border border-neutral-300 rounded-xl px-3 py-2.5 text-base"
+              className="border border-strong rounded-xl px-3 py-2.5 text-base"
             >
               <option value="BAROMFIUDVAR">Baromfiudvar</option>
               <option value="SAJTFUTAR">Sajtfutár</option>
@@ -346,7 +346,7 @@ export default function SzamlakPage() {
                 >
                   <div>
                     <span className="font-semibold text-base">{item.shortName}</span>
-                    <span className="text-xs text-neutral-500"> · {item.productName}</span>
+                    <span className="text-xs text-muted"> · {item.productName}</span>
                     <p className="text-sm">
                       {SUPPLIER_LABEL[itemSupplier]}: {item.priorPrice.toLocaleString("hu-HU")} →{" "}
                       {item.newPrice.toLocaleString("hu-HU")} Ft ({diffPct.toFixed(0)}%-kal {direction})
@@ -361,9 +361,9 @@ export default function SzamlakPage() {
                       onChange={(e) =>
                         setEditedPendingPrice((m) => ({ ...m, [item.id]: e.target.value }))
                       }
-                      className="border border-neutral-300 rounded-xl px-3 py-2.5 w-28"
+                      className="border border-strong rounded-xl px-3 py-2.5 w-28"
                     />
-                    <span className="text-xs text-neutral-500">Ft (ha eltér, ezt menti el)</span>
+                    <span className="text-xs text-muted">Ft (ha eltér, ezt menti el)</span>
                     <button
                       onClick={() => confirmPendingPriceItem(invoiceId, item.id)}
                       className="px-4 py-2.5 rounded-xl bg-gold text-ink font-semibold active:bg-gold-dark"
@@ -400,13 +400,13 @@ export default function SzamlakPage() {
               return (
                 <li
                   key={p.id}
-                  className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm flex flex-col gap-3"
+                  className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm flex flex-col gap-3"
                 >
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <span className="font-semibold text-base">{p.name}</span>
                       {p.priceObservations[0] && (
-                        <p className="text-xs text-neutral-500">
+                        <p className="text-xs text-muted">
                           {SUPPLIER_LABEL[p.priceObservations[0].supplier]}{" "}
                           {p.priceObservations[0].unitPrice.toLocaleString("hu-HU")} Ft
                         </p>
@@ -429,7 +429,7 @@ export default function SzamlakPage() {
                           setMergeTarget((m) => ({ ...m, [p.id]: "" }));
                         }}
                         placeholder="Termék keresése összevonáshoz..."
-                        className="border border-neutral-300 rounded-xl px-3 py-2.5 flex-1 min-w-[180px]"
+                        className="border border-strong rounded-xl px-3 py-2.5 flex-1 min-w-[180px]"
                       />
                       <button
                         onClick={() => mergeProduct(p.id)}
@@ -440,16 +440,16 @@ export default function SzamlakPage() {
                       </button>
                     </div>
                     {selected && (
-                      <p className="text-xs text-neutral-500">
+                      <p className="text-xs text-muted">
                         Kiválasztva: {selected.name}
                         <br />
                         {formatCandidatePrices(selected.bySupplier)}
                       </p>
                     )}
                     {search && !selected && (
-                      <ul className="border border-neutral-200 rounded-xl divide-y divide-neutral-200 max-h-56 overflow-y-auto">
+                      <ul className="border border-surface-border rounded-xl divide-y divide-surface-border max-h-56 overflow-y-auto">
                         {matches.length === 0 ? (
-                          <li className="px-3 py-2 text-neutral-400">Nincs találat</li>
+                          <li className="px-3 py-2 text-faint">Nincs találat</li>
                         ) : (
                           matches.slice(0, 20).map((cp) => (
                             <li key={cp.id}>
@@ -458,10 +458,10 @@ export default function SzamlakPage() {
                                   setMergeTarget((m) => ({ ...m, [p.id]: cp.id }));
                                   setMergeSearch((m) => ({ ...m, [p.id]: cp.name }));
                                 }}
-                                className="w-full text-left px-3 py-2 active:bg-neutral-100"
+                                className="w-full text-left px-3 py-2 active:bg-surface-alt"
                               >
                                 <div>{cp.name}</div>
-                                <div className="text-xs text-neutral-500">
+                                <div className="text-xs text-muted">
                                   {formatCandidatePrices(cp.bySupplier)}
                                 </div>
                               </button>
@@ -481,9 +481,9 @@ export default function SzamlakPage() {
       <section>
         <h2 className="text-lg font-semibold mb-3">Ár-összehasonlítás</h2>
         {loading ? (
-          <p className="text-neutral-500">Betöltés...</p>
+          <p className="text-muted">Betöltés...</p>
         ) : comparison.length === 0 ? (
-          <p className="text-neutral-500">Még nincs jóváhagyott termék árelőzménye.</p>
+          <p className="text-muted">Még nincs jóváhagyott termék árelőzménye.</p>
         ) : (
           <>
             <div className="flex flex-wrap gap-2 mb-3 text-sm">
@@ -494,7 +494,7 @@ export default function SzamlakPage() {
                   className={
                     comparisonFilter === opt.value
                       ? "px-3 py-1.5 rounded-full bg-gold text-ink font-semibold"
-                      : "px-3 py-1.5 rounded-full border bg-umber/8 border-umber/40 text-neutral-600 active:bg-umber/15"
+                      : "px-3 py-1.5 rounded-full border bg-umber/8 border-umber/40 text-muted active:bg-umber/15"
                   }
                 >
                   {opt.label}
@@ -521,7 +521,7 @@ export default function SzamlakPage() {
 
               if (filteredComparison.length === 0) {
                 return (
-                  <p className="text-neutral-500">Nincs a szűrésnek megfelelő termék.</p>
+                  <p className="text-muted">Nincs a szűrésnek megfelelő termék.</p>
                 );
               }
 
@@ -529,7 +529,7 @@ export default function SzamlakPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm border-collapse">
                     <thead>
-                      <tr className="text-left text-xs text-neutral-500">
+                      <tr className="text-left text-xs text-muted">
                         <th className="py-2 pr-3">Termék</th>
                         <th className="py-2 pr-3">Sajtfutár</th>
                         <th className="py-2 pr-3">Baromfiudvar</th>
@@ -538,20 +538,20 @@ export default function SzamlakPage() {
                     </thead>
                     <tbody>
                       {filteredComparison.map((row) => (
-                        <tr key={row.productId} className="border-t border-neutral-200">
+                        <tr key={row.productId} className="border-t border-surface-border">
                           <td className="py-2 pr-3 font-medium">
                             {row.productName}
                             {comparisonFilter === "recent" && (
-                              <p className="font-normal text-xs text-neutral-500">
+                              <p className="font-normal text-xs text-muted">
                                 Utoljára rögzítve: {row.latestObservedDate ?? "–"}
                               </p>
                             )}
                             {comparisonFilter === "mostOrdered" && (
-                              <p className="font-normal text-xs text-neutral-500">
+                              <p className="font-normal text-xs text-muted">
                                 {row.observationCount} alkalommal rögzítve
                               </p>
                             )}
-                            <div className="flex items-center gap-1.5 mt-1 font-normal text-xs text-neutral-500">
+                            <div className="flex items-center gap-1.5 mt-1 font-normal text-xs text-muted">
                               <label htmlFor={`packsize-${row.productId}`}>Csomagméret (db/doboz):</label>
                               <input
                                 id={`packsize-${row.productId}`}
@@ -567,7 +567,7 @@ export default function SzamlakPage() {
                                   if (next === row.packSize) return;
                                   updatePackSize(row.productId, next);
                                 }}
-                                className="w-16 border border-neutral-300 rounded-lg px-1.5 py-0.5"
+                                className="w-16 border border-strong rounded-lg px-1.5 py-0.5"
                               />
                             </div>
                           </td>
@@ -602,17 +602,17 @@ export default function SzamlakPage() {
       <section>
         <h2 className="text-lg font-semibold mb-3">Feltöltött számlák</h2>
         {loading ? (
-          <p className="text-neutral-500">Betöltés...</p>
+          <p className="text-muted">Betöltés...</p>
         ) : invoices.length === 0 ? (
-          <p className="text-neutral-500">Még nincs feltöltött számla.</p>
+          <p className="text-muted">Még nincs feltöltött számla.</p>
         ) : (
           <ul className="space-y-2">
             {invoices.map((inv) => (
               <li
                 key={inv.id}
-                className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm"
+                className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm"
               >
-                <div className="flex items-center justify-between text-xs text-neutral-500 mb-2">
+                <div className="flex items-center justify-between text-xs text-muted mb-2">
                   <span>
                     {SUPPLIER_LABEL[inv.supplier]} ·{" "}
                     {new Date(inv.uploadedAt).toLocaleDateString("hu-HU")}
@@ -620,10 +620,10 @@ export default function SzamlakPage() {
                   <span
                     className={
                       inv.status === "FAILED"
-                        ? "text-red-600"
+                        ? "text-red-600 dark:text-red-400"
                         : inv.status === "PROCESSED"
-                          ? "text-green-600"
-                          : "text-neutral-500"
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-muted"
                     }
                   >
                     {inv.status === "PROCESSED"
@@ -637,7 +637,7 @@ export default function SzamlakPage() {
                   <p className="text-sm whitespace-pre-line">{inv.summaryText}</p>
                 )}
                 {inv.errorMessage && (
-                  <p className="text-sm text-red-600">{inv.errorMessage}</p>
+                  <p className="text-sm text-red-600 dark:text-red-400">{inv.errorMessage}</p>
                 )}
               </li>
             ))}

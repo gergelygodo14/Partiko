@@ -50,14 +50,14 @@ async function fetchSummary(from: string, to: string): Promise<Summary> {
 }
 
 function SummaryTable({ summary }: { summary: Summary | null }) {
-  if (!summary) return <p className="text-neutral-500">Betöltés...</p>;
+  if (!summary) return <p className="text-muted">Betöltés...</p>;
   if (summary.rows.length === 0) {
-    return <p className="text-neutral-500">Nincs rögzített adat ebben az időszakban.</p>;
+    return <p className="text-muted">Nincs rögzített adat ebben az időszakban.</p>;
   }
   return (
-    <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm">
+    <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm">
       <table className="w-full text-sm">
-        <thead className="bg-neutral-100 text-neutral-600">
+        <thead className="bg-surface-alt text-muted">
           <tr>
             <th className="text-left px-3 py-3">Alapanyag</th>
             <th className="text-right px-3 py-3">Mennyiség</th>
@@ -66,7 +66,7 @@ function SummaryTable({ summary }: { summary: Summary | null }) {
         </thead>
         <tbody>
           {summary.rows.map((r) => (
-            <tr key={r.ingredientId} className="border-t border-neutral-100">
+            <tr key={r.ingredientId} className="border-t border-surface-border">
               <td className="px-3 py-3">{r.name}</td>
               <td className="px-3 py-3 text-right">
                 {r.totalQuantity.toLocaleString("hu-HU")} {r.unit}
@@ -78,7 +78,7 @@ function SummaryTable({ summary }: { summary: Summary | null }) {
           ))}
         </tbody>
         <tfoot>
-          <tr className="border-t border-neutral-300 font-semibold">
+          <tr className="border-t border-strong font-semibold">
             <td className="px-3 py-3" colSpan={2}>
               Összesen
             </td>
@@ -134,7 +134,7 @@ function OpenPeriodSection() {
         <h2 className="text-lg font-semibold">
           Nyitott időszak (nem számlázott)
           {range && (
-            <span className="text-sm font-normal text-neutral-500 ml-2">
+            <span className="text-sm font-normal text-muted ml-2">
               {range.from > range.to
                 ? "minden mai tétel le van számlázva"
                 : `${formatDate(range.from)} – ${formatDate(range.to)}`}
@@ -191,10 +191,10 @@ function HistorySection() {
           <li key={p.id}>
             <button
               onClick={() => select(p)}
-              className="w-full text-left border border-neutral-200 bg-white rounded-2xl p-4 text-sm active:bg-neutral-100"
+              className="w-full text-left border border-surface-border bg-surface rounded-2xl p-4 text-sm active:bg-surface-alt"
             >
               {formatDate(p.from)} – {formatDate(p.to)}
-              <span className="text-neutral-400 ml-2">
+              <span className="text-faint ml-2">
                 (lezárva: {formatDate(p.closedAt)})
               </span>
             </button>
@@ -260,21 +260,21 @@ function AdHocSection() {
         </div>
         <div className="flex items-end gap-2">
           <div>
-            <label className="block text-xs text-neutral-500 mb-1">Ettől</label>
+            <label className="block text-xs text-muted mb-1">Ettől</label>
             <input
               type="date"
               value={from}
               onChange={(e) => setFrom(e.target.value)}
-              className="border border-neutral-300 rounded-xl px-3 py-2.5 text-base"
+              className="border border-strong rounded-xl px-3 py-2.5 text-base"
             />
           </div>
           <div>
-            <label className="block text-xs text-neutral-500 mb-1">Eddig</label>
+            <label className="block text-xs text-muted mb-1">Eddig</label>
             <input
               type="date"
               value={to}
               onChange={(e) => setTo(e.target.value)}
-              className="border border-neutral-300 rounded-xl px-3 py-2.5 text-base"
+              className="border border-strong rounded-xl px-3 py-2.5 text-base"
             />
           </div>
         </div>

@@ -62,7 +62,7 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
 
   return (
     <div className="fixed inset-0 z-50 bg-paper overflow-y-auto">
-      <div className="sticky top-0 bg-white border-b border-neutral-200 px-4 py-3 flex items-center gap-3">
+      <div className="sticky top-0 bg-surface border-b border-surface-border px-4 py-3 flex items-center gap-3">
         <button
           type="button"
           onClick={onClose}
@@ -73,7 +73,7 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
         <div className="flex-1 min-w-0">
           <div className="font-semibold">Pékáru rendelés</div>
           {data && (
-            <div className="text-xs text-neutral-500">
+            <div className="text-xs text-muted">
               {data.dayName} ({formatDate(data.date)})
             </div>
           )}
@@ -82,12 +82,12 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
 
       <div className="max-w-3xl mx-auto px-4 py-4 space-y-4">
         {!data ? (
-          <p className="text-neutral-500">Betöltés...</p>
+          <p className="text-muted">Betöltés...</p>
         ) : sentText ? (
           <div className="space-y-3">
-            <div className="border border-green-300 bg-green-50 rounded-2xl p-4 space-y-2">
-              <div className="font-semibold text-green-800">Elküldve Telegramra ✓</div>
-              <pre className="whitespace-pre-wrap text-sm text-neutral-700 font-sans">{sentText}</pre>
+            <div className="border border-green-300 dark:border-green-800/60 bg-green-50 dark:bg-green-950/40 rounded-2xl p-4 space-y-2">
+              <div className="font-semibold text-green-800 dark:text-green-400">Elküldve Telegramra ✓</div>
+              <pre className="whitespace-pre-wrap text-sm text-neutral-700 dark:text-neutral-300 font-sans">{sentText}</pre>
             </div>
             <button
               type="button"
@@ -100,30 +100,30 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
         ) : (
           <>
             {data.isEstimate ? (
-              <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5">
+              <p className="text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-xl px-3 py-2.5">
                 Ma nem szombat van, ezért a szükséges mennyiség csak becslés — az előző hét ugyanerre
                 a napra ({data.dayName}) leadott rendelések alapján.
               </p>
             ) : (
-              <p className="text-xs text-neutral-500 bg-neutral-100 rounded-xl px-3 py-2.5">
+              <p className="text-xs text-muted bg-surface-alt rounded-xl px-3 py-2.5">
                 Szombat van, ezért a mennyiség pontos — a holnapi (hétfői) rendelések alapján.
               </p>
             )}
 
             {error && (
-              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
+              <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 rounded-xl px-3 py-2">
                 {error}
               </p>
             )}
 
-            <p className="text-sm text-neutral-500">Írd be, miből mennyi maradt a raktárban:</p>
+            <p className="text-sm text-muted">Írd be, miből mennyi maradt a raktárban:</p>
 
-            <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm divide-y divide-neutral-100">
+            <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm divide-y divide-surface-border">
               {rows.map((row) => (
                 <div key={row.key} className="flex items-center gap-3 px-3 py-3">
                   <div className="flex-1 min-w-0">
                     <div className="font-medium">{row.label}</div>
-                    <div className="text-xs text-neutral-400">szükséges: {row.needed} db</div>
+                    <div className="text-xs text-faint">szükséges: {row.needed} db</div>
                   </div>
                   <input
                     type="number"
@@ -134,11 +134,11 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
                     onChange={(e) =>
                       setLeftovers((prev) => ({ ...prev, [row.key]: e.target.value }))
                     }
-                    className="w-24 border border-neutral-300 rounded-lg px-2.5 py-1.5 text-right text-sm"
+                    className="w-24 border border-strong rounded-lg px-2.5 py-1.5 text-right text-sm"
                   />
                   <div className="w-20 text-right">
                     <div className="font-semibold">{row.toOrder}</div>
-                    <div className="text-[10px] text-neutral-400">rendelendő</div>
+                    <div className="text-[10px] text-faint">rendelendő</div>
                   </div>
                 </div>
               ))}

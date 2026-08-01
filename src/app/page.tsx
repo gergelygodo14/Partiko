@@ -129,9 +129,9 @@ export default function DailyEntryPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <div className="text-sm text-neutral-500">Ez a hét: {weekLabel(date)}</div>
+        <div className="text-sm text-muted">Ez a hét: {weekLabel(date)}</div>
         <div className="flex items-center gap-3">
-          <label className="text-sm text-neutral-600" htmlFor="date">
+          <label className="text-sm text-muted" htmlFor="date">
             Dátum
           </label>
           <input
@@ -139,15 +139,15 @@ export default function DailyEntryPage() {
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="border border-neutral-300 rounded-xl px-3 py-2.5 text-base"
+            className="border border-strong rounded-xl px-3 py-2.5 text-base"
           />
         </div>
       </div>
 
       {loading ? (
-        <p className="text-neutral-500">Betöltés...</p>
+        <p className="text-muted">Betöltés...</p>
       ) : ingredients.length === 0 ? (
-        <p className="text-neutral-500">
+        <p className="text-muted">
           Nincs még alapanyag felvéve. Vedd fel az{" "}
           <a href="/alapanyagok" className="underline">
             Alapanyagok
@@ -162,12 +162,12 @@ export default function DailyEntryPage() {
             return (
               <li
                 key={ing.id}
-                className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm"
+                className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm"
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <div className="font-semibold text-base">{ing.name}</div>
-                    <div className="text-xs text-neutral-500">
+                    <div className="text-xs text-muted">
                       {ing.unit} · {ing.unitPrice.toLocaleString("hu-HU")} Ft/
                       {ing.unit}
                     </div>
@@ -187,7 +187,7 @@ export default function DailyEntryPage() {
                       onKeyDown={(e) => {
                         if (e.key === "Enter") addEntry(ing.id);
                       }}
-                      className="flex-1 sm:w-24 sm:flex-none border border-neutral-300 rounded-xl px-3 py-3 text-base text-right"
+                      className="flex-1 sm:w-24 sm:flex-none border border-strong rounded-xl px-3 py-3 text-base text-right"
                     />
                     <button
                       onClick={() => addEntry(ing.id)}
@@ -209,11 +209,11 @@ export default function DailyEntryPage() {
                         key={e.id}
                         className="inline-flex items-center gap-1.5 bg-umber/10 rounded-full pl-3 pr-1.5 py-1.5"
                       >
-                        <span className="text-neutral-400 text-xs">{formatShort(e.date)}</span>
+                        <span className="text-faint text-xs">{formatShort(e.date)}</span>
                         {e.quantity.toLocaleString("hu-HU")}
                         <button
                           onClick={() => removeEntry(e.id)}
-                          className="text-neutral-400 active:text-red-600 w-6 h-6 flex items-center justify-center rounded-full"
+                          className="text-faint active:text-red-600 dark:active:text-red-400 w-6 h-6 flex items-center justify-center rounded-full"
                           aria-label="Törlés"
                         >
                           ×
@@ -235,7 +235,7 @@ export default function DailyEntryPage() {
                         )}
                       </button>
                     )}
-                    <span className="text-neutral-500 flex items-center">
+                    <span className="text-muted flex items-center">
                       = {sum.toLocaleString("hu-HU")} {ing.unit}
                     </span>
                   </div>

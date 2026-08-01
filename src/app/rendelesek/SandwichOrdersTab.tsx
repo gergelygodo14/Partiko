@@ -75,11 +75,11 @@ function SummaryTables({ summary }: { summary: PeriodSummary }) {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Boltonként</h2>
         {summary.byCustomer.length === 0 ? (
-          <p className="text-neutral-500">Még nincs leadott szendvics-rendelés erre az időszakra.</p>
+          <p className="text-muted">Még nincs leadott szendvics-rendelés erre az időszakra.</p>
         ) : (
-          <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
+          <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-neutral-100 text-neutral-600">
+              <thead className="bg-surface-alt text-muted">
                 <tr>
                   <th className="text-left px-3 py-3">Üzlet</th>
                   <th className="text-right px-3 py-3">Db</th>
@@ -88,7 +88,7 @@ function SummaryTables({ summary }: { summary: PeriodSummary }) {
               </thead>
               <tbody>
                 {summary.byCustomer.map((c) => (
-                  <tr key={c.customerId} className="border-t border-neutral-100">
+                  <tr key={c.customerId} className="border-t border-surface-border">
                     <td className="px-3 py-3">{c.storeName}</td>
                     <td className="px-3 py-3 text-right">{c.quantity}</td>
                     <td className="px-3 py-3 text-right font-medium">
@@ -98,7 +98,7 @@ function SummaryTables({ summary }: { summary: PeriodSummary }) {
                 ))}
               </tbody>
               <tfoot>
-                <tr className="border-t border-neutral-300 font-semibold">
+                <tr className="border-t border-strong font-semibold">
                   <td className="px-3 py-3">Összesen</td>
                   <td className="px-3 py-3 text-right">{summary.totalQuantity}</td>
                   <td className="px-3 py-3 text-right">
@@ -114,11 +114,11 @@ function SummaryTables({ summary }: { summary: PeriodSummary }) {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Szendvicsenként</h2>
         {summary.byItem.length === 0 ? (
-          <p className="text-neutral-500">Még nincs leadott szendvics-rendelés erre az időszakra.</p>
+          <p className="text-muted">Még nincs leadott szendvics-rendelés erre az időszakra.</p>
         ) : (
-          <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
+          <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-neutral-100 text-neutral-600">
+              <thead className="bg-surface-alt text-muted">
                 <tr>
                   <th className="text-left px-3 py-3">Szendvics</th>
                   <th className="text-right px-3 py-3">Db</th>
@@ -127,7 +127,7 @@ function SummaryTables({ summary }: { summary: PeriodSummary }) {
               </thead>
               <tbody>
                 {summary.byItem.map((item) => (
-                  <tr key={item.itemId} className="border-t border-neutral-100">
+                  <tr key={item.itemId} className="border-t border-surface-border">
                     <td className="px-3 py-3">{item.itemName}</td>
                     <td className="px-3 py-3 text-right">{item.quantity}</td>
                     <td className="px-3 py-3 text-right font-medium">
@@ -149,27 +149,27 @@ function MeatPrepSection({ meatPrep }: { meatPrep: MeatPrep }) {
     <section className="space-y-3">
       <h2 className="text-lg font-semibold">
         Húsigény{" "}
-        <span className="text-neutral-400 font-normal text-sm">
+        <span className="text-faint font-normal text-sm">
           ({meatPrep.dayName} {formatDate(meatPrep.date)})
         </span>
       </h2>
-      <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm grid grid-cols-3 divide-x divide-neutral-100">
+      <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm grid grid-cols-3 divide-x divide-surface-border">
         <div className="p-4 text-center">
           <div className="text-2xl font-semibold">{meatPrep.rantottHusDb}</div>
-          <div className="text-xs text-neutral-500 mt-1">db rántott hús</div>
+          <div className="text-xs text-muted mt-1">db rántott hús</div>
         </div>
         <div className="p-4 text-center">
           <div className="text-2xl font-semibold">{meatPrep.tortillaHusDb}</div>
-          <div className="text-xs text-neutral-500 mt-1">db tortilla hús</div>
+          <div className="text-xs text-muted mt-1">db tortilla hús</div>
         </div>
         <div className="p-4 text-center">
           <div className="text-2xl font-semibold">
             {(meatPrep.grillHusDkg / 100).toLocaleString("hu-HU", { maximumFractionDigits: 2 })}
           </div>
-          <div className="text-xs text-neutral-500 mt-1">kg grill hús</div>
+          <div className="text-xs text-muted mt-1">kg grill hús</div>
         </div>
       </div>
-      <p className="text-xs text-neutral-500">
+      <p className="text-xs text-muted">
         Előző héten ({meatPrep.previousWeek.dayName} {formatDate(meatPrep.previousWeek.date)}):{" "}
         {meatPrep.previousWeek.rantottHusDb} db rántott hús, {meatPrep.previousWeek.tortillaHusDb} db tortilla hús,{" "}
         {(meatPrep.previousWeek.grillHusDkg / 100).toLocaleString("hu-HU", { maximumFractionDigits: 2 })} kg grill
@@ -186,14 +186,14 @@ function DayItemsTable({ day, dayIndex }: { day: DayItemTotals; dayIndex: number
     <section className="space-y-3">
       <h2 className="text-lg font-semibold">
         {FULL_DAY_NAMES[dayIndex]}{" "}
-        <span className="text-neutral-400 font-normal text-sm">({formatDate(day.date)})</span>
+        <span className="text-faint font-normal text-sm">({formatDate(day.date)})</span>
       </h2>
       {nonZero.length === 0 ? (
-        <p className="text-neutral-500">Nincs leadott szendvics-rendelés erre a napra.</p>
+        <p className="text-muted">Nincs leadott szendvics-rendelés erre a napra.</p>
       ) : (
-        <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
+        <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-neutral-100 text-neutral-600">
+            <thead className="bg-surface-alt text-muted">
               <tr>
                 <th className="text-left px-3 py-3">Szendvics</th>
                 <th className="text-right px-3 py-3">Db</th>
@@ -201,14 +201,14 @@ function DayItemsTable({ day, dayIndex }: { day: DayItemTotals; dayIndex: number
             </thead>
             <tbody>
               {nonZero.map((item) => (
-                <tr key={item.itemId} className="border-t border-neutral-100">
+                <tr key={item.itemId} className="border-t border-surface-border">
                   <td className="px-3 py-3">{item.itemName}</td>
                   <td className="px-3 py-3 text-right">{item.quantity}</td>
                 </tr>
               ))}
             </tbody>
             <tfoot>
-              <tr className="border-t border-neutral-300 font-semibold">
+              <tr className="border-t border-strong font-semibold">
                 <td className="px-3 py-3">Összesen</td>
                 <td className="px-3 py-3 text-right">{total}</td>
               </tr>
@@ -230,18 +230,18 @@ function MonthGridTable({ grid }: { grid: MonthGrid }) {
     <section className="space-y-3">
       <h2 className="text-lg font-semibold capitalize">
         Havi bontás{" "}
-        <span className="text-neutral-400 font-normal text-sm normal-case">
+        <span className="text-faint font-normal text-sm normal-case">
           ({formatMonthLabel(grid.monthStart)})
         </span>
       </h2>
       {grid.items.every((item) => item.totalQuantity === 0) ? (
-        <p className="text-neutral-500">Még nincs leadott szendvics-rendelés erre a hónapra.</p>
+        <p className="text-muted">Még nincs leadott szendvics-rendelés erre a hónapra.</p>
       ) : (
-        <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
+        <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
           <table className="text-sm">
-            <thead className="bg-neutral-100 text-neutral-600">
+            <thead className="bg-surface-alt text-muted">
               <tr>
-                <th className="sticky left-0 z-[1] bg-neutral-100 text-left px-3 py-3">Szendvics</th>
+                <th className="sticky left-0 z-[1] bg-surface-alt text-left px-3 py-3">Szendvics</th>
                 {grid.businessDays.map((day) => (
                   <th key={day} className="text-right px-2 py-3 whitespace-nowrap">
                     {formatDate(day)}
@@ -252,8 +252,8 @@ function MonthGridTable({ grid }: { grid: MonthGrid }) {
             </thead>
             <tbody>
               {grid.items.map((item) => (
-                <tr key={item.itemId} className="border-t border-neutral-100">
-                  <td className="sticky left-0 z-[1] bg-white px-3 py-2.5 whitespace-nowrap">
+                <tr key={item.itemId} className="border-t border-surface-border">
+                  <td className="sticky left-0 z-[1] bg-surface px-3 py-2.5 whitespace-nowrap">
                     {item.itemName}
                   </td>
                   {grid.businessDays.map((day) => (
@@ -266,8 +266,8 @@ function MonthGridTable({ grid }: { grid: MonthGrid }) {
               ))}
             </tbody>
             <tfoot>
-              <tr className="border-t border-neutral-300 font-semibold">
-                <td className="sticky left-0 z-[1] bg-white px-3 py-3">Összesen</td>
+              <tr className="border-t border-strong font-semibold">
+                <td className="sticky left-0 z-[1] bg-surface px-3 py-3">Összesen</td>
                 {dayTotals.map((total, i) => (
                   <td key={grid.businessDays[i]} className="text-right px-2 py-3">
                     {total}
@@ -291,12 +291,12 @@ function ProfitTable({ report }: { report: ProfitReport }) {
     <section className="space-y-3">
       <h2 className="text-lg font-semibold capitalize">
         Havi nyereség{" "}
-        <span className="text-neutral-400 font-normal text-sm normal-case">
+        <span className="text-faint font-normal text-sm normal-case">
           ({formatMonthLabel(report.monthStart)})
         </span>
       </h2>
       {noProfitConfigured && (
-        <p className="text-xs text-amber-600">
+        <p className="text-xs text-amber-600 dark:text-amber-400">
           Egyik szendvicshez sincs beállítva haszon, ezért minden érték 0 — állítsd be a{" "}
           <Link href="/rendelesek/szendvics-termekek" className="underline">
             szendvics-katalógusban
@@ -305,11 +305,11 @@ function ProfitTable({ report }: { report: ProfitReport }) {
         </p>
       )}
       {report.items.every((item) => item.quantity === 0) ? (
-        <p className="text-neutral-500">Még nincs leadott szendvics-rendelés erre a hónapra.</p>
+        <p className="text-muted">Még nincs leadott szendvics-rendelés erre a hónapra.</p>
       ) : (
-        <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
+        <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-neutral-100 text-neutral-600">
+            <thead className="bg-surface-alt text-muted">
               <tr>
                 <th className="text-left px-3 py-3">Szendvics</th>
                 <th className="text-right px-3 py-3">Db</th>
@@ -319,7 +319,7 @@ function ProfitTable({ report }: { report: ProfitReport }) {
             </thead>
             <tbody>
               {report.items.map((item) => (
-                <tr key={item.itemId} className="border-t border-neutral-100">
+                <tr key={item.itemId} className="border-t border-surface-border">
                   <td className="px-3 py-3">{item.itemName}</td>
                   <td className="px-3 py-3 text-right">{item.quantity}</td>
                   <td className="px-3 py-3 text-right">
@@ -332,7 +332,7 @@ function ProfitTable({ report }: { report: ProfitReport }) {
               ))}
             </tbody>
             <tfoot>
-              <tr className="border-t border-neutral-300 font-semibold">
+              <tr className="border-t border-strong font-semibold">
                 <td className="px-3 py-3">Összesen</td>
                 <td className="px-3 py-3 text-right">{totalQuantity}</td>
                 <td></td>
@@ -344,8 +344,8 @@ function ProfitTable({ report }: { report: ProfitReport }) {
           </table>
         </div>
       )}
-      <div className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm flex items-center justify-between">
-        <span className="text-neutral-500 text-sm">Havi nyereség összesen</span>
+      <div className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm flex items-center justify-between">
+        <span className="text-muted text-sm">Havi nyereség összesen</span>
         <span className="font-semibold text-lg">
           {report.totalProfitFt.toLocaleString("hu-HU")} Ft
         </span>
@@ -475,12 +475,12 @@ export default function SandwichOrdersTab() {
   }
 
   if (loading || !weekSummary) {
-    return <p className="text-neutral-500">Betöltés...</p>;
+    return <p className="text-muted">Betöltés...</p>;
   }
 
   return (
     <div className="space-y-8">
-      <section className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm space-y-3">
+      <section className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-3">
         <button
           onClick={() => downloadFile("/api/sandwich-orders/export")}
           disabled={downloading}
@@ -488,7 +488,7 @@ export default function SandwichOrdersTab() {
         >
           {downloading ? "Letöltés…" : "Holnapi szendvics rendelések letöltése (.xlsx)"}
         </button>
-        <p className="text-xs text-neutral-500 text-center">
+        <p className="text-xs text-muted text-center">
           Mindig a következő napra tartalmazza a rendeléseket, boltonként oszlopban, szendvicsenként
           sorban.
         </p>
@@ -499,7 +499,7 @@ export default function SandwichOrdersTab() {
         >
           {downloading ? "Letöltés…" : "Holnapi szendvics összesítő letöltése (.xlsx)"}
         </button>
-        <p className="text-xs text-neutral-500 text-center">
+        <p className="text-xs text-muted text-center">
           Csak szendvicsenkénti darabszám, boltok nélkül - a rendelések excel "összesítés" fülének
           formátumában.
         </p>
@@ -515,12 +515,12 @@ export default function SandwichOrdersTab() {
         >
           Rendelésfelvétel megnyitása
         </Link>
-        <p className="text-xs text-neutral-500 text-center">
+        <p className="text-xs text-muted text-center">
           Telefonon leadott rendelések rögzítése naponként, boltonként — az Excel helyett.
         </p>
         <Link
           href="/rendelesek/szendvics-termekek"
-          className="block text-center text-sm text-neutral-500 underline"
+          className="block text-center text-sm text-muted underline"
         >
           Szendvics-katalógus szerkesztése
         </Link>
@@ -585,7 +585,7 @@ export default function SandwichOrdersTab() {
         <>
           <h2 className="text-lg font-semibold">
             Heti szendvics rendelések{" "}
-            <span className="text-neutral-400 font-normal text-sm">
+            <span className="text-faint font-normal text-sm">
               ({formatDate(weekSummary.weekStart)} – {formatDate(weekSummary.weekEnd)})
             </span>
           </h2>
@@ -600,7 +600,7 @@ export default function SandwichOrdersTab() {
             >
               ◀ Előző hét
             </button>
-            <span className="text-sm text-neutral-500">
+            <span className="text-sm text-muted">
               {dayWeekStart &&
                 `${formatDate(dayWeekStart)} – ${formatDate(addDaysStr(dayWeekStart, 4))}`}
             </span>
@@ -629,7 +629,7 @@ export default function SandwichOrdersTab() {
           </div>
 
           {dayBreakdownLoading || !dayBreakdown ? (
-            <p className="text-neutral-500">Betöltés...</p>
+            <p className="text-muted">Betöltés...</p>
           ) : (
             <DayItemsTable day={dayBreakdown.days[selectedDayIndex]} dayIndex={selectedDayIndex} />
           )}
@@ -643,7 +643,7 @@ export default function SandwichOrdersTab() {
             >
               ◀ Előző hónap
             </button>
-            <span className="text-sm text-neutral-500 capitalize">
+            <span className="text-sm text-muted capitalize">
               {monthGridMonth && formatMonthLabel(monthGridMonth)}
             </span>
             <button
@@ -655,7 +655,7 @@ export default function SandwichOrdersTab() {
           </div>
 
           {monthGridLoading || !monthGrid ? (
-            <p className="text-neutral-500">Betöltés...</p>
+            <p className="text-muted">Betöltés...</p>
           ) : (
             <MonthGridTable grid={monthGrid} />
           )}
@@ -669,7 +669,7 @@ export default function SandwichOrdersTab() {
             >
               ◀ Előző hónap
             </button>
-            <span className="text-sm text-neutral-500 capitalize">
+            <span className="text-sm text-muted capitalize">
               {profitMonth && formatMonthLabel(profitMonth)}
             </span>
             <button
@@ -681,18 +681,18 @@ export default function SandwichOrdersTab() {
           </div>
 
           {profitLoading || !profitReport ? (
-            <p className="text-neutral-500">Betöltés...</p>
+            <p className="text-muted">Betöltés...</p>
           ) : (
             <ProfitTable report={profitReport} />
           )}
         </>
       ) : monthLoading || !monthSummary ? (
-        <p className="text-neutral-500">Betöltés...</p>
+        <p className="text-muted">Betöltés...</p>
       ) : (
         <>
           <h2 className="text-lg font-semibold capitalize">
             Havi szendvics elszámolás{" "}
-            <span className="text-neutral-400 font-normal text-sm normal-case">
+            <span className="text-faint font-normal text-sm normal-case">
               ({formatMonthLabel(monthSummary.monthStart)})
             </span>
           </h2>

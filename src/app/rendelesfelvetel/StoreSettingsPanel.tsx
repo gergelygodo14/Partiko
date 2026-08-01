@@ -99,11 +99,11 @@ export default function StoreSettingsPanel({
   const orderCount = (info?.sandwichOrderCount ?? 0) + (info?.readyMealOrderCount ?? 0);
 
   return (
-    <div className="border-t border-neutral-200 pt-4 space-y-3">
-      <div className="text-sm font-medium text-neutral-600">Bolt beállításai</div>
+    <div className="border-t border-surface-border pt-4 space-y-3">
+      <div className="text-sm font-medium text-muted">Bolt beállításai</div>
 
       <div>
-        <div className="text-xs text-neutral-500 mb-1.5">
+        <div className="text-xs text-muted mb-1.5">
           Csoport — ez dönti el, hol áll az oszlopa, a konyhai nyomtatványon is.
         </div>
         <div className="flex flex-wrap gap-1.5">
@@ -125,7 +125,7 @@ export default function StoreSettingsPanel({
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
+        <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 rounded-xl px-3 py-2">
           {error}
         </p>
       )}
@@ -134,19 +134,19 @@ export default function StoreSettingsPanel({
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="text-sm text-red-600 border border-red-200 rounded-xl px-3.5 py-2.5 active:bg-red-50"
+          className="text-sm text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/60 rounded-xl px-3.5 py-2.5 active:bg-red-50 dark:active:bg-red-950/40"
         >
           Bolt eltávolítása
         </button>
       ) : (
-        <div className="border border-red-200 bg-red-50 rounded-2xl p-3 space-y-3">
+        <div className="border border-red-200 dark:border-red-800/60 bg-red-50 dark:bg-red-950/40 rounded-2xl p-3 space-y-3">
           <div className="text-sm font-medium">{store.storeName} eltávolítása</div>
 
           {info === null ? (
-            <p className="text-sm text-neutral-500">Betöltés…</p>
+            <p className="text-sm text-muted">Betöltés…</p>
           ) : (
             <>
-              <p className="text-xs text-neutral-600">
+              <p className="text-xs text-muted">
                 Jelenleg ezeken a napokon van a listán:{" "}
                 <span className="font-medium">
                   {info.roundWeekdays.length > 0
@@ -156,7 +156,7 @@ export default function StoreSettingsPanel({
                 {info.hasOrderOnDate && (
                   <>
                     {" · "}
-                    <span className="text-red-700 font-medium">
+                    <span className="text-red-700 dark:text-red-400 font-medium">
                       ezen a napon {info.quantityOnDate} db rendelése van, az is törlődik
                     </span>
                   </>
@@ -172,7 +172,7 @@ export default function StoreSettingsPanel({
                 <div className="text-sm font-medium">
                   Levétel a {DAY_ADJECTIVES[weekday]} listáról
                 </div>
-                <div className="text-xs text-neutral-500">A többi nap érintetlen marad.</div>
+                <div className="text-xs text-muted">A többi nap érintetlen marad.</div>
               </button>
 
               <button
@@ -182,7 +182,7 @@ export default function StoreSettingsPanel({
                 className="w-full text-left bg-umber/8 border border-umber/40 rounded-xl px-3.5 py-2.5 active:bg-umber/15 disabled:opacity-40"
               >
                 <div className="text-sm font-medium">Levétel minden napról (H–P)</div>
-                <div className="text-xs text-neutral-500">
+                <div className="text-xs text-muted">
                   A bolt megmarad, a korábbi rendelései is — csak nem jelenik meg többé a
                   felvételnél.
                 </div>
@@ -192,10 +192,10 @@ export default function StoreSettingsPanel({
                 type="button"
                 disabled={busy || !info.deletable}
                 onClick={() => remove("customer")}
-                className="w-full text-left bg-white border border-red-300 rounded-xl px-3.5 py-2.5 active:bg-red-100 disabled:opacity-40"
+                className="w-full text-left bg-surface border border-red-300 dark:border-red-800/60 rounded-xl px-3.5 py-2.5 active:bg-red-100 dark:active:bg-red-950/40 disabled:opacity-40"
               >
-                <div className="text-sm font-medium text-red-700">Bolt végleges törlése</div>
-                <div className="text-xs text-neutral-500">
+                <div className="text-sm font-medium text-red-700 dark:text-red-400">Bolt végleges törlése</div>
+                <div className="text-xs text-muted">
                   {info.deletable
                     ? "Nincs egyetlen rendelése sem, nyugodtan törölhető (pl. elgépelt név)."
                     : `${orderCount} korábbi rendelése van, ezért nem törölhető — vedd le a listákról helyette.`}
@@ -208,7 +208,7 @@ export default function StoreSettingsPanel({
             type="button"
             onClick={() => setOpen(false)}
             disabled={busy}
-            className="text-sm text-neutral-500 underline active:opacity-60 disabled:opacity-40"
+            className="text-sm text-muted underline active:opacity-60 disabled:opacity-40"
           >
             Mégse
           </button>

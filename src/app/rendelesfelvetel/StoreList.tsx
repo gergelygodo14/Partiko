@@ -29,10 +29,10 @@ export default function StoreList({
     <div className="space-y-5">
       {blocks.map((block) => (
         <section key={block.group} className="space-y-2">
-          <h2 className="text-sm font-semibold text-neutral-500 uppercase tracking-wide">
+          <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">
             {STORE_GROUP_LABELS[block.group]}
           </h2>
-          <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm divide-y divide-neutral-100">
+          <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm divide-y divide-surface-border">
             {block.stores.map((store) => {
               const total = totals.byStore[store.customerId];
               const quantity = total?.quantity ?? 0;
@@ -41,7 +41,7 @@ export default function StoreList({
                   key={store.customerId}
                   type="button"
                   onClick={() => onOpenStore(store.customerId)}
-                  className="w-full flex items-center gap-3 px-3 py-3 text-left active:bg-neutral-50"
+                  className="w-full flex items-center gap-3 px-3 py-3 text-left active:bg-surface-alt"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="font-medium truncate">
@@ -53,18 +53,18 @@ export default function StoreList({
                       )}
                     </div>
                     {!store.onFixList && (
-                      <div className="text-xs text-neutral-400">nincs fix rendelése erre a napra</div>
+                      <div className="text-xs text-faint">nincs fix rendelése erre a napra</div>
                     )}
                   </div>
                   <div className="text-right shrink-0">
-                    <div className={quantity > 0 ? "font-semibold" : "text-neutral-300"}>
+                    <div className={quantity > 0 ? "font-semibold" : "text-faint"}>
                       {quantity > 0 ? `${quantity} db` : "—"}
                     </div>
                     {quantity > 0 && (
-                      <div className="text-xs text-neutral-500">{formatFt(total.valueFt)}</div>
+                      <div className="text-xs text-muted">{formatFt(total.valueFt)}</div>
                     )}
                   </div>
-                  <span className="text-neutral-300">›</span>
+                  <span className="text-faint">›</span>
                 </button>
               );
             })}

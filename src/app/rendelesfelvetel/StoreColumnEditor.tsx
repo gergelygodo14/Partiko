@@ -73,7 +73,7 @@ export default function StoreColumnEditor({
 
   return (
     <div className="fixed inset-0 z-50 bg-paper overflow-y-auto">
-      <div className="sticky top-0 bg-white border-b border-neutral-200 px-4 py-3 flex items-center gap-3">
+      <div className="sticky top-0 bg-surface border-b border-surface-border px-4 py-3 flex items-center gap-3">
         <button
           type="button"
           onClick={onClose}
@@ -83,7 +83,7 @@ export default function StoreColumnEditor({
         </button>
         <div className="flex-1 min-w-0">
           <div className="font-semibold truncate">{store.storeName}</div>
-          <div className="text-xs text-neutral-500">
+          <div className="text-xs text-muted">
             {dayLabel} · {STORE_GROUP_LABELS[store.storeGroup]}
           </div>
         </div>
@@ -125,14 +125,14 @@ export default function StoreColumnEditor({
         </div>
 
         {!hasFix && (
-          <p className="text-xs text-neutral-400">
+          <p className="text-xs text-faint">
             Ehhez a bolthoz nincs fix rendelés erre a napra.
           </p>
         )}
 
         {history.length > 0 && (
           <div className="space-y-2">
-            <div className="text-sm font-medium text-neutral-600">Korábbi rendelései</div>
+            <div className="text-sm font-medium text-muted">Korábbi rendelései</div>
             <div className="flex gap-2 overflow-x-auto pb-1">
               {history.map((entry) => (
                 <button
@@ -142,13 +142,13 @@ export default function StoreColumnEditor({
                   className="shrink-0 border bg-umber/8 border-umber/40 rounded-xl px-3.5 py-2.5 text-sm text-left active:bg-umber/15"
                 >
                   <div className="font-medium">{formatShortDate(entry.orderDate)}</div>
-                  <div className="text-neutral-500 text-xs">
+                  <div className="text-muted text-xs">
                     {entry.totalQuantity} db · {formatFt(entry.totalValueFt)}
                   </div>
                 </button>
               ))}
             </div>
-            <p className="text-xs text-neutral-400">
+            <p className="text-xs text-faint">
               Koppints egy korábbi napra a betöltéshez — utána még szabadon módosíthatod.
             </p>
           </div>
@@ -160,13 +160,13 @@ export default function StoreColumnEditor({
             return (
               <div
                 key={item.itemId}
-                className={`border rounded-xl bg-white shadow-sm p-3 flex flex-col gap-2 ${
-                  qty > 0 ? "border-gold" : "border-neutral-200"
+                className={`border rounded-xl bg-surface shadow-sm p-3 flex flex-col gap-2 ${
+                  qty > 0 ? "border-gold" : "border-surface-border"
                 }`}
               >
                 <div>
                   <div className="text-sm font-medium leading-tight">{item.shortLabel}</div>
-                  <div className="text-xs text-neutral-400">{formatFt(item.price)}</div>
+                  <div className="text-xs text-faint">{formatFt(item.price)}</div>
                 </div>
                 <div className="flex items-center justify-between gap-1">
                   <button
@@ -208,11 +208,11 @@ export default function StoreColumnEditor({
         />
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 px-4 py-3">
+      <div className="fixed bottom-0 left-0 right-0 bg-surface border-t border-surface-border px-4 py-3">
         <div className="max-w-3xl mx-auto flex items-center gap-3">
           <div className="flex-1 text-sm">
             <span className="font-semibold">{totalQuantity} db</span>
-            <span className="text-neutral-500"> · {formatFt(totalValue)}</span>
+            <span className="text-muted"> · {formatFt(totalValue)}</span>
             {totalValue > 0 && totalValue < MIN_ORDER_VALUE_FT && (
               <span className="block text-xs text-umber-dark">
                 A minimális rendelés {formatFt(MIN_ORDER_VALUE_FT)} — ez csak jelzés.

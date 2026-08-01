@@ -4,7 +4,14 @@ import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import UpdateNotifier from "@/components/UpdateNotifier";
 import BottomNav from "@/components/BottomNav";
 import LogoutButton from "@/components/LogoutButton";
+import ThemeToggle from "@/components/ThemeToggle";
 import "./globals.css";
+
+// Runs before hydration (blocking, in <head>) so the page never flashes the
+// wrong theme: applies a saved choice immediately, or falls back to the OS
+// preference on a first visit. ThemeToggle only ever mirrors/toggles
+// whatever this already set - it never picks a theme itself.
+const THEME_INIT_SCRIPT = `(function(){try{var s=localStorage.getItem('partiko_theme');var t=(s==='light'||s==='dark')?s:(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +44,9 @@ export default function RootLayout({
       lang="hu"
       className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className="min-h-full flex flex-col bg-paper">
         <header className="bg-ink sticky top-0 z-10">
           <div className="max-w-3xl mx-auto px-4 py-2 grid grid-cols-[1fr_auto_1fr] items-center">
@@ -54,7 +64,10 @@ export default function RootLayout({
             >
               Partiko
             </span>
-            <LogoutButton />
+            <div className="flex items-center gap-3 justify-self-end">
+              <ThemeToggle />
+              <LogoutButton />
+            </div>
           </div>
         </header>
         <main className="flex-1 max-w-3xl w-full mx-auto px-4 py-6 pb-28">

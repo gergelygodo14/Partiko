@@ -44,7 +44,7 @@ function LoginForm() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             autoComplete="username"
-            className="w-full border border-neutral-300 rounded-xl px-3.5 py-3 text-base"
+            className="w-full border border-strong rounded-xl px-3.5 py-3 text-base"
           />
         </div>
         <div>
@@ -54,10 +54,10 @@ function LoginForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
-            className="w-full border border-neutral-300 rounded-xl px-3.5 py-3 text-base"
+            className="w-full border border-strong rounded-xl px-3.5 py-3 text-base"
           />
         </div>
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+        {error && <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>}
         <button
           type="submit"
           disabled={submitting}

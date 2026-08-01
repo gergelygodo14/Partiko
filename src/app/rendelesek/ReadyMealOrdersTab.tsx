@@ -136,7 +136,7 @@ export default function ReadyMealOrdersTab() {
   }
 
   if (loading || !summary || dayIndex === null) {
-    return <p className="text-neutral-500">Betöltés...</p>;
+    return <p className="text-muted">Betöltés...</p>;
   }
 
   const { weekDays, week } = summary;
@@ -145,7 +145,7 @@ export default function ReadyMealOrdersTab() {
 
   return (
     <div className="space-y-8">
-      <section className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm space-y-3">
+      <section className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-3">
         <button
           onClick={downloadTomorrowOrders}
           disabled={downloading}
@@ -153,7 +153,7 @@ export default function ReadyMealOrdersTab() {
         >
           {downloading ? "Letöltés…" : "Holnapi rendelések letöltése (.xlsx)"}
         </button>
-        <p className="text-xs text-neutral-500 text-center">
+        <p className="text-xs text-muted text-center">
           Mindig a következő napra (amit ma főzünk) tartalmazza a rendeléseket — nincs hét- vagy
           dátumválasztás, minden nap ugyanez a gomb tölti le a friss listát.
         </p>
@@ -197,16 +197,16 @@ export default function ReadyMealOrdersTab() {
           <section className="space-y-3">
             <h2 className="text-lg font-semibold">
               Heti rendelések{" "}
-              <span className="text-neutral-400 font-normal text-sm">
+              <span className="text-faint font-normal text-sm">
                 ({formatDate(week.weekStart)}-tól)
               </span>
             </h2>
             {week.byCustomer.length === 0 ? (
-              <p className="text-neutral-500">Még nincs leadott rendelés erre a hétre.</p>
+              <p className="text-muted">Még nincs leadott rendelés erre a hétre.</p>
             ) : (
-              <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
+              <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-neutral-100 text-neutral-600">
+                  <thead className="bg-surface-alt text-muted">
                     <tr>
                       <th className="text-left px-3 py-3">Üzlet</th>
                       {SHORT_DAY_NAMES.map((name) => (
@@ -220,7 +220,7 @@ export default function ReadyMealOrdersTab() {
                   </thead>
                   <tbody>
                     {week.byCustomer.map((c) => (
-                      <tr key={c.customerId} className="border-t border-neutral-100">
+                      <tr key={c.customerId} className="border-t border-surface-border">
                         <td className="px-3 py-3">{c.storeName}</td>
                         {c.days.map((d, i) => (
                           <td key={i} className="px-3 py-3 text-right">
@@ -235,7 +235,7 @@ export default function ReadyMealOrdersTab() {
                     ))}
                   </tbody>
                   <tfoot>
-                    <tr className="border-t border-neutral-300 font-semibold">
+                    <tr className="border-t border-strong font-semibold">
                       <td className="px-3 py-3">Összesen</td>
                       {week.dayTotals.map((d, i) => (
                         <td key={i} className="px-3 py-3 text-right">
@@ -253,14 +253,14 @@ export default function ReadyMealOrdersTab() {
             )}
           </section>
 
-          <section className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm space-y-1">
+          <section className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-1">
             <h2 className="text-lg font-semibold">Heti összesítés</h2>
-            <p className="text-neutral-600">
+            <p className="text-muted">
               Ezen a héten eddig összesen{" "}
               <span className="font-semibold">{week.totalMeals.toLocaleString("hu-HU")}</span> kaja
               lett megrendelve.
             </p>
-            <p className="text-neutral-600">
+            <p className="text-muted">
               Összeg:{" "}
               <span className="font-semibold">{week.totalValue.toLocaleString("hu-HU")} Ft</span>
             </p>
@@ -287,14 +287,14 @@ export default function ReadyMealOrdersTab() {
           <section className="space-y-3">
             <h2 className="text-lg font-semibold">
               {FULL_DAY_NAMES[dayIndex]}{" "}
-              <span className="text-neutral-400 font-normal text-sm">({formatDate(day.date)})</span>
+              <span className="text-faint font-normal text-sm">({formatDate(day.date)})</span>
             </h2>
             {day.byCustomer.length === 0 ? (
-              <p className="text-neutral-500">Nincs leadott rendelés erre a napra.</p>
+              <p className="text-muted">Nincs leadott rendelés erre a napra.</p>
             ) : (
-              <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
+              <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-neutral-100 text-neutral-600">
+                  <thead className="bg-surface-alt text-muted">
                     <tr>
                       <th className="text-left px-3 py-3">Üzlet</th>
                       <th className="text-right px-3 py-3">{day.dishNames?.a ?? "A"}</th>
@@ -305,7 +305,7 @@ export default function ReadyMealOrdersTab() {
                   </thead>
                   <tbody>
                     {day.byCustomer.map((c) => (
-                      <tr key={c.customerId} className="border-t border-neutral-100">
+                      <tr key={c.customerId} className="border-t border-surface-border">
                         <td className="px-3 py-3">{c.storeName}</td>
                         <td className="px-3 py-3 text-right">{formatCell(c.a, c.aXl)}</td>
                         <td className="px-3 py-3 text-right">{formatCell(c.b, c.bXl)}</td>
@@ -315,7 +315,7 @@ export default function ReadyMealOrdersTab() {
                     ))}
                   </tbody>
                   <tfoot>
-                    <tr className="border-t border-neutral-300 font-semibold">
+                    <tr className="border-t border-strong font-semibold">
                       <td className="px-3 py-3">Összesen</td>
                       <td className="px-3 py-3 text-right">
                         {formatCell(day.dayTotals.a, day.dayTotals.aXl)}
@@ -335,24 +335,24 @@ export default function ReadyMealOrdersTab() {
           </section>
         </>
       ) : monthLoading || !monthSummary ? (
-        <p className="text-neutral-500">Betöltés...</p>
+        <p className="text-muted">Betöltés...</p>
       ) : (
         <>
           <section className="space-y-3">
             <h2 className="text-lg font-semibold">
               Havi elszámolás{" "}
-              <span className="text-neutral-400 font-normal text-sm capitalize">
+              <span className="text-faint font-normal text-sm capitalize">
                 ({formatMonthLabel(monthSummary.monthStart)})
               </span>
             </h2>
             {monthSummary.byCustomer.length === 0 ? (
-              <p className="text-neutral-500">Még nincs leadott rendelés erre a hónapra.</p>
+              <p className="text-muted">Még nincs leadott rendelés erre a hónapra.</p>
             ) : (
-              <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
+              <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-neutral-100 text-neutral-600">
+                  <thead className="bg-surface-alt text-muted">
                     <tr>
-                      <th className="text-left px-3 py-3 sticky left-0 z-[1] bg-neutral-100">Üzlet</th>
+                      <th className="text-left px-3 py-3 sticky left-0 z-[1] bg-surface-alt">Üzlet</th>
                       {monthSummary.weekStarts.map((weekStart) => (
                         <th key={weekStart} className="text-right px-3 py-3 whitespace-nowrap">
                           {formatDate(weekStart)} hete
@@ -364,20 +364,20 @@ export default function ReadyMealOrdersTab() {
                   </thead>
                   <tbody>
                     {monthSummary.byCustomer.map((c) => (
-                      <tr key={c.customerId} className="border-t border-neutral-100">
-                        <td className="px-3 py-3 sticky left-0 z-[1] bg-white">{c.storeName}</td>
+                      <tr key={c.customerId} className="border-t border-surface-border">
+                        <td className="px-3 py-3 sticky left-0 z-[1] bg-surface">{c.storeName}</td>
                         {c.byWeek.map((w) => (
                           <td key={w.weekStart} className="px-3 py-3 text-right whitespace-nowrap">
                             {w.meals > 0 ? (
                               <>
                                 {w.meals}
-                                <span className="text-neutral-400 text-xs">
+                                <span className="text-faint text-xs">
                                   {" "}
                                   ({w.value.toLocaleString("hu-HU")} Ft)
                                 </span>
                               </>
                             ) : (
-                              <span className="text-neutral-300">–</span>
+                              <span className="text-faint">–</span>
                             )}
                           </td>
                         ))}
@@ -389,8 +389,8 @@ export default function ReadyMealOrdersTab() {
                     ))}
                   </tbody>
                   <tfoot>
-                    <tr className="border-t border-neutral-300 font-semibold">
-                      <td className="px-3 py-3 sticky left-0 z-[1] bg-white">Összesen</td>
+                    <tr className="border-t border-strong font-semibold">
+                      <td className="px-3 py-3 sticky left-0 z-[1] bg-surface">Összesen</td>
                       {monthSummary.weekStarts.map((weekStart) => {
                         const meals = monthSummary.byCustomer.reduce(
                           (sum, c) => sum + (c.byWeek.find((w) => w.weekStart === weekStart)?.meals ?? 0),
@@ -405,7 +405,7 @@ export default function ReadyMealOrdersTab() {
                             {meals > 0 ? (
                               <>
                                 {meals}{" "}
-                                <span className="text-neutral-500 text-xs font-normal">
+                                <span className="text-muted text-xs font-normal">
                                   ({value.toLocaleString("hu-HU")} Ft)
                                 </span>
                               </>
@@ -426,9 +426,9 @@ export default function ReadyMealOrdersTab() {
             )}
           </section>
 
-          <section className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm space-y-1">
+          <section className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-1">
             <h2 className="text-lg font-semibold">Havi összesítés</h2>
-            <p className="text-neutral-600">
+            <p className="text-muted">
               {formatDate(monthSummary.monthStart)}-től {formatDate(monthSummary.monthEnd)}-ig eddig
               összesen{" "}
               <span className="font-semibold">
@@ -436,7 +436,7 @@ export default function ReadyMealOrdersTab() {
               </span>{" "}
               kaja lett megrendelve.
             </p>
-            <p className="text-neutral-600">
+            <p className="text-muted">
               Összeg:{" "}
               <span className="font-semibold">
                 {monthSummary.totalValue.toLocaleString("hu-HU")} Ft

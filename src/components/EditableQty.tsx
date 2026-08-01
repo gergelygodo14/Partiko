@@ -48,7 +48,7 @@ export default function EditableQty({
           if (e.key === "Enter") e.currentTarget.blur();
           if (e.key === "Escape") setEditing(false);
         }}
-        className={`${className} border border-gold rounded-md outline-none bg-white`}
+        className={`${className} border border-gold rounded-md outline-none bg-surface`}
       />
     );
   }
@@ -63,7 +63,7 @@ export default function EditableQty({
       }}
       className={className}
     >
-      {value > 0 ? value : <span className="text-neutral-300">{placeholder}</span>}
+      {value > 0 ? value : <span className="text-faint">{placeholder}</span>}
     </button>
   );
 }

@@ -86,7 +86,7 @@ export default function AddStoreDialog({
 
   return (
     <div className="fixed inset-0 z-50 bg-paper overflow-y-auto">
-      <div className="sticky top-0 bg-white border-b border-neutral-200 px-4 py-3 flex items-center gap-3">
+      <div className="sticky top-0 bg-surface border-b border-surface-border px-4 py-3 flex items-center gap-3">
         <button
           type="button"
           onClick={onClose}
@@ -96,7 +96,7 @@ export default function AddStoreDialog({
         </button>
         <div className="flex-1 min-w-0">
           <div className="font-semibold">Bolt hozzáadása</div>
-          <div className="text-xs text-neutral-500">{DAY_ADJECTIVES[weekday]} lista</div>
+          <div className="text-xs text-muted">{DAY_ADJECTIVES[weekday]} lista</div>
         </div>
       </div>
 
@@ -107,22 +107,22 @@ export default function AddStoreDialog({
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Bolt neve…"
           autoFocus
-          className="w-full border border-neutral-300 rounded-xl px-3.5 py-2.5 text-base"
+          className="w-full border border-strong rounded-xl px-3.5 py-2.5 text-base"
         />
 
-        <div className="flex rounded-xl border border-neutral-300 overflow-hidden text-sm">
+        <div className="flex rounded-xl border border-strong overflow-hidden text-sm">
           <button
             type="button"
             onClick={() => setEveryDay(false)}
-            className={`flex-1 px-3 py-2.5 ${!everyDay ? "bg-gold text-ink font-medium" : "active:bg-neutral-100"}`}
+            className={`flex-1 px-3 py-2.5 ${!everyDay ? "bg-gold text-ink font-medium" : "active:bg-surface-alt"}`}
           >
             Csak {DAY_ONTO[weekday]}
           </button>
           <button
             type="button"
             onClick={() => setEveryDay(true)}
-            className={`flex-1 px-3 py-2.5 border-l border-neutral-300 ${
-              everyDay ? "bg-gold text-ink font-medium" : "active:bg-neutral-100"
+            className={`flex-1 px-3 py-2.5 border-l border-strong ${
+              everyDay ? "bg-gold text-ink font-medium" : "active:bg-surface-alt"
             }`}
           >
             Minden napra (H–P)
@@ -130,7 +130,7 @@ export default function AddStoreDialog({
         </div>
 
         {error && (
-          <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
+          <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 rounded-xl px-3 py-2">
             {error}
           </p>
         )}
@@ -139,7 +139,7 @@ export default function AddStoreDialog({
           <div className="border border-gold bg-gold/10 rounded-2xl p-3 space-y-3">
             <div className="text-sm font-medium">Új bolt létrehozása: „{trimmed}”</div>
             <div>
-              <div className="text-xs text-neutral-500 mb-1.5">Hova tartozik?</div>
+              <div className="text-xs text-muted mb-1.5">Hova tartozik?</div>
               <div className="flex flex-wrap gap-1.5">
                 {STORE_GROUP_ORDER.map((group) => {
                   const selected = (newGroup ?? suggestStoreGroup(trimmed)) === group;
@@ -177,12 +177,12 @@ export default function AddStoreDialog({
         )}
 
         <div className="space-y-1.5">
-          <div className="text-sm font-medium text-neutral-600">
+          <div className="text-sm font-medium text-muted">
             {trimmed.length > 0 ? "Találatok" : "Boltok, amik nincsenek ezen a napon"}
           </div>
-          <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm divide-y divide-neutral-100">
+          <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm divide-y divide-surface-border">
             {matches.length === 0 && (
-              <p className="px-3 py-4 text-sm text-neutral-400">
+              <p className="px-3 py-4 text-sm text-faint">
                 {trimmed.length > 0
                   ? "Nincs ilyen nevű bolt — fentebb létrehozhatod újként."
                   : "Minden bolt rajta van ezen a napon."}
@@ -196,15 +196,15 @@ export default function AddStoreDialog({
                   type="button"
                   disabled={already || busy}
                   onClick={() => add({ customerId: store.customerId }, store.storeName)}
-                  className="w-full flex items-center gap-3 px-3 py-3 text-left active:bg-neutral-50 disabled:opacity-40"
+                  className="w-full flex items-center gap-3 px-3 py-3 text-left active:bg-surface-alt disabled:opacity-40"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="font-medium truncate">{store.storeName}</div>
-                    <div className="text-xs text-neutral-400">
+                    <div className="text-xs text-faint">
                       {STORE_GROUP_LABELS[store.storeGroup]}
                     </div>
                   </div>
-                  <span className="text-sm text-neutral-400 shrink-0">
+                  <span className="text-sm text-faint shrink-0">
                     {already ? "már a listán" : "+ hozzáad"}
                   </span>
                 </button>
@@ -213,7 +213,7 @@ export default function AddStoreDialog({
           </div>
         </div>
 
-        <p className="text-xs text-neutral-400 pb-8">
+        <p className="text-xs text-faint pb-8">
           A hozzáadott bolt csak ezen a képernyőn jelenik meg — a konyhai nyomtatványra és az
           összesítésekbe csak akkor kerül rá, ha ténylegesen rendel is.
         </p>

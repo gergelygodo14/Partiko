@@ -378,7 +378,7 @@ export default function OrderEntryScreen() {
           >
             ◀ Előző hét
           </button>
-          <span className="text-neutral-500">
+          <span className="text-muted">
             {formatShortDate(weekStart)} – {formatShortDate(addDaysStr(weekStart, 4))}
           </span>
           <button
@@ -415,7 +415,7 @@ export default function OrderEntryScreen() {
             );
           })}
         </div>
-        <p className="text-center text-sm text-neutral-500">{dayLabel}</p>
+        <p className="text-center text-sm text-muted">{dayLabel}</p>
       </div>
 
       {alreadyExported && (
@@ -438,7 +438,7 @@ export default function OrderEntryScreen() {
                 if (stored) setDraftsByDate((prev) => ({ ...prev, [date]: stored }));
                 setStaleDraftDate(null);
               }}
-              className="px-3 py-1.5 rounded-lg border border-gold-dark bg-white active:bg-gold/15"
+              className="px-3 py-1.5 rounded-lg border border-gold-dark bg-surface active:bg-gold/15"
             >
               Módosításaim visszaállítása
             </button>
@@ -479,19 +479,19 @@ export default function OrderEntryScreen() {
         >
           + Bolt hozzáadása
         </button>
-        <div className="ml-auto flex rounded-xl border border-neutral-300 overflow-hidden text-sm">
+        <div className="ml-auto flex rounded-xl border border-strong overflow-hidden text-sm">
           <button
             type="button"
             onClick={() => chooseViewMode("grid")}
-            className={`px-3 py-2 ${viewMode === "grid" ? "bg-gold text-ink" : "active:bg-neutral-100"}`}
+            className={`px-3 py-2 ${viewMode === "grid" ? "bg-gold text-ink" : "active:bg-surface-alt"}`}
           >
             Táblázat
           </button>
           <button
             type="button"
             onClick={() => chooseViewMode("list")}
-            className={`px-3 py-2 border-l border-neutral-300 ${
-              viewMode === "list" ? "bg-gold text-ink" : "active:bg-neutral-100"
+            className={`px-3 py-2 border-l border-strong ${
+              viewMode === "list" ? "bg-gold text-ink" : "active:bg-surface-alt"
             }`}
           >
             Lista
@@ -500,13 +500,13 @@ export default function OrderEntryScreen() {
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
+        <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 rounded-xl px-3 py-2">
           {error}
         </p>
       )}
 
       {sendResult && (
-        <p className="text-sm text-green-700 bg-green-50 border border-green-300 rounded-xl px-3 py-2">
+        <p className="text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/40 border border-green-300 dark:border-green-800/60 rounded-xl px-3 py-2">
           Mentve: {sendResult.createdCount + sendResult.updatedCount} bolt módosítva
           {sendResult.deletedCount > 0 && `, ${sendResult.deletedCount} törölve`} · a nap összesen{" "}
           {sendResult.totalQuantity} db · {formatFt(sendResult.totalValueFt)}
@@ -514,10 +514,10 @@ export default function OrderEntryScreen() {
       )}
 
       {/* --- the grid itself --- */}
-      {loading && <p className="text-center text-neutral-500 py-10">Betöltés…</p>}
+      {loading && <p className="text-center text-muted py-10">Betöltés…</p>}
 
       {!loading && grid && grid.stores.length === 0 && (
-        <p className="text-center text-neutral-500 py-10">
+        <p className="text-center text-muted py-10">
           Erre a napra nincs bolt a listán, és rendelés sincs. A „Bolt hozzáadása” gombbal vehetsz
           fel egyet.
         </p>
@@ -596,7 +596,7 @@ export default function OrderEntryScreen() {
             type="button"
             onClick={handleSend}
             disabled={sending || dirty.length === 0}
-            className="w-full bg-gold text-ink font-semibold text-base px-5 py-3.5 rounded-xl shadow-lg active:bg-gold-dark disabled:bg-neutral-200 disabled:text-neutral-500 disabled:shadow-none"
+            className="w-full bg-gold text-ink font-semibold text-base px-5 py-3.5 rounded-xl shadow-lg active:bg-gold-dark disabled:bg-surface-alt disabled:text-muted disabled:shadow-none"
           >
             {sending
               ? "Küldés…"

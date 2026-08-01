@@ -17,7 +17,7 @@ export default function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      className="justify-self-end text-xs text-neutral-400 active:text-neutral-200"
+      className="text-xs text-neutral-400 active:text-neutral-200"
     >
       Kilépés
     </button>

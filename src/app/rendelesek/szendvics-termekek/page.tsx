@@ -96,31 +96,31 @@ export default function SandwichItemsPage() {
         <h2 className="text-lg font-semibold mb-3">Új szendvics</h2>
         <form onSubmit={createItem} className="flex flex-wrap gap-3 items-end">
           <div>
-            <label className="block text-xs text-neutral-500 mb-1">Név</label>
+            <label className="block text-xs text-muted mb-1">Név</label>
             <input
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              className="border border-neutral-300 rounded-xl px-3 py-2.5 text-base"
+              className="border border-strong rounded-xl px-3 py-2.5 text-base"
               placeholder="pl. Hamburger"
             />
           </div>
           <div>
-            <label className="block text-xs text-neutral-500 mb-1">Ár (Ft)</label>
+            <label className="block text-xs text-muted mb-1">Ár (Ft)</label>
             <input
               type="number"
               value={form.price}
               onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
-              className="border border-neutral-300 rounded-xl px-3 py-2.5 text-base w-28"
+              className="border border-strong rounded-xl px-3 py-2.5 text-base w-28"
               placeholder="700"
             />
           </div>
           <div>
-            <label className="block text-xs text-neutral-500 mb-1">Haszon (Ft/db)</label>
+            <label className="block text-xs text-muted mb-1">Haszon (Ft/db)</label>
             <input
               type="number"
               value={form.profitFt}
               onChange={(e) => setForm((f) => ({ ...f, profitFt: e.target.value }))}
-              className="border border-neutral-300 rounded-xl px-3 py-2.5 text-base w-28"
+              className="border border-strong rounded-xl px-3 py-2.5 text-base w-28"
               placeholder="320"
             />
           </div>
@@ -136,7 +136,7 @@ export default function SandwichItemsPage() {
       <section>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-semibold">Szendvicsek</h2>
-          <label className="flex items-center gap-2 text-sm text-neutral-600">
+          <label className="flex items-center gap-2 text-sm text-muted">
             <input
               type="checkbox"
               checked={showArchived}
@@ -147,13 +147,13 @@ export default function SandwichItemsPage() {
         </div>
 
         {loading ? (
-          <p className="text-neutral-500">Betöltés...</p>
+          <p className="text-muted">Betöltés...</p>
         ) : (
           <ul className="space-y-2">
             {visible.map((item) => (
               <li
                 key={item.id}
-                className={`border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm ${
+                className={`border border-surface-border bg-surface rounded-2xl p-4 shadow-sm ${
                   item.archived ? "opacity-50" : ""
                 }`}
               >
@@ -162,19 +162,19 @@ export default function SandwichItemsPage() {
                     <input
                       value={editForm.name}
                       onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
-                      className="border border-neutral-300 rounded-xl px-3 py-2 text-base"
+                      className="border border-strong rounded-xl px-3 py-2 text-base"
                     />
                     <input
                       type="number"
                       value={editForm.price}
                       onChange={(e) => setEditForm((f) => ({ ...f, price: e.target.value }))}
-                      className="border border-neutral-300 rounded-xl px-3 py-2 text-base w-24"
+                      className="border border-strong rounded-xl px-3 py-2 text-base w-24"
                     />
                     <input
                       type="number"
                       value={editForm.profitFt}
                       onChange={(e) => setEditForm((f) => ({ ...f, profitFt: e.target.value }))}
-                      className="border border-neutral-300 rounded-xl px-3 py-2 text-base w-24"
+                      className="border border-strong rounded-xl px-3 py-2 text-base w-24"
                       placeholder="Haszon"
                     />
                     <button
@@ -185,7 +185,7 @@ export default function SandwichItemsPage() {
                     </button>
                     <button
                       onClick={() => setEditingId(null)}
-                      className="text-sm px-4 py-2.5 rounded-xl border border-neutral-300"
+                      className="text-sm px-4 py-2.5 rounded-xl border border-strong"
                     >
                       Mégse
                     </button>
@@ -194,7 +194,7 @@ export default function SandwichItemsPage() {
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <span className="font-semibold text-base">{item.name}</span>
-                      <span className="text-xs text-neutral-500 ml-2">
+                      <span className="text-xs text-muted ml-2">
                         {item.price.toLocaleString("hu-HU")} Ft · haszon:{" "}
                         {item.profitFt.toLocaleString("hu-HU")} Ft
                         {item.archived ? " · archiválva" : ""}

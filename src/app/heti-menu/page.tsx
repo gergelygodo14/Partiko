@@ -261,7 +261,7 @@ export default function WeeklyMenuPage() {
           {!isCurrentWeek && (
             <button
               onClick={() => setWeekStart(mondayOf(todayStr()))}
-              className="text-xs text-neutral-500 underline"
+              className="text-xs text-muted underline"
             >
               Ugrás a jelenlegi hétre
             </button>
@@ -277,16 +277,16 @@ export default function WeeklyMenuPage() {
       </div>
 
       {loading ? (
-        <p className="text-neutral-500">Betöltés...</p>
+        <p className="text-muted">Betöltés...</p>
       ) : (
         <div className="space-y-4">
           {DAY_NAMES.map((name, i) => (
             <div
               key={name}
-              className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm space-y-3"
+              className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-3"
             >
               <div className="font-semibold">
-                {name} <span className="text-neutral-400 font-normal text-sm">({formatDate(addDaysStr(weekStart, i))})</span>
+                {name} <span className="text-faint font-normal text-sm">({formatDate(addDaysStr(weekStart, i))})</span>
               </div>
               {(["a", "b", "c"] as const).map((letter) => (
                 <div
@@ -313,7 +313,7 @@ export default function WeeklyMenuPage() {
                     value={days[i][letter]}
                     onChange={(e) => updateDay(i, { [letter]: e.target.value } as Partial<MenuDay>)}
                     placeholder="étel neve"
-                    className="flex-1 border border-neutral-300 rounded-xl px-3 py-2.5 text-base"
+                    className="flex-1 border border-strong rounded-xl px-3 py-2.5 text-base"
                   />
                   <button
                     type="button"
@@ -324,7 +324,7 @@ export default function WeeklyMenuPage() {
                   >
                     {suggestingKey === `${i}-${letter}` ? "…" : "AI"}
                   </button>
-                  <label className="flex items-center gap-1.5 text-sm text-neutral-600 shrink-0">
+                  <label className="flex items-center gap-1.5 text-sm text-muted shrink-0">
                     <input
                       type="checkbox"
                       checked={days[i][`${letter}GM` as `${typeof letter}GM`]}
@@ -343,19 +343,19 @@ export default function WeeklyMenuPage() {
         </div>
       )}
 
-      <div className="border border-neutral-200 bg-white rounded-2xl p-4 shadow-sm flex items-center justify-between gap-3 flex-wrap">
+      <div className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm flex items-center justify-between gap-3 flex-wrap">
         <div className="text-sm">
           {published ? (
-            <span className="text-green-700 font-semibold">
+            <span className="text-green-700 dark:text-green-400 font-semibold">
               Közzétéve ✓{" "}
               {publishedAt && (
-                <span className="text-neutral-400 font-normal">
+                <span className="text-faint font-normal">
                   ({new Date(publishedAt).toLocaleString("hu-HU")})
                 </span>
               )}
             </span>
           ) : (
-            <span className="text-neutral-500">Még nincs közzétéve az ügyfeleknek</span>
+            <span className="text-muted">Még nincs közzétéve az ügyfeleknek</span>
           )}
         </div>
         <button

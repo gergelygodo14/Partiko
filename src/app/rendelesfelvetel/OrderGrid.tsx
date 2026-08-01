@@ -84,19 +84,19 @@ function GridTable({
 
   return (
     <section className="space-y-2">
-      <h2 className="text-sm font-semibold text-neutral-500 uppercase tracking-wide">{caption}</h2>
+      <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">{caption}</h2>
 
       {/* Full-bleed from md up: 30 store columns need more than the shared
           layout's max-w-3xl. Below md the store list is the default view
           anyway, so the constrained width there is fine. */}
       <div className="md:relative md:left-1/2 md:w-screen md:-translate-x-1/2 md:px-4">
-        <div className="border border-neutral-200 bg-white rounded-2xl shadow-sm overflow-x-auto">
+        <div className="border border-surface-border bg-surface rounded-2xl shadow-sm overflow-x-auto">
           <table className="text-sm border-collapse">
             <thead>
-              <tr className="bg-neutral-100 text-neutral-600">
+              <tr className="bg-surface-alt text-muted">
                 <th
                   rowSpan={2}
-                  className="sticky left-0 z-[2] bg-neutral-100 text-left px-3 py-2 align-bottom border-r border-neutral-300 min-w-[10rem]"
+                  className="sticky left-0 z-[2] bg-surface-alt text-left px-3 py-2 align-bottom border-r border-strong min-w-[10rem]"
                 >
                   Szendvics
                 </th>
@@ -104,22 +104,22 @@ function GridTable({
                   <th
                     key={block.group}
                     colSpan={block.stores.length}
-                    className="px-2 py-1.5 text-center text-xs font-semibold uppercase tracking-wide border-l-2 border-neutral-400"
+                    className="px-2 py-1.5 text-center text-xs font-semibold uppercase tracking-wide border-l-2 border-strong"
                   >
                     {STORE_GROUP_LABELS[block.group]}
                   </th>
                 ))}
-                <th rowSpan={2} className="px-3 py-2 text-right align-bottom border-l-2 border-neutral-400">
+                <th rowSpan={2} className="px-3 py-2 text-right align-bottom border-l-2 border-strong">
                   Össz.
                 </th>
               </tr>
-              <tr className="bg-neutral-100 text-neutral-600">
+              <tr className="bg-surface-alt text-muted">
                 {blocks.flatMap((block) =>
                   block.stores.map((store, i) => (
                     <th
                       key={store.customerId}
                       className={`px-1 py-2 align-bottom font-medium min-w-[3.5rem] ${
-                        i === 0 ? "border-l-2 border-neutral-400" : "border-l border-neutral-200"
+                        i === 0 ? "border-l-2 border-strong" : "border-l border-surface-border"
                       }`}
                     >
                       {/* Tapping a store header opens the single-store editor -
@@ -145,10 +145,10 @@ function GridTable({
 
             <tbody>
               {items.map((item) => (
-                <tr key={item.itemId} className="border-t border-neutral-100">
+                <tr key={item.itemId} className="border-t border-surface-border">
                   <th
                     scope="row"
-                    className="sticky left-0 z-[1] bg-white text-left font-normal px-3 py-1.5 whitespace-nowrap border-r border-neutral-300"
+                    className="sticky left-0 z-[1] bg-surface text-left font-normal px-3 py-1.5 whitespace-nowrap border-r border-strong"
                     title={item.name}
                   >
                     {item.shortLabel}
@@ -158,7 +158,7 @@ function GridTable({
                       <td
                         key={store.customerId}
                         className={`p-0 text-center ${
-                          i === 0 ? "border-l-2 border-neutral-400" : "border-l border-neutral-200"
+                          i === 0 ? "border-l-2 border-strong" : "border-l border-surface-border"
                         }`}
                       >
                         <EditableQty
@@ -171,7 +171,7 @@ function GridTable({
                       </td>
                     ))
                   )}
-                  <td className="px-3 py-1.5 text-right tabular-nums text-neutral-500 border-l-2 border-neutral-400">
+                  <td className="px-3 py-1.5 text-right tabular-nums text-muted border-l-2 border-strong">
                     {totals.byItem[item.itemId] || ""}
                   </td>
                 </tr>
@@ -179,8 +179,8 @@ function GridTable({
             </tbody>
 
             <tfoot>
-              <tr className="border-t-2 border-neutral-400 bg-neutral-50 font-semibold">
-                <th className="sticky left-0 z-[1] bg-neutral-50 text-left px-3 py-2 border-r border-neutral-300">
+              <tr className="border-t-2 border-strong bg-surface-alt font-semibold">
+                <th className="sticky left-0 z-[1] bg-surface-alt text-left px-3 py-2 border-r border-strong">
                   Összesen
                 </th>
                 {blocks.flatMap((block) =>
@@ -188,14 +188,14 @@ function GridTable({
                     <td
                       key={store.customerId}
                       className={`px-1 py-2 text-center tabular-nums ${
-                        i === 0 ? "border-l-2 border-neutral-400" : "border-l border-neutral-200"
+                        i === 0 ? "border-l-2 border-strong" : "border-l border-surface-border"
                       }`}
                     >
                       {totals.byStore[store.customerId]?.quantity || ""}
                     </td>
                   ))
                 )}
-                <td className="px-3 py-2 text-right tabular-nums border-l-2 border-neutral-400">
+                <td className="px-3 py-2 text-right tabular-nums border-l-2 border-strong">
                   {columns.reduce(
                     (sum, store) => sum + (totals.byStore[store.customerId]?.quantity ?? 0),
                     0
@@ -206,7 +206,7 @@ function GridTable({
           </table>
         </div>
 
-        <p className="mt-1.5 px-1 text-xs text-neutral-400 md:px-0">
+        <p className="mt-1.5 px-1 text-xs text-faint md:px-0">
           Érték:{" "}
           {formatFt(
             columns.reduce((sum, store) => sum + (totals.byStore[store.customerId]?.valueFt ?? 0), 0)
