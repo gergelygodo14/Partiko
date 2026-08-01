@@ -149,7 +149,7 @@ export default function ReadyMealOrdersTab() {
         <button
           onClick={downloadTomorrowOrders}
           disabled={downloading}
-          className="block w-full text-center bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500 disabled:opacity-50"
+          className="block w-full text-center bg-gold text-ink font-semibold text-base px-5 py-3 rounded-xl active:bg-gold-dark disabled:opacity-50"
         >
           {downloading ? "Letöltés…" : "Holnapi rendelések letöltése (.xlsx)"}
         </button>
@@ -164,7 +164,7 @@ export default function ReadyMealOrdersTab() {
           onClick={() => setView("week")}
           className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base ${
             view === "week"
-              ? "bg-yellow-400 text-black"
+              ? "bg-gold text-ink"
               : "border border-neutral-300 active:bg-neutral-100"
           }`}
         >
@@ -174,7 +174,7 @@ export default function ReadyMealOrdersTab() {
           onClick={() => setView("day")}
           className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base ${
             view === "day"
-              ? "bg-yellow-400 text-black"
+              ? "bg-gold text-ink"
               : "border border-neutral-300 active:bg-neutral-100"
           }`}
         >
@@ -184,7 +184,7 @@ export default function ReadyMealOrdersTab() {
           onClick={() => setView("month")}
           className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base ${
             view === "month"
-              ? "bg-yellow-400 text-black"
+              ? "bg-gold text-ink"
               : "border border-neutral-300 active:bg-neutral-100"
           }`}
         >
@@ -275,7 +275,7 @@ export default function ReadyMealOrdersTab() {
                 onClick={() => setDayIndex(i)}
                 className={`flex-1 px-1 py-2.5 rounded-xl font-semibold text-sm ${
                   dayIndex === i
-                    ? "bg-yellow-400 text-black"
+                    ? "bg-gold text-ink"
                     : "border border-neutral-300 active:bg-neutral-100"
                 }`}
               >

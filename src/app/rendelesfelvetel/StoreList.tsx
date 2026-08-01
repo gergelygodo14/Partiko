@@ -47,7 +47,7 @@ export default function StoreList({
                     <div className="font-medium truncate">
                       {store.storeName}
                       {dirty.has(store.customerId) && (
-                        <span className="ml-1.5 text-yellow-600" aria-label="mentetlen">
+                        <span className="ml-1.5 text-umber-dark" aria-label="mentetlen">
                           ●
                         </span>
                       )}

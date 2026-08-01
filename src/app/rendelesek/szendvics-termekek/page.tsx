@@ -85,7 +85,10 @@ export default function SandwichItemsPage() {
 
   return (
     <div className="space-y-8">
-      <Link href="/rendelesek" className="text-sm text-neutral-500 underline">
+      <Link
+        href="/rendelesek"
+        className="inline-block text-sm font-bold text-umber-dark bg-umber/10 border border-umber/50 rounded-full px-3.5 py-1.5 active:bg-umber/20"
+      >
         ← Vissza a rendelésekhez
       </Link>
 
@@ -123,7 +126,7 @@ export default function SandwichItemsPage() {
           </div>
           <button
             type="submit"
-            className="bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500"
+            className="bg-gold text-ink font-semibold text-base px-5 py-3 rounded-xl active:bg-gold-dark"
           >
             Hozzáadás
           </button>
@@ -176,7 +179,7 @@ export default function SandwichItemsPage() {
                     />
                     <button
                       onClick={() => saveEdit(item.id)}
-                      className="bg-yellow-400 text-black font-semibold text-sm px-4 py-2.5 rounded-xl active:bg-yellow-500"
+                      className="bg-gold text-ink font-semibold text-sm px-4 py-2.5 rounded-xl active:bg-gold-dark"
                     >
                       Mentés
                     </button>

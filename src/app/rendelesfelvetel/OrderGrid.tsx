@@ -132,7 +132,7 @@ function GridTable({
                       >
                         {store.storeName}
                         {dirty.has(store.customerId) && (
-                          <span className="block text-yellow-600" aria-label="mentetlen">
+                          <span className="block text-umber-dark" aria-label="mentetlen">
                             ●
                           </span>
                         )}

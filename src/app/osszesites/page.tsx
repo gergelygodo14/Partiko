@@ -144,7 +144,7 @@ function OpenPeriodSection() {
         <button
           onClick={closePeriod}
           disabled={closing || !summary || summary.rows.length === 0}
-          className="w-full sm:w-auto bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500 disabled:opacity-50"
+          className="w-full sm:w-auto bg-gold text-ink font-semibold text-base px-5 py-3 rounded-xl active:bg-gold-dark disabled:opacity-50"
         >
           Tételek leszámlázva
         </button>

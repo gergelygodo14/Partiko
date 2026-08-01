@@ -19,7 +19,7 @@ export default function OrdersPage() {
           onClick={() => setFeature("keszetel")}
           className={`flex-1 px-4 py-4 rounded-2xl font-semibold text-base ${
             feature === "keszetel"
-              ? "bg-yellow-400 text-black"
+              ? "bg-gold text-ink"
               : "border border-neutral-300 active:bg-neutral-100"
           }`}
         >
@@ -29,7 +29,7 @@ export default function OrdersPage() {
           onClick={() => setFeature("szendvics")}
           className={`flex-1 px-4 py-4 rounded-2xl font-semibold text-base ${
             feature === "szendvics"
-              ? "bg-yellow-400 text-black"
+              ? "bg-gold text-ink"
               : "border border-neutral-300 active:bg-neutral-100"
           }`}
         >

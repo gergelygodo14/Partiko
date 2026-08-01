@@ -61,7 +61,7 @@ function LoginForm() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500 disabled:opacity-50"
+          className="w-full bg-gold text-ink font-semibold text-base px-5 py-3 rounded-xl active:bg-gold-dark disabled:opacity-50"
         >
           Belépés
         </button>

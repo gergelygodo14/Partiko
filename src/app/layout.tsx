@@ -37,8 +37,8 @@ export default function RootLayout({
       lang="hu"
       className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-neutral-50">
-        <header className="bg-black sticky top-0 z-10">
+      <body className="min-h-full flex flex-col bg-paper">
+        <header className="bg-ink sticky top-0 z-10">
           <div className="max-w-3xl mx-auto px-4 py-2 grid grid-cols-[1fr_auto_1fr] items-center">
             <Image
               src="/logo-penguin-yellow.png"
@@ -49,7 +49,7 @@ export default function RootLayout({
               className="h-9 w-auto justify-self-start"
             />
             <span
-              className="text-yellow-400 text-2xl leading-none tracking-tight"
+              className="text-gold text-2xl leading-none tracking-tight"
               style={{ fontFamily: "var(--font-poppins)" }}
             >
               Partiko

@@ -115,7 +115,7 @@ export default function IngredientsPage() {
           </div>
           <button
             type="submit"
-            className="bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500"
+            className="bg-gold text-ink font-semibold text-base px-5 py-3 rounded-xl active:bg-gold-dark"
           >
             Hozzáadás
           </button>
@@ -172,7 +172,7 @@ export default function IngredientsPage() {
                     />
                     <button
                       onClick={() => saveEdit(ing.id)}
-                      className="bg-yellow-400 text-black font-semibold text-sm px-4 py-2.5 rounded-xl active:bg-yellow-500"
+                      className="bg-gold text-ink font-semibold text-sm px-4 py-2.5 rounded-xl active:bg-gold-dark"
                     >
                       Mentés
                     </button>

@@ -61,12 +61,12 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-neutral-50 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-paper overflow-y-auto">
       <div className="sticky top-0 bg-white border-b border-neutral-200 px-4 py-3 flex items-center gap-3">
         <button
           type="button"
           onClick={onClose}
-          className="text-sm font-medium text-neutral-600 active:opacity-60"
+          className="shrink-0 text-sm font-bold text-umber-dark bg-umber/10 border border-umber/50 rounded-full px-3.5 py-1.5 active:bg-umber/20"
         >
           ‹ Vissza
         </button>
@@ -92,7 +92,7 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
             <button
               type="button"
               onClick={onClose}
-              className="w-full bg-yellow-400 text-black font-semibold px-4 py-3 rounded-xl active:bg-yellow-500"
+              className="w-full bg-gold text-ink font-semibold px-4 py-3 rounded-xl active:bg-gold-dark"
             >
               Bezárás
             </button>
@@ -148,7 +148,7 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
               type="button"
               disabled={sending}
               onClick={send}
-              className="w-full bg-yellow-400 text-black font-semibold px-4 py-3 rounded-xl active:bg-yellow-500 disabled:opacity-50"
+              className="w-full bg-gold text-ink font-semibold px-4 py-3 rounded-xl active:bg-gold-dark disabled:opacity-50"
             >
               {sending ? "Küldés…" : "Küldés Telegramra"}
             </button>

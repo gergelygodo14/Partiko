@@ -356,7 +356,10 @@ export default function OrderEntryScreen() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-xl font-semibold">Rendelésfelvétel</h1>
-        <Link href="/rendelesek" className="text-sm text-neutral-500 underline active:opacity-60">
+        <Link
+          href="/rendelesek"
+          className="shrink-0 text-sm font-bold text-ink bg-gold rounded-full px-4 py-2 active:bg-gold-dark"
+        >
           Összesítések
         </Link>
       </div>
@@ -402,12 +405,12 @@ export default function OrderEntryScreen() {
                 onClick={() => setDate(tabDate)}
                 className={`py-2 rounded-lg text-sm font-medium border ${
                   isActive
-                    ? "bg-yellow-400 text-black border-yellow-400"
+                    ? "bg-gold text-ink border-gold"
                     : "border-neutral-300 active:bg-neutral-100"
                 }`}
               >
                 {name}
-                {dirtyDates.has(tabDate) && <span className="ml-1 text-yellow-600">●</span>}
+                {dirtyDates.has(tabDate) && <span className="ml-1 text-umber-dark">●</span>}
               </button>
             );
           })}
@@ -416,14 +419,14 @@ export default function OrderEntryScreen() {
       </div>
 
       {alreadyExported && (
-        <p className="text-sm text-yellow-700 bg-yellow-50 border border-yellow-300 rounded-xl px-3 py-2">
+        <p className="text-sm text-umber-dark bg-gold/10 border border-gold/50 rounded-xl px-3 py-2">
           Ezt a napot a konyha már letöltötte — a módosítás nem biztos, hogy eljut hozzájuk.
         </p>
       )}
 
       {staleDraftDate === date && (
-        <div className="text-sm bg-yellow-50 border border-yellow-300 rounded-xl px-3 py-2 space-y-2">
-          <p className="text-yellow-800">
+        <div className="text-sm bg-gold/10 border border-gold/50 rounded-xl px-3 py-2 space-y-2">
+          <p className="text-umber-dark">
             Volt mentetlen módosításod ezen a napon, de közben változtak az adatok a szerveren. A
             szerver adatait töltöttük be.
           </p>
@@ -435,7 +438,7 @@ export default function OrderEntryScreen() {
                 if (stored) setDraftsByDate((prev) => ({ ...prev, [date]: stored }));
                 setStaleDraftDate(null);
               }}
-              className="px-3 py-1.5 rounded-lg border border-yellow-500 bg-white active:bg-yellow-100"
+              className="px-3 py-1.5 rounded-lg border border-gold-dark bg-white active:bg-gold/15"
             >
               Módosításaim visszaállítása
             </button>
@@ -456,7 +459,7 @@ export default function OrderEntryScreen() {
           type="button"
           onClick={() => loadAllFixOrders("replace")}
           disabled={!grid}
-          className="border border-yellow-400 bg-yellow-50 text-sm rounded-xl px-3 py-2 font-medium active:bg-yellow-100 disabled:opacity-40"
+          className="border border-gold bg-gold/10 text-sm rounded-xl px-3 py-2 font-medium active:bg-gold/15 disabled:opacity-40"
         >
           Fix rendelések betöltése
         </button>
@@ -480,7 +483,7 @@ export default function OrderEntryScreen() {
           <button
             type="button"
             onClick={() => chooseViewMode("grid")}
-            className={`px-3 py-2 ${viewMode === "grid" ? "bg-yellow-400 text-black" : "active:bg-neutral-100"}`}
+            className={`px-3 py-2 ${viewMode === "grid" ? "bg-gold text-ink" : "active:bg-neutral-100"}`}
           >
             Táblázat
           </button>
@@ -488,7 +491,7 @@ export default function OrderEntryScreen() {
             type="button"
             onClick={() => chooseViewMode("list")}
             className={`px-3 py-2 border-l border-neutral-300 ${
-              viewMode === "list" ? "bg-yellow-400 text-black" : "active:bg-neutral-100"
+              viewMode === "list" ? "bg-gold text-ink" : "active:bg-neutral-100"
             }`}
           >
             Lista
@@ -593,7 +596,7 @@ export default function OrderEntryScreen() {
             type="button"
             onClick={handleSend}
             disabled={sending || dirty.length === 0}
-            className="w-full bg-yellow-400 text-black font-semibold text-base px-5 py-3.5 rounded-xl shadow-lg active:bg-yellow-500 disabled:bg-neutral-200 disabled:text-neutral-500 disabled:shadow-none"
+            className="w-full bg-gold text-ink font-semibold text-base px-5 py-3.5 rounded-xl shadow-lg active:bg-gold-dark disabled:bg-neutral-200 disabled:text-neutral-500 disabled:shadow-none"
           >
             {sending
               ? "Küldés…"

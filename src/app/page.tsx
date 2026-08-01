@@ -192,7 +192,7 @@ export default function DailyEntryPage() {
                     <button
                       onClick={() => addEntry(ing.id)}
                       disabled={savingId === ing.id}
-                      className="bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500 disabled:opacity-50 whitespace-nowrap"
+                      className="bg-gold text-ink font-semibold text-base px-5 py-3 rounded-xl active:bg-gold-dark disabled:opacity-50 whitespace-nowrap"
                     >
                       Hozzáadás
                     </button>

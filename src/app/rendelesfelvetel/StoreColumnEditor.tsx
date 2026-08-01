@@ -72,12 +72,12 @@ export default function StoreColumnEditor({
   const hasFix = Object.keys(store.fix).length > 0;
 
   return (
-    <div className="fixed inset-0 z-50 bg-neutral-50 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-paper overflow-y-auto">
       <div className="sticky top-0 bg-white border-b border-neutral-200 px-4 py-3 flex items-center gap-3">
         <button
           type="button"
           onClick={onClose}
-          className="text-sm font-medium text-neutral-600 active:opacity-60"
+          className="shrink-0 text-sm font-bold text-umber-dark bg-umber/10 border border-umber/50 rounded-full px-3.5 py-1.5 active:bg-umber/20"
         >
           ‹ Vissza
         </button>
@@ -95,7 +95,7 @@ export default function StoreColumnEditor({
             type="button"
             onClick={onApplyFix}
             disabled={!hasFix}
-            className="border border-yellow-400 bg-yellow-50 text-sm rounded-xl px-3.5 py-2.5 font-medium active:bg-yellow-100 disabled:opacity-40"
+            className="border border-gold bg-gold/10 text-sm rounded-xl px-3.5 py-2.5 font-medium active:bg-gold/15 disabled:opacity-40"
           >
             Fix rendelés betöltése
           </button>
@@ -161,7 +161,7 @@ export default function StoreColumnEditor({
               <div
                 key={item.itemId}
                 className={`border rounded-xl bg-white shadow-sm p-3 flex flex-col gap-2 ${
-                  qty > 0 ? "border-yellow-400" : "border-neutral-200"
+                  qty > 0 ? "border-gold" : "border-neutral-200"
                 }`}
               >
                 <div>
@@ -214,7 +214,7 @@ export default function StoreColumnEditor({
             <span className="font-semibold">{totalQuantity} db</span>
             <span className="text-neutral-500"> · {formatFt(totalValue)}</span>
             {totalValue > 0 && totalValue < MIN_ORDER_VALUE_FT && (
-              <span className="block text-xs text-yellow-600">
+              <span className="block text-xs text-umber-dark">
                 A minimális rendelés {formatFt(MIN_ORDER_VALUE_FT)} — ez csak jelzés.
               </span>
             )}
@@ -222,7 +222,7 @@ export default function StoreColumnEditor({
           <button
             type="button"
             onClick={onClose}
-            className="bg-yellow-400 text-black font-semibold px-5 py-2.5 rounded-xl active:bg-yellow-500"
+            className="bg-gold text-ink font-semibold px-5 py-2.5 rounded-xl active:bg-gold-dark"
           >
             Kész
           </button>

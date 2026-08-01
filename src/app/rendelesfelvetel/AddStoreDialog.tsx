@@ -85,12 +85,12 @@ export default function AddStoreDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-neutral-50 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-paper overflow-y-auto">
       <div className="sticky top-0 bg-white border-b border-neutral-200 px-4 py-3 flex items-center gap-3">
         <button
           type="button"
           onClick={onClose}
-          className="text-sm font-medium text-neutral-600 active:opacity-60"
+          className="shrink-0 text-sm font-bold text-umber-dark bg-umber/10 border border-umber/50 rounded-full px-3.5 py-1.5 active:bg-umber/20"
         >
           ‹ Vissza
         </button>
@@ -114,7 +114,7 @@ export default function AddStoreDialog({
           <button
             type="button"
             onClick={() => setEveryDay(false)}
-            className={`flex-1 px-3 py-2.5 ${!everyDay ? "bg-yellow-400 text-black font-medium" : "active:bg-neutral-100"}`}
+            className={`flex-1 px-3 py-2.5 ${!everyDay ? "bg-gold text-ink font-medium" : "active:bg-neutral-100"}`}
           >
             Csak {DAY_ONTO[weekday]}
           </button>
@@ -122,7 +122,7 @@ export default function AddStoreDialog({
             type="button"
             onClick={() => setEveryDay(true)}
             className={`flex-1 px-3 py-2.5 border-l border-neutral-300 ${
-              everyDay ? "bg-yellow-400 text-black font-medium" : "active:bg-neutral-100"
+              everyDay ? "bg-gold text-ink font-medium" : "active:bg-neutral-100"
             }`}
           >
             Minden napra (H–P)
@@ -136,7 +136,7 @@ export default function AddStoreDialog({
         )}
 
         {canCreate && (
-          <div className="border border-yellow-400 bg-yellow-50 rounded-2xl p-3 space-y-3">
+          <div className="border border-gold bg-gold/10 rounded-2xl p-3 space-y-3">
             <div className="text-sm font-medium">Új bolt létrehozása: „{trimmed}”</div>
             <div>
               <div className="text-xs text-neutral-500 mb-1.5">Hova tartozik?</div>
@@ -150,7 +150,7 @@ export default function AddStoreDialog({
                       onClick={() => setNewGroup(group)}
                       className={`px-3 py-1.5 rounded-lg text-sm border ${
                         selected
-                          ? "bg-neutral-800 text-white border-neutral-800"
+                          ? "bg-ink text-white border-ink"
                           : "bg-white border-neutral-300 active:bg-neutral-100"
                       }`}
                     >
@@ -169,7 +169,7 @@ export default function AddStoreDialog({
                   trimmed
                 )
               }
-              className="w-full bg-yellow-400 text-black font-semibold px-4 py-2.5 rounded-xl active:bg-yellow-500 disabled:opacity-40"
+              className="w-full bg-gold text-ink font-semibold px-4 py-2.5 rounded-xl active:bg-gold-dark disabled:opacity-40"
             >
               {busy ? "Hozzáadás…" : "Létrehozás és hozzáadás"}
             </button>

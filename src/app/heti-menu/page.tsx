@@ -239,7 +239,7 @@ export default function WeeklyMenuPage() {
     <div className="space-y-6">
       {dragSource && dragPos && (
         <div
-          className="fixed z-50 pointer-events-none -translate-x-1/2 -translate-y-1/2 bg-neutral-900 text-white text-sm font-semibold px-3 py-2 rounded-xl shadow-lg max-w-[70vw] truncate"
+          className="fixed z-50 pointer-events-none -translate-x-1/2 -translate-y-1/2 bg-ink text-white text-sm font-semibold px-3 py-2 rounded-xl shadow-lg max-w-[70vw] truncate"
           style={{ left: dragPos.x, top: dragPos.y }}
         >
           {dragSource.letter.toUpperCase()}. {days[dragSource.day][dragSource.letter] || "(üres)"}
@@ -295,7 +295,7 @@ export default function WeeklyMenuPage() {
                   data-slot-letter={letter}
                   className={`flex items-center gap-2 rounded-xl transition-colors ${
                     slotsEqual(dragOverSlot, { day: i, letter }) && !slotsEqual(dragSource, { day: i, letter })
-                      ? "bg-yellow-100 ring-2 ring-yellow-400"
+                      ? "bg-gold/15 ring-2 ring-gold"
                       : ""
                   }`}
                 >
@@ -303,7 +303,7 @@ export default function WeeklyMenuPage() {
                     onPointerDown={(e) => handleLetterPointerDown(e, i, letter)}
                     style={{ touchAction: "none" }}
                     className={`font-semibold w-5 shrink-0 cursor-grab select-none rounded ${
-                      slotsEqual(dragSource, { day: i, letter }) ? "bg-yellow-400 text-black" : ""
+                      slotsEqual(dragSource, { day: i, letter }) ? "bg-gold text-ink" : ""
                     }`}
                   >
                     {letter.toUpperCase()}.
@@ -364,7 +364,7 @@ export default function WeeklyMenuPage() {
           className={`px-5 py-3 rounded-xl font-semibold text-base disabled:opacity-50 ${
             published
               ? "border border-neutral-300 active:bg-neutral-100"
-              : "bg-yellow-400 text-black active:bg-yellow-500"
+              : "bg-gold text-ink active:bg-gold-dark"
           }`}
         >
           {published ? "Visszavonás" : "Közzététel"}
@@ -382,7 +382,7 @@ export default function WeeklyMenuPage() {
         <button
           onClick={saveAndDownload}
           disabled={saving || loading}
-          className="flex-1 bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500 disabled:opacity-50"
+          className="flex-1 bg-gold text-ink font-semibold text-base px-5 py-3 rounded-xl active:bg-gold-dark disabled:opacity-50"
         >
           Letöltés (.docx)
         </button>

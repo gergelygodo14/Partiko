@@ -96,7 +96,7 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 bg-black pb-[env(safe-area-inset-bottom)]"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-ink pb-[env(safe-area-inset-bottom)]"
       aria-label="Fő navigáció"
     >
       <div className="max-w-3xl mx-auto grid grid-cols-6">
@@ -107,7 +107,7 @@ export default function BottomNav() {
               key={href}
               href={href}
               className={`flex flex-col items-center justify-center gap-1 py-3 min-h-[64px] transition-colors ${
-                active ? "text-yellow-400" : "text-neutral-400 active:text-yellow-300"
+                active ? "text-gold" : "text-neutral-400 active:text-gold"
               }`}
             >
               <Icon />

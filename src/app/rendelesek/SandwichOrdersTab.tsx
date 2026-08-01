@@ -484,7 +484,7 @@ export default function SandwichOrdersTab() {
         <button
           onClick={() => downloadFile("/api/sandwich-orders/export")}
           disabled={downloading}
-          className="block w-full text-center bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500 disabled:opacity-50"
+          className="block w-full text-center bg-gold text-ink font-semibold text-base px-5 py-3 rounded-xl active:bg-gold-dark disabled:opacity-50"
         >
           {downloading ? "Letöltés…" : "Holnapi szendvics rendelések letöltése (.xlsx)"}
         </button>
@@ -511,7 +511,7 @@ export default function SandwichOrdersTab() {
         </button>
         <Link
           href="/rendelesfelvetel"
-          className="block w-full text-center bg-yellow-400 text-black font-semibold px-5 py-3 rounded-xl active:bg-yellow-500"
+          className="block w-full text-center bg-gold text-ink font-semibold px-5 py-3 rounded-xl active:bg-gold-dark"
         >
           Rendelésfelvétel megnyitása
         </Link>
@@ -533,7 +533,7 @@ export default function SandwichOrdersTab() {
           onClick={() => setView("week")}
           className={`flex-1 min-w-[45%] px-4 py-3 rounded-xl font-semibold text-base ${
             view === "week"
-              ? "bg-yellow-400 text-black"
+              ? "bg-gold text-ink"
               : "border border-neutral-300 active:bg-neutral-100"
           }`}
         >
@@ -543,7 +543,7 @@ export default function SandwichOrdersTab() {
           onClick={() => setView("day")}
           className={`flex-1 min-w-[45%] px-4 py-3 rounded-xl font-semibold text-base ${
             view === "day"
-              ? "bg-yellow-400 text-black"
+              ? "bg-gold text-ink"
               : "border border-neutral-300 active:bg-neutral-100"
           }`}
         >
@@ -553,7 +553,7 @@ export default function SandwichOrdersTab() {
           onClick={() => setView("monthGrid")}
           className={`flex-1 min-w-[45%] px-4 py-3 rounded-xl font-semibold text-base ${
             view === "monthGrid"
-              ? "bg-yellow-400 text-black"
+              ? "bg-gold text-ink"
               : "border border-neutral-300 active:bg-neutral-100"
           }`}
         >
@@ -563,7 +563,7 @@ export default function SandwichOrdersTab() {
           onClick={() => setView("profit")}
           className={`flex-1 min-w-[45%] px-4 py-3 rounded-xl font-semibold text-base ${
             view === "profit"
-              ? "bg-yellow-400 text-black"
+              ? "bg-gold text-ink"
               : "border border-neutral-300 active:bg-neutral-100"
           }`}
         >
@@ -573,7 +573,7 @@ export default function SandwichOrdersTab() {
           onClick={() => setView("month")}
           className={`flex-1 min-w-[45%] px-4 py-3 rounded-xl font-semibold text-base ${
             view === "month"
-              ? "bg-yellow-400 text-black"
+              ? "bg-gold text-ink"
               : "border border-neutral-300 active:bg-neutral-100"
           }`}
         >
@@ -619,7 +619,7 @@ export default function SandwichOrdersTab() {
                 onClick={() => setSelectedDayIndex(i)}
                 className={`flex-1 px-1 py-2.5 rounded-xl font-semibold text-sm ${
                   selectedDayIndex === i
-                    ? "bg-yellow-400 text-black"
+                    ? "bg-gold text-ink"
                     : "border border-neutral-300 active:bg-neutral-100"
                 }`}
               >

@@ -48,7 +48,7 @@ export default function EditableQty({
           if (e.key === "Enter") e.currentTarget.blur();
           if (e.key === "Escape") setEditing(false);
         }}
-        className={`${className} border border-yellow-400 rounded-md outline-none bg-white`}
+        className={`${className} border border-gold rounded-md outline-none bg-white`}
       />
     );
   }

@@ -114,7 +114,7 @@ export default function StoreSettingsPanel({
               onClick={() => changeGroup(group)}
               className={`px-3 py-1.5 rounded-lg text-sm border ${
                 store.storeGroup === group
-                  ? "bg-neutral-800 text-white border-neutral-800"
+                  ? "bg-ink text-white border-ink"
                   : "bg-white border-neutral-300 active:bg-neutral-100"
               }`}
             >

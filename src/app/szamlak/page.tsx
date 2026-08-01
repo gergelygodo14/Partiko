@@ -121,7 +121,7 @@ function TrendIndicator({ point }: { point: SupplierPricePoint }) {
         {trend === "up" ? "▲" : "▼"}
       </button>
       <span
-        className={`absolute z-10 left-1/2 -translate-x-1/2 bottom-full mb-1 whitespace-nowrap rounded-lg bg-neutral-900 text-white text-xs px-2 py-1 shadow-lg pointer-events-none ${
+        className={`absolute z-10 left-1/2 -translate-x-1/2 bottom-full mb-1 whitespace-nowrap rounded-lg bg-ink text-white text-xs px-2 py-1 shadow-lg pointer-events-none ${
           open ? "block" : "hidden group-hover:block"
         }`}
       >
@@ -295,7 +295,7 @@ export default function SzamlakPage() {
   return (
     <div className="space-y-8">
       {latestHighlight && (
-        <section className="border-2 border-yellow-400 bg-yellow-50 rounded-2xl p-4 shadow-sm space-y-1">
+        <section className="border-2 border-gold bg-gold/10 rounded-2xl p-4 shadow-sm space-y-1">
           <h2 className="text-lg font-semibold">Árváltozás</h2>
           <p className="text-xs text-neutral-500">
             {SUPPLIER_LABEL[latestInvoice.supplier]} ·{" "}
@@ -319,7 +319,7 @@ export default function SzamlakPage() {
               <option value="SAJTFUTAR">Sajtfutár</option>
             </select>
           </div>
-          <label className="bg-yellow-400 text-black font-semibold text-base px-5 py-3 rounded-xl active:bg-yellow-500 cursor-pointer">
+          <label className="bg-gold text-ink font-semibold text-base px-5 py-3 rounded-xl active:bg-gold-dark cursor-pointer">
             {uploading ? "Feltöltés..." : "Számla feltöltése"}
             <input
               type="file"
@@ -342,7 +342,7 @@ export default function SzamlakPage() {
               return (
                 <li
                   key={item.id}
-                  className="border-2 border-yellow-400 bg-yellow-50 rounded-2xl p-4 shadow-sm space-y-3"
+                  className="border-2 border-gold bg-gold/10 rounded-2xl p-4 shadow-sm space-y-3"
                 >
                   <div>
                     <span className="font-semibold text-base">{item.shortName}</span>
@@ -366,7 +366,7 @@ export default function SzamlakPage() {
                     <span className="text-xs text-neutral-500">Ft (ha eltér, ezt menti el)</span>
                     <button
                       onClick={() => confirmPendingPriceItem(invoiceId, item.id)}
-                      className="px-4 py-2.5 rounded-xl bg-yellow-400 text-black font-semibold active:bg-yellow-500"
+                      className="px-4 py-2.5 rounded-xl bg-gold text-ink font-semibold active:bg-gold-dark"
                     >
                       Elfogadás
                     </button>
@@ -414,7 +414,7 @@ export default function SzamlakPage() {
                     </div>
                     <button
                       onClick={() => confirmProduct(p.id)}
-                      className="px-4 py-2.5 rounded-xl bg-yellow-400 text-black font-semibold active:bg-yellow-500 self-start"
+                      className="px-4 py-2.5 rounded-xl bg-gold text-ink font-semibold active:bg-gold-dark self-start"
                     >
                       Új termékként jóváhagyás
                     </button>
@@ -493,7 +493,7 @@ export default function SzamlakPage() {
                   onClick={() => setComparisonFilter(opt.value)}
                   className={
                     comparisonFilter === opt.value
-                      ? "px-3 py-1.5 rounded-full bg-yellow-400 text-black font-semibold"
+                      ? "px-3 py-1.5 rounded-full bg-gold text-ink font-semibold"
                       : "px-3 py-1.5 rounded-full border border-neutral-300 text-neutral-600 active:bg-neutral-100"
                   }
                 >
