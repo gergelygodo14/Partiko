@@ -374,7 +374,7 @@ export default function OrderEntryScreen() {
               setWeekStart(next);
               setDate(dateForWeekday(next, weekday));
             }}
-            className="px-3 py-1.5 rounded-lg border border-neutral-300 active:bg-neutral-100"
+            className="px-3 py-1.5 rounded-lg border bg-umber/8 border-umber/40 active:bg-umber/15"
           >
             ◀ Előző hét
           </button>
@@ -388,7 +388,7 @@ export default function OrderEntryScreen() {
               setWeekStart(next);
               setDate(dateForWeekday(next, weekday));
             }}
-            className="px-3 py-1.5 rounded-lg border border-neutral-300 active:bg-neutral-100"
+            className="px-3 py-1.5 rounded-lg border bg-umber/8 border-umber/40 active:bg-umber/15"
           >
             Következő hét ▶
           </button>
@@ -406,7 +406,7 @@ export default function OrderEntryScreen() {
                 className={`py-2 rounded-lg text-sm font-medium border ${
                   isActive
                     ? "bg-gold text-ink border-gold"
-                    : "border-neutral-300 active:bg-neutral-100"
+                    : "bg-umber/8 border-umber/40 active:bg-umber/15"
                 }`}
               >
                 {name}
@@ -445,7 +445,7 @@ export default function OrderEntryScreen() {
             <button
               type="button"
               onClick={() => setStaleDraftDate(null)}
-              className="px-3 py-1.5 rounded-lg border border-neutral-300 bg-white active:bg-neutral-100"
+              className="px-3 py-1.5 rounded-lg border border-umber/40 bg-umber/8 active:bg-umber/15"
             >
               Eldobás
             </button>
@@ -467,7 +467,7 @@ export default function OrderEntryScreen() {
           type="button"
           onClick={() => loadAllFixOrders("onlyEmpty")}
           disabled={!grid}
-          className="border border-neutral-300 text-sm rounded-xl px-3 py-2 active:bg-neutral-100 disabled:opacity-40"
+          className="border bg-umber/8 border-umber/40 text-sm rounded-xl px-3 py-2 active:bg-umber/15 disabled:opacity-40"
         >
           Csak az üresekbe
         </button>
@@ -475,7 +475,7 @@ export default function OrderEntryScreen() {
           type="button"
           onClick={() => setAddOpen(true)}
           disabled={!grid}
-          className="border border-neutral-300 text-sm rounded-xl px-3 py-2 active:bg-neutral-100 disabled:opacity-40"
+          className="border bg-umber/8 border-umber/40 text-sm rounded-xl px-3 py-2 active:bg-umber/15 disabled:opacity-40"
         >
           + Bolt hozzáadása
         </button>

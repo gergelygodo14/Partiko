@@ -115,7 +115,7 @@ export default function StoreSettingsPanel({
               className={`px-3 py-1.5 rounded-lg text-sm border ${
                 store.storeGroup === group
                   ? "bg-ink text-white border-ink"
-                  : "bg-white border-neutral-300 active:bg-neutral-100"
+                  : "bg-umber/8 border-umber/40 active:bg-umber/15"
               }`}
             >
               {STORE_GROUP_LABELS[group]}
@@ -167,7 +167,7 @@ export default function StoreSettingsPanel({
                 type="button"
                 disabled={busy}
                 onClick={() => remove("weekday")}
-                className="w-full text-left bg-white border border-neutral-300 rounded-xl px-3.5 py-2.5 active:bg-neutral-100 disabled:opacity-40"
+                className="w-full text-left bg-umber/8 border border-umber/40 rounded-xl px-3.5 py-2.5 active:bg-umber/15 disabled:opacity-40"
               >
                 <div className="text-sm font-medium">
                   Levétel a {DAY_ADJECTIVES[weekday]} listáról
@@ -179,7 +179,7 @@ export default function StoreSettingsPanel({
                 type="button"
                 disabled={busy}
                 onClick={() => remove("allWeekdays")}
-                className="w-full text-left bg-white border border-neutral-300 rounded-xl px-3.5 py-2.5 active:bg-neutral-100 disabled:opacity-40"
+                className="w-full text-left bg-umber/8 border border-umber/40 rounded-xl px-3.5 py-2.5 active:bg-umber/15 disabled:opacity-40"
               >
                 <div className="text-sm font-medium">Levétel minden napról (H–P)</div>
                 <div className="text-xs text-neutral-500">

@@ -495,7 +495,7 @@ export default function SandwichOrdersTab() {
         <button
           onClick={() => downloadFile("/api/sandwich-orders/daily-summary-export")}
           disabled={downloading}
-          className="block w-full text-center border border-neutral-300 font-semibold text-base px-5 py-3 rounded-xl active:bg-neutral-100 disabled:opacity-50"
+          className="block w-full text-center border bg-umber/8 border-umber/40 font-semibold text-base px-5 py-3 rounded-xl active:bg-umber/15 disabled:opacity-50"
         >
           {downloading ? "Letöltés…" : "Holnapi szendvics összesítő letöltése (.xlsx)"}
         </button>
@@ -505,7 +505,7 @@ export default function SandwichOrdersTab() {
         </p>
         <button
           onClick={() => setBakeryOrderOpen(true)}
-          className="block w-full text-center border border-neutral-300 font-semibold text-base px-5 py-3 rounded-xl active:bg-neutral-100"
+          className="block w-full text-center border bg-umber/8 border-umber/40 font-semibold text-base px-5 py-3 rounded-xl active:bg-umber/15"
         >
           Pékáru rendelés összeállítása
         </button>
@@ -534,7 +534,7 @@ export default function SandwichOrdersTab() {
           className={`flex-1 min-w-[45%] px-4 py-3 rounded-xl font-semibold text-base ${
             view === "week"
               ? "bg-gold text-ink"
-              : "border border-neutral-300 active:bg-neutral-100"
+              : "border bg-umber/8 border-umber/40 active:bg-umber/15"
           }`}
         >
           Heti összesítés
@@ -544,7 +544,7 @@ export default function SandwichOrdersTab() {
           className={`flex-1 min-w-[45%] px-4 py-3 rounded-xl font-semibold text-base ${
             view === "day"
               ? "bg-gold text-ink"
-              : "border border-neutral-300 active:bg-neutral-100"
+              : "border bg-umber/8 border-umber/40 active:bg-umber/15"
           }`}
         >
           Napi bontás
@@ -554,7 +554,7 @@ export default function SandwichOrdersTab() {
           className={`flex-1 min-w-[45%] px-4 py-3 rounded-xl font-semibold text-base ${
             view === "monthGrid"
               ? "bg-gold text-ink"
-              : "border border-neutral-300 active:bg-neutral-100"
+              : "border bg-umber/8 border-umber/40 active:bg-umber/15"
           }`}
         >
           Havi bontás
@@ -564,7 +564,7 @@ export default function SandwichOrdersTab() {
           className={`flex-1 min-w-[45%] px-4 py-3 rounded-xl font-semibold text-base ${
             view === "profit"
               ? "bg-gold text-ink"
-              : "border border-neutral-300 active:bg-neutral-100"
+              : "border bg-umber/8 border-umber/40 active:bg-umber/15"
           }`}
         >
           Havi nyereség
@@ -574,7 +574,7 @@ export default function SandwichOrdersTab() {
           className={`flex-1 min-w-[45%] px-4 py-3 rounded-xl font-semibold text-base ${
             view === "month"
               ? "bg-gold text-ink"
-              : "border border-neutral-300 active:bg-neutral-100"
+              : "border bg-umber/8 border-umber/40 active:bg-umber/15"
           }`}
         >
           Havi elszámolás
@@ -596,7 +596,7 @@ export default function SandwichOrdersTab() {
           <div className="flex items-center justify-between gap-2">
             <button
               onClick={() => dayWeekStart && setDayWeekStart(addDaysStr(dayWeekStart, -7))}
-              className="px-3 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold active:bg-neutral-100"
+              className="px-3 py-2.5 rounded-xl border bg-umber/8 border-umber/40 text-sm font-semibold active:bg-umber/15"
             >
               ◀ Előző hét
             </button>
@@ -606,7 +606,7 @@ export default function SandwichOrdersTab() {
             </span>
             <button
               onClick={() => dayWeekStart && setDayWeekStart(addDaysStr(dayWeekStart, 7))}
-              className="px-3 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold active:bg-neutral-100"
+              className="px-3 py-2.5 rounded-xl border bg-umber/8 border-umber/40 text-sm font-semibold active:bg-umber/15"
             >
               Következő hét ▶
             </button>
@@ -620,7 +620,7 @@ export default function SandwichOrdersTab() {
                 className={`flex-1 px-1 py-2.5 rounded-xl font-semibold text-sm ${
                   selectedDayIndex === i
                     ? "bg-gold text-ink"
-                    : "border border-neutral-300 active:bg-neutral-100"
+                    : "border bg-umber/8 border-umber/40 active:bg-umber/15"
                 }`}
               >
                 {SHORT_DAY_NAMES[i]}
@@ -639,7 +639,7 @@ export default function SandwichOrdersTab() {
           <div className="flex items-center justify-between gap-2">
             <button
               onClick={() => monthGridMonth && setMonthGridMonth(addMonthsStr(monthGridMonth, -1))}
-              className="px-3 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold active:bg-neutral-100"
+              className="px-3 py-2.5 rounded-xl border bg-umber/8 border-umber/40 text-sm font-semibold active:bg-umber/15"
             >
               ◀ Előző hónap
             </button>
@@ -648,7 +648,7 @@ export default function SandwichOrdersTab() {
             </span>
             <button
               onClick={() => monthGridMonth && setMonthGridMonth(addMonthsStr(monthGridMonth, 1))}
-              className="px-3 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold active:bg-neutral-100"
+              className="px-3 py-2.5 rounded-xl border bg-umber/8 border-umber/40 text-sm font-semibold active:bg-umber/15"
             >
               Következő hónap ▶
             </button>
@@ -665,7 +665,7 @@ export default function SandwichOrdersTab() {
           <div className="flex items-center justify-between gap-2">
             <button
               onClick={() => profitMonth && setProfitMonth(addMonthsStr(profitMonth, -1))}
-              className="px-3 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold active:bg-neutral-100"
+              className="px-3 py-2.5 rounded-xl border bg-umber/8 border-umber/40 text-sm font-semibold active:bg-umber/15"
             >
               ◀ Előző hónap
             </button>
@@ -674,7 +674,7 @@ export default function SandwichOrdersTab() {
             </span>
             <button
               onClick={() => profitMonth && setProfitMonth(addMonthsStr(profitMonth, 1))}
-              className="px-3 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold active:bg-neutral-100"
+              className="px-3 py-2.5 rounded-xl border bg-umber/8 border-umber/40 text-sm font-semibold active:bg-umber/15"
             >
               Következő hónap ▶
             </button>

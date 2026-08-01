@@ -165,7 +165,7 @@ export default function ReadyMealOrdersTab() {
           className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base ${
             view === "week"
               ? "bg-gold text-ink"
-              : "border border-neutral-300 active:bg-neutral-100"
+              : "border bg-umber/8 border-umber/40 active:bg-umber/15"
           }`}
         >
           Heti összesítés
@@ -175,7 +175,7 @@ export default function ReadyMealOrdersTab() {
           className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base ${
             view === "day"
               ? "bg-gold text-ink"
-              : "border border-neutral-300 active:bg-neutral-100"
+              : "border bg-umber/8 border-umber/40 active:bg-umber/15"
           }`}
         >
           Napi bontás
@@ -185,7 +185,7 @@ export default function ReadyMealOrdersTab() {
           className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base ${
             view === "month"
               ? "bg-gold text-ink"
-              : "border border-neutral-300 active:bg-neutral-100"
+              : "border bg-umber/8 border-umber/40 active:bg-umber/15"
           }`}
         >
           Havi elszámolás
@@ -276,7 +276,7 @@ export default function ReadyMealOrdersTab() {
                 className={`flex-1 px-1 py-2.5 rounded-xl font-semibold text-sm ${
                   dayIndex === i
                     ? "bg-gold text-ink"
-                    : "border border-neutral-300 active:bg-neutral-100"
+                    : "border bg-umber/8 border-umber/40 active:bg-umber/15"
                 }`}
               >
                 {SHORT_DAY_NAMES[i]}

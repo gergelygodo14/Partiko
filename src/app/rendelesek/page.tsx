@@ -20,7 +20,7 @@ export default function OrdersPage() {
           className={`flex-1 px-4 py-4 rounded-2xl font-semibold text-base ${
             feature === "keszetel"
               ? "bg-gold text-ink"
-              : "border border-neutral-300 active:bg-neutral-100"
+              : "border bg-umber/8 border-umber/40 active:bg-umber/15"
           }`}
         >
           Készétel rendelések
@@ -30,7 +30,7 @@ export default function OrdersPage() {
           className={`flex-1 px-4 py-4 rounded-2xl font-semibold text-base ${
             feature === "szendvics"
               ? "bg-gold text-ink"
-              : "border border-neutral-300 active:bg-neutral-100"
+              : "border bg-umber/8 border-umber/40 active:bg-umber/15"
           }`}
         >
           Szendvics rendelések

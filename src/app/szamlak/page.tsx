@@ -372,7 +372,7 @@ export default function SzamlakPage() {
                     </button>
                     <button
                       onClick={() => rejectPendingPriceItem(invoiceId, item.id)}
-                      className="px-4 py-2.5 rounded-xl border border-neutral-300 active:bg-neutral-100"
+                      className="px-4 py-2.5 rounded-xl border bg-umber/8 border-umber/40 active:bg-umber/15"
                     >
                       Elutasítás
                     </button>
@@ -434,7 +434,7 @@ export default function SzamlakPage() {
                       <button
                         onClick={() => mergeProduct(p.id)}
                         disabled={!mergeTarget[p.id]}
-                        className="px-4 py-2.5 rounded-xl border border-neutral-300 active:bg-neutral-100 disabled:opacity-40"
+                        className="px-4 py-2.5 rounded-xl border bg-umber/8 border-umber/40 active:bg-umber/15 disabled:opacity-40"
                       >
                         Összevonás
                       </button>
@@ -494,7 +494,7 @@ export default function SzamlakPage() {
                   className={
                     comparisonFilter === opt.value
                       ? "px-3 py-1.5 rounded-full bg-gold text-ink font-semibold"
-                      : "px-3 py-1.5 rounded-full border border-neutral-300 text-neutral-600 active:bg-neutral-100"
+                      : "px-3 py-1.5 rounded-full border bg-umber/8 border-umber/40 text-neutral-600 active:bg-umber/15"
                   }
                 >
                   {opt.label}

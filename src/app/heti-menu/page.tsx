@@ -249,7 +249,7 @@ export default function WeeklyMenuPage() {
       <div className="flex items-center justify-between gap-2">
         <button
           onClick={() => setWeekStart(addDaysStr(weekStart, -7))}
-          className="px-4 py-3 rounded-xl border border-neutral-300 active:bg-neutral-100"
+          className="px-4 py-3 rounded-xl border bg-umber/8 border-umber/40 active:bg-umber/15"
           aria-label="Előző hét"
         >
           ←
@@ -269,7 +269,7 @@ export default function WeeklyMenuPage() {
         </div>
         <button
           onClick={() => setWeekStart(addDaysStr(weekStart, 7))}
-          className="px-4 py-3 rounded-xl border border-neutral-300 active:bg-neutral-100"
+          className="px-4 py-3 rounded-xl border bg-umber/8 border-umber/40 active:bg-umber/15"
           aria-label="Következő hét"
         >
           →
@@ -320,7 +320,7 @@ export default function WeeklyMenuPage() {
                     onClick={() => suggestDish(i, letter)}
                     disabled={suggestingKey === `${i}-${letter}`}
                     title="AI ötlet erre a fogásra"
-                    className="shrink-0 px-2.5 py-2.5 rounded-xl border border-neutral-300 text-xs font-semibold active:bg-neutral-100 disabled:opacity-50"
+                    className="shrink-0 px-2.5 py-2.5 rounded-xl border bg-umber/8 border-umber/40 text-xs font-semibold active:bg-umber/15 disabled:opacity-50"
                   >
                     {suggestingKey === `${i}-${letter}` ? "…" : "AI"}
                   </button>
@@ -363,7 +363,7 @@ export default function WeeklyMenuPage() {
           disabled={publishing || loading}
           className={`px-5 py-3 rounded-xl font-semibold text-base disabled:opacity-50 ${
             published
-              ? "border border-neutral-300 active:bg-neutral-100"
+              ? "border bg-umber/8 border-umber/40 active:bg-umber/15"
               : "bg-gold text-ink active:bg-gold-dark"
           }`}
         >
@@ -375,7 +375,7 @@ export default function WeeklyMenuPage() {
         <button
           onClick={save}
           disabled={saving || loading}
-          className="flex-1 border border-neutral-300 font-semibold text-base px-5 py-3 rounded-xl active:bg-neutral-100 disabled:opacity-50"
+          className="flex-1 border bg-umber/8 border-umber/40 font-semibold text-base px-5 py-3 rounded-xl active:bg-umber/15 disabled:opacity-50"
         >
           {savedMessage ? "Elmentve ✓" : "Mentés"}
         </button>

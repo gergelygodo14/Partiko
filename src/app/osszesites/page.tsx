@@ -241,19 +241,19 @@ function AdHocSection() {
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => setPreset("day")}
-            className="text-sm px-4 py-2.5 rounded-xl border border-neutral-300 active:bg-neutral-100"
+            className="text-sm px-4 py-2.5 rounded-xl border bg-umber/8 border-umber/40 active:bg-umber/15"
           >
             Ma
           </button>
           <button
             onClick={() => setPreset("week")}
-            className="text-sm px-4 py-2.5 rounded-xl border border-neutral-300 active:bg-neutral-100"
+            className="text-sm px-4 py-2.5 rounded-xl border bg-umber/8 border-umber/40 active:bg-umber/15"
           >
             Ez a hét
           </button>
           <button
             onClick={() => setPreset("month")}
-            className="text-sm px-4 py-2.5 rounded-xl border border-neutral-300 active:bg-neutral-100"
+            className="text-sm px-4 py-2.5 rounded-xl border bg-umber/8 border-umber/40 active:bg-umber/15"
           >
             Ez a hónap
           </button>

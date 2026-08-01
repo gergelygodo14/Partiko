@@ -102,7 +102,7 @@ export default function StoreColumnEditor({
           <button
             type="button"
             onClick={onClear}
-            className="border border-neutral-300 text-sm rounded-xl px-3.5 py-2.5 active:bg-neutral-100"
+            className="border bg-umber/8 border-umber/40 text-sm rounded-xl px-3.5 py-2.5 active:bg-umber/15"
           >
             Oszlop ürítése
           </button>
@@ -118,7 +118,7 @@ export default function StoreColumnEditor({
               }
             }}
             disabled={savingFix}
-            className="border border-neutral-300 text-sm rounded-xl px-3.5 py-2.5 active:bg-neutral-100 disabled:opacity-40"
+            className="border bg-umber/8 border-umber/40 text-sm rounded-xl px-3.5 py-2.5 active:bg-umber/15 disabled:opacity-40"
           >
             {savingFix ? "Mentés…" : fixSaved ? "Fixként mentve ✓" : "Mentés fix rendelésként"}
           </button>
@@ -139,7 +139,7 @@ export default function StoreColumnEditor({
                   key={entry.orderDate}
                   type="button"
                   onClick={() => onApplyHistory(entry)}
-                  className="shrink-0 border border-neutral-300 rounded-xl px-3.5 py-2.5 text-sm text-left active:bg-neutral-100"
+                  className="shrink-0 border bg-umber/8 border-umber/40 rounded-xl px-3.5 py-2.5 text-sm text-left active:bg-umber/15"
                 >
                   <div className="font-medium">{formatShortDate(entry.orderDate)}</div>
                   <div className="text-neutral-500 text-xs">
@@ -174,7 +174,7 @@ export default function StoreColumnEditor({
                     onClick={() => onSetQuantity(item.itemId, qty - 1)}
                     disabled={qty === 0}
                     aria-label={`${item.name} csökkentés`}
-                    className="w-9 h-9 shrink-0 rounded-lg border border-neutral-300 font-semibold active:bg-neutral-100 disabled:opacity-40"
+                    className="w-9 h-9 shrink-0 rounded-lg border bg-umber/8 border-umber/40 font-semibold active:bg-umber/15 disabled:opacity-40"
                   >
                     −
                   </button>
@@ -189,7 +189,7 @@ export default function StoreColumnEditor({
                     type="button"
                     onClick={() => onSetQuantity(item.itemId, qty + 1)}
                     aria-label={`${item.name} növelés`}
-                    className="w-9 h-9 shrink-0 rounded-lg border border-neutral-300 font-semibold active:bg-neutral-100"
+                    className="w-9 h-9 shrink-0 rounded-lg border bg-umber/8 border-umber/40 font-semibold active:bg-umber/15"
                   >
                     +
                   </button>

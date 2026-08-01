@@ -203,13 +203,13 @@ export default function SandwichItemsPage() {
                     <div className="flex gap-2 text-sm">
                       <button
                         onClick={() => startEdit(item)}
-                        className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-neutral-300 active:bg-neutral-100"
+                        className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border bg-umber/8 border-umber/40 active:bg-umber/15"
                       >
                         Szerkesztés
                       </button>
                       <button
                         onClick={() => toggleArchive(item)}
-                        className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-neutral-300 active:bg-neutral-100"
+                        className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border bg-umber/8 border-umber/40 active:bg-umber/15"
                       >
                         {item.archived ? "Visszaállítás" : "Archiválás"}
                       </button>

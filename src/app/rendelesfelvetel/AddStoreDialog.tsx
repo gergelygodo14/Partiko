@@ -151,7 +151,7 @@ export default function AddStoreDialog({
                       className={`px-3 py-1.5 rounded-lg text-sm border ${
                         selected
                           ? "bg-ink text-white border-ink"
-                          : "bg-white border-neutral-300 active:bg-neutral-100"
+                          : "bg-umber/8 border-umber/40 active:bg-umber/15"
                       }`}
                     >
                       {STORE_GROUP_LABELS[group]}
