@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import Anthropic from "@anthropic-ai/sdk";
 import { prisma } from "@/lib/db";
 import { PriceSource, ProductStatus, type Supplier } from "@/generated/prisma/client";
@@ -132,6 +133,44 @@ export function buildHighlightSummary(notes: PriceChangeNote[]): string {
   return lines.join("\n");
 }
 
+// A misread invoice photo doesn't average out or cancel across items - it
+// shows up as one implausible number (a real example: a row-shift bug once
+// put a 750 Ft item's price on a 1200 Ft item). Rather than trust every
+// number the vision model returns, a jump this large against the product's
+// own last same-supplier price gets held back for a manual look before it's
+// allowed to become real price history.
+export const LARGE_PRICE_CHANGE_THRESHOLD = 0.2;
+
+export type PendingPriceItem = {
+  id: string;
+  productId: string;
+  productName: string;
+  shortName: string;
+  rawText: string;
+  unit: string | null;
+  newPrice: number;
+  priorPrice: number;
+  observedDate: string;
+};
+
+function isLargePriceChange(newPrice: number, priorPrice: number): boolean {
+  if (priorPrice === 0) return false;
+  return Math.abs(newPrice - priorPrice) / priorPrice >= LARGE_PRICE_CHANGE_THRESHOLD;
+}
+
+export function buildPendingReviewNote(items: PendingPriceItem[]): string {
+  if (items.length === 0) return "";
+  const lines = items.map((item) => {
+    const direction = item.newPrice > item.priorPrice ? "drágább" : "olcsóbb";
+    const diffPct = Math.abs(((item.newPrice - item.priorPrice) / item.priorPrice) * 100);
+    return (
+      `❓ ${item.shortName}: ${item.priorPrice} → ${item.newPrice} Ft ` +
+      `(${diffPct.toFixed(0)}%-kal ${direction}) - megerősítés szükséges, egyelőre nincs elmentve`
+    );
+  });
+  return `Nagy áreltérést találtam, jóváhagyásra vár:\n${lines.join("\n")}`;
+}
+
 export function formatPriceChangeSummary(notes: PriceChangeNote[]): string {
   if (notes.length === 0) return "Nem sikerült egyetlen tételt sem feldolgozni.";
 
@@ -169,13 +208,14 @@ export async function processInvoiceLineItems(
   invoiceId: string,
   supplier: Supplier,
   extraction: ExtractedInvoice
-): Promise<{ summaryText: string; highlightText: string | null }> {
+): Promise<{ summaryText: string; highlightText: string | null; pendingLineItems: PendingPriceItem[] }> {
   const observedDate = extraction.invoiceDate ? new Date(extraction.invoiceDate) : new Date();
   const confirmedProducts = await prisma.product.findMany({
     where: { status: ProductStatus.CONFIRMED },
   });
 
   const notes: PriceChangeNote[] = [];
+  const pendingLineItems: PendingPriceItem[] = [];
 
   for (const item of extraction.lineItems) {
     const match = findBestProductMatch(item.name, confirmedProducts);
@@ -210,6 +250,21 @@ export async function processInvoiceLineItems(
       }),
     ]);
 
+    if (priorSameSupplier && isLargePriceChange(unitPrice, priorSameSupplier.unitPrice)) {
+      pendingLineItems.push({
+        id: randomUUID(),
+        productId,
+        productName,
+        shortName: item.shortName,
+        rawText: item.name,
+        unit: item.unit,
+        newPrice: unitPrice,
+        priorPrice: priorSameSupplier.unitPrice,
+        observedDate: observedDate.toISOString(),
+      });
+      continue;
+    }
+
     await prisma.priceObservation.create({
       data: {
         productId,
@@ -236,9 +291,12 @@ export async function processInvoiceLineItems(
   }
 
   const highlight = buildHighlightSummary(notes);
-  const detail = formatPriceChangeSummary(notes);
-  return {
-    summaryText: highlight ? `${highlight}\n\n${detail}` : detail,
-    highlightText: highlight || null,
-  };
+  const pendingNote = buildPendingReviewNote(pendingLineItems);
+  // A fully-pending invoice (every item flagged) has nothing left for
+  // formatPriceChangeSummary to report on - its "not a single item could be
+  // processed" fallback would be misleading here, so skip it in that case.
+  const detail = notes.length > 0 || pendingLineItems.length === 0 ? formatPriceChangeSummary(notes) : "";
+  const summaryText = [pendingNote, highlight, detail].filter(Boolean).join("\n\n");
+
+  return { summaryText, highlightText: highlight || null, pendingLineItems };
 }

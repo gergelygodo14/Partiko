@@ -18,8 +18,13 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
-const { buildPriceChangeNote, buildHighlightSummary, formatPriceChangeSummary, processInvoiceLineItems } =
-  await import("@/lib/invoiceProcessing");
+const {
+  buildPriceChangeNote,
+  buildHighlightSummary,
+  buildPendingReviewNote,
+  formatPriceChangeSummary,
+  processInvoiceLineItems,
+} = await import("@/lib/invoiceProcessing");
 
 beforeEach(() => {
   findFirst.mockReset();
@@ -194,6 +199,32 @@ describe("buildHighlightSummary", () => {
   });
 });
 
+describe("buildPendingReviewNote", () => {
+  it("returns an empty string when nothing is pending", () => {
+    expect(buildPendingReviewNote([])).toBe("");
+  });
+
+  it("lists each pending item with its old and new price", () => {
+    const note = buildPendingReviewNote([
+      {
+        id: "p1",
+        productId: "prod-1",
+        productName: "Pizza Toast Sonka Pápai 3,2 kg",
+        shortName: "Toast sonka",
+        rawText: "Pizza Toast Sonka Pápai 3,2 kg",
+        unit: "kg",
+        newPrice: 1200,
+        priorPrice: 750,
+        observedDate: "2026-07-30T00:00:00.000Z",
+      },
+    ]);
+    expect(note).toContain("jóváhagyásra vár");
+    expect(note).toContain("Toast sonka: 750 → 1200 Ft");
+    expect(note).toContain("60%-kal drágább");
+    expect(note).toContain("nincs elmentve");
+  });
+});
+
 describe("processInvoiceLineItems", () => {
   it("matches an existing confirmed product and records the observation", async () => {
     findMany.mockResolvedValue([{ id: "prod-1", name: "Csirke mellfilé" }]);
@@ -239,5 +270,71 @@ describe("processInvoiceLineItems", () => {
     );
     expect(result.summaryText).toContain("Egzotikus fűszerkeverék: 500 Ft");
     expect(result.highlightText).toBeNull();
+  });
+
+  it("holds back a line item with a >=20% price jump instead of saving it", async () => {
+    findMany.mockResolvedValue([{ id: "prod-1", name: "Pizza Toast Sonka Pápai 3,2 kg" }]);
+    findFirst.mockResolvedValueOnce({ supplier: "SAJTFUTAR", unitPrice: 750 }); // priorSameSupplier
+    findFirst.mockResolvedValueOnce(null); // latestOtherSupplier
+
+    const result = await processInvoiceLineItems("inv-3", "SAJTFUTAR", {
+      invoiceDate: "2026-07-30",
+      lineItems: [
+        {
+          name: "Pizza Toast Sonka Pápai 3,2 kg",
+          shortName: "Toast sonka",
+          unit: "kg",
+          quantity: 13,
+          unitPrice: 1200,
+        },
+      ],
+    });
+
+    expect(observationCreate).not.toHaveBeenCalled();
+    expect(result.pendingLineItems).toEqual([
+      expect.objectContaining({
+        productId: "prod-1",
+        productName: "Pizza Toast Sonka Pápai 3,2 kg",
+        shortName: "Toast sonka",
+        newPrice: 1200,
+        priorPrice: 750,
+      }),
+    ]);
+    expect(result.summaryText).toContain("Toast sonka: 750 → 1200 Ft");
+    expect(result.summaryText).toContain("megerősítés szükséges");
+  });
+
+  it("still auto-saves a change below the threshold (existing behavior unchanged)", async () => {
+    findMany.mockResolvedValue([{ id: "prod-1", name: "Csirke mellfilé" }]);
+    findFirst.mockResolvedValueOnce({ supplier: "BAROMFIUDVAR", unitPrice: 1200 });
+    findFirst.mockResolvedValueOnce(null);
+    observationCreate.mockResolvedValue({});
+
+    const result = await processInvoiceLineItems("inv-4", "BAROMFIUDVAR", {
+      invoiceDate: "2026-07-10",
+      lineItems: [
+        { name: "Csirkemell filé", shortName: "Csirkemell", unit: "kg", quantity: 10, unitPrice: 1350 },
+      ],
+    });
+
+    expect(observationCreate).toHaveBeenCalled();
+    expect(result.pendingLineItems).toEqual([]);
+  });
+
+  it("never holds back an item that has no prior price to compare against", async () => {
+    findMany.mockResolvedValue([{ id: "prod-1", name: "Ritkán rendelt tétel" }]);
+    findFirst.mockResolvedValueOnce(null); // no prior same-supplier price
+    findFirst.mockResolvedValueOnce(null);
+    observationCreate.mockResolvedValue({});
+
+    const result = await processInvoiceLineItems("inv-5", "SAJTFUTAR", {
+      invoiceDate: null,
+      lineItems: [
+        { name: "Ritkán rendelt tétel", shortName: "Ritka tétel", unit: "kg", quantity: 1, unitPrice: 99999 },
+      ],
+    });
+
+    expect(observationCreate).toHaveBeenCalled();
+    expect(result.pendingLineItems).toEqual([]);
   });
 });

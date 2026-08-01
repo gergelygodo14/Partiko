@@ -179,6 +179,13 @@ model Invoice {
   // the page, without having to parse it back out of the full summary text.
   highlightText     String?
   errorMessage      String?
+  // Extracted line items whose price differs a lot (see
+  // LARGE_PRICE_CHANGE_THRESHOLD in invoiceProcessing.ts) from the last
+  // observation of the matched product - held back from priceObservations
+  // until the owner confirms the AI actually read them correctly, instead of
+  // silently trusting a number that might be a misread. Cleared out (item
+  // removed from the array) once confirmed or rejected.
+  pendingLineItems  Json?
   priceObservations PriceObservation[]
   createdAt         DateTime           @default(now())
 }

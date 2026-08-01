@@ -10,6 +10,18 @@ const SUPPLIER_LABEL: Record<Supplier, string> = {
   BAROMFIUDVAR: "Baromfiudvar",
 };
 
+type PendingPriceItem = {
+  id: string;
+  productId: string;
+  productName: string;
+  shortName: string;
+  rawText: string;
+  unit: string | null;
+  newPrice: number;
+  priorPrice: number;
+  observedDate: string;
+};
+
 type Invoice = {
   id: string;
   supplier: Supplier;
@@ -19,6 +31,7 @@ type Invoice = {
   summaryText: string | null;
   highlightText: string | null;
   errorMessage: string | null;
+  pendingLineItems: PendingPriceItem[] | null;
 };
 
 type Product = {
@@ -176,6 +189,7 @@ export default function SzamlakPage() {
   const [loading, setLoading] = useState(true);
   const [mergeTarget, setMergeTarget] = useState<Record<string, string>>({});
   const [mergeSearch, setMergeSearch] = useState<Record<string, string>>({});
+  const [editedPendingPrice, setEditedPendingPrice] = useState<Record<string, string>>({});
 
   async function loadAll() {
     setLoading(true);
@@ -229,6 +243,30 @@ export default function SzamlakPage() {
     await loadAll();
   }
 
+  async function confirmPendingPriceItem(invoiceId: string, itemId: string) {
+    const override = (editedPendingPrice[itemId] ?? "").trim();
+    const body = override ? { unitPrice: Number(override.replace(",", ".")) } : {};
+    await fetch(`/api/szamlak/invoices/${invoiceId}/pending-items/${itemId}/confirm`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    setEditedPendingPrice((m) => {
+      const { [itemId]: _removed, ...rest } = m;
+      return rest;
+    });
+    await loadAll();
+  }
+
+  async function rejectPendingPriceItem(invoiceId: string, itemId: string) {
+    await fetch(`/api/szamlak/invoices/${invoiceId}/pending-items/${itemId}/reject`, { method: "POST" });
+    setEditedPendingPrice((m) => {
+      const { [itemId]: _removed, ...rest } = m;
+      return rest;
+    });
+    await loadAll();
+  }
+
   async function updatePackSize(id: string, packSize: number | null) {
     await fetch(`/api/szamlak/products/${id}`, {
       method: "PATCH",
@@ -243,6 +281,10 @@ export default function SzamlakPage() {
     name: row.productName,
     bySupplier: row.bySupplier,
   }));
+
+  const pendingPriceReviews = invoices.flatMap((inv) =>
+    (inv.pendingLineItems ?? []).map((item) => ({ invoiceId: inv.id, supplier: inv.supplier, item }))
+  );
 
   // Only the most recently uploaded invoice - the point is "did what I just
   // photographed change price", not a resurfaced list of older changes the
@@ -289,6 +331,58 @@ export default function SzamlakPage() {
           </label>
         </div>
       </section>
+
+      {pendingPriceReviews.length > 0 && (
+        <section>
+          <h2 className="text-lg font-semibold mb-3">Ár-megerősítésre váró tételek</h2>
+          <ul className="space-y-2">
+            {pendingPriceReviews.map(({ invoiceId, supplier: itemSupplier, item }) => {
+              const direction = item.newPrice > item.priorPrice ? "drágább" : "olcsóbb";
+              const diffPct = Math.abs(((item.newPrice - item.priorPrice) / item.priorPrice) * 100);
+              return (
+                <li
+                  key={item.id}
+                  className="border-2 border-yellow-400 bg-yellow-50 rounded-2xl p-4 shadow-sm space-y-3"
+                >
+                  <div>
+                    <span className="font-semibold text-base">{item.shortName}</span>
+                    <span className="text-xs text-neutral-500"> · {item.productName}</span>
+                    <p className="text-sm">
+                      {SUPPLIER_LABEL[itemSupplier]}: {item.priorPrice.toLocaleString("hu-HU")} →{" "}
+                      {item.newPrice.toLocaleString("hu-HU")} Ft ({diffPct.toFixed(0)}%-kal {direction})
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2 items-center">
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      placeholder={String(item.newPrice)}
+                      value={editedPendingPrice[item.id] ?? ""}
+                      onChange={(e) =>
+                        setEditedPendingPrice((m) => ({ ...m, [item.id]: e.target.value }))
+                      }
+                      className="border border-neutral-300 rounded-xl px-3 py-2.5 w-28"
+                    />
+                    <span className="text-xs text-neutral-500">Ft (ha eltér, ezt menti el)</span>
+                    <button
+                      onClick={() => confirmPendingPriceItem(invoiceId, item.id)}
+                      className="px-4 py-2.5 rounded-xl bg-yellow-400 text-black font-semibold active:bg-yellow-500"
+                    >
+                      Elfogadás
+                    </button>
+                    <button
+                      onClick={() => rejectPendingPriceItem(invoiceId, item.id)}
+                      className="px-4 py-2.5 rounded-xl border border-neutral-300 active:bg-neutral-100"
+                    >
+                      Elutasítás
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
 
       {pendingProducts.length > 0 && (
         <section>
