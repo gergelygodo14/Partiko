@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { computeItemTrends, rankSandwichItems } from "@/lib/sandwichAnalytics";
+import { computeItemTrends, rankItems } from "@/lib/reportAnalytics";
 
-describe("rankSandwichItems", () => {
+describe("rankItems", () => {
   it("returns the top and bottom N items by quantity, sorted best/worst first", () => {
     const byItem = [
       { itemId: "1", itemName: "A", quantity: 50 },
@@ -12,7 +12,7 @@ describe("rankSandwichItems", () => {
       { itemId: "6", itemName: "F", quantity: 5 },
       { itemId: "7", itemName: "G", quantity: 1 },
     ];
-    const { topItems, bottomItems } = rankSandwichItems(byItem, 2);
+    const { topItems, bottomItems } = rankItems(byItem, 2);
     expect(topItems.map((i) => i.itemName)).toEqual(["A", "B"]);
     expect(bottomItems.map((i) => i.itemName)).toEqual(["G", "F"]);
   });
@@ -22,7 +22,7 @@ describe("rankSandwichItems", () => {
       { itemId: "1", itemName: "A", quantity: 5 },
       { itemId: "2", itemName: "B", quantity: 0 },
     ];
-    const { topItems, bottomItems } = rankSandwichItems(byItem, 5);
+    const { topItems, bottomItems } = rankItems(byItem, 5);
     expect(topItems.map((i) => i.itemName)).toEqual(["A"]);
     expect(bottomItems).toEqual([]);
   });
@@ -33,14 +33,14 @@ describe("rankSandwichItems", () => {
       { itemId: "2", itemName: "B", quantity: 2 },
       { itemId: "3", itemName: "C", quantity: 1 },
     ];
-    const { topItems, bottomItems } = rankSandwichItems(byItem, 5);
+    const { topItems, bottomItems } = rankItems(byItem, 5);
     const topIds = new Set(topItems.map((i) => i.itemId));
     for (const item of bottomItems) expect(topIds.has(item.itemId)).toBe(false);
   });
 
   it("returns everything as topItems with no bottomItems when there's only 1 distinct item", () => {
     const byItem = [{ itemId: "1", itemName: "A", quantity: 7 }];
-    const { topItems, bottomItems } = rankSandwichItems(byItem, 5);
+    const { topItems, bottomItems } = rankItems(byItem, 5);
     expect(topItems.map((i) => i.itemName)).toEqual(["A"]);
     expect(bottomItems).toEqual([]);
   });
@@ -113,6 +113,30 @@ describe("computeItemTrends", () => {
       [{ itemId: "1", itemName: "Stabil", quantity: 100 }]
     );
     expect(trends).toEqual([]);
+  });
+
+  it("honors a custom minQuantity for units where 5 isn't a meaningful floor (e.g. Ft)", () => {
+    const noOverride = computeItemTrends(
+      [{ itemId: "1", itemName: "Liszt", quantity: 3 }],
+      [{ itemId: "1", itemName: "Liszt", quantity: 1 }]
+    );
+    expect(noOverride).toEqual([]);
+
+    const withLowerFloor = computeItemTrends(
+      [{ itemId: "1", itemName: "Liszt", quantity: 3 }],
+      [{ itemId: "1", itemName: "Liszt", quantity: 1 }],
+      { minQuantity: 1 }
+    );
+    expect(withLowerFloor[0]).toMatchObject({ currentQuantity: 3, previousQuantity: 1 });
+  });
+
+  it("honors a custom thresholdPercent", () => {
+    const trends = computeItemTrends(
+      [{ itemId: "1", itemName: "Cukor", quantity: 110 }],
+      [{ itemId: "1", itemName: "Cukor", quantity: 100 }],
+      { thresholdPercent: 5 }
+    );
+    expect(trends[0]).toMatchObject({ changePercent: 10 });
   });
 
   it("sorts growth first, biggest swing first within each direction", () => {

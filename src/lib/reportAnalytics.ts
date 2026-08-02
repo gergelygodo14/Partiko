@@ -2,7 +2,7 @@ export type ItemQuantityRow = { itemId: string; itemName: string; quantity: numb
 
 /** How many items to show on each side - capped so a small catalog never
  *  shows the same item as both a top and bottom performer. */
-export function rankSandwichItems(
+export function rankItems(
   byItem: ItemQuantityRow[],
   count = 5
 ): { topItems: ItemQuantityRow[]; bottomItems: ItemQuantityRow[] } {
@@ -30,24 +30,28 @@ export type ItemTrendRow = {
   direction: "up" | "down";
 };
 
-// Below this, a swing is just noise (an item going from 1 to 3 "grew" 200%
-// but nobody cares) - only items where at least one period reached this
-// volume are considered at all.
-const TREND_MIN_QUANTITY = 5;
-// How big a change has to be, in percent, to count as "notable" once past
-// the volume floor above.
-const TREND_THRESHOLD_PERCENT = 30;
+// Defaults tuned for sandwich portion counts - callers whose "quantity" is a
+// different unit (kg, liter, Ft...) should pass their own minQuantity, since
+// an absolute floor of 5 doesn't mean the same thing across units.
+const DEFAULT_MIN_QUANTITY = 5;
+const DEFAULT_THRESHOLD_PERCENT = 30;
 
-/** Flags sandwiches with a notable month-over-month swing, in both
- *  directions - including items that vanished entirely (in previousByItem
- *  but absent from currentByItem, i.e. currentQuantity 0) and items that
- *  debuted this period (previousQuantity 0, so changePercent is null rather
- *  than a meaningless divide-by-zero). Sorted growth-first, biggest swing
- *  first within each direction. */
+/** Flags items with a notable period-over-period swing, in both directions -
+ *  including items that vanished entirely (in previousByItem but absent from
+ *  currentByItem, i.e. currentQuantity 0) and items that debuted this period
+ *  (previousQuantity 0, so changePercent is null rather than a meaningless
+ *  divide-by-zero). Sorted growth-first, biggest swing first within each
+ *  direction. Each row compares an item only against its own previous value,
+ *  never against a different item, so mixing units across rows (kg here, db
+ *  there) is safe - only the min-quantity floor needs to be unit-aware. */
 export function computeItemTrends(
   currentByItem: ItemQuantityRow[],
-  previousByItem: ItemQuantityRow[]
+  previousByItem: ItemQuantityRow[],
+  opts?: { minQuantity?: number; thresholdPercent?: number }
 ): ItemTrendRow[] {
+  const minQuantity = opts?.minQuantity ?? DEFAULT_MIN_QUANTITY;
+  const thresholdPercent = opts?.thresholdPercent ?? DEFAULT_THRESHOLD_PERCENT;
+
   const currentMap = new Map(currentByItem.map((item) => [item.itemId, item]));
   const previousMap = new Map(previousByItem.map((item) => [item.itemId, item]));
   const allIds = new Set([...currentMap.keys(), ...previousMap.keys()]);
@@ -58,11 +62,11 @@ export function computeItemTrends(
     const previous = previousMap.get(itemId);
     const currentQuantity = current?.quantity ?? 0;
     const previousQuantity = previous?.quantity ?? 0;
-    if (Math.max(currentQuantity, previousQuantity) < TREND_MIN_QUANTITY) continue;
+    if (Math.max(currentQuantity, previousQuantity) < minQuantity) continue;
 
     const changePercent =
       previousQuantity === 0 ? null : ((currentQuantity - previousQuantity) / previousQuantity) * 100;
-    const isNotable = changePercent === null || Math.abs(changePercent) >= TREND_THRESHOLD_PERCENT;
+    const isNotable = changePercent === null || Math.abs(changePercent) >= thresholdPercent;
     if (!isNotable) continue;
 
     rows.push({

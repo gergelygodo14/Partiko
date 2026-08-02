@@ -5,10 +5,10 @@ import { useEffect, useState } from "react";
 import { addMonthsStr, monthStartOf, todayStr } from "@/lib/dates";
 import {
   computeItemTrends,
-  rankSandwichItems,
+  rankItems,
   type ItemQuantityRow,
   type ItemTrendRow,
-} from "@/lib/sandwichAnalytics";
+} from "@/lib/reportAnalytics";
 
 type SandwichMonthlyItemProfit = {
   itemId: string;
@@ -30,6 +30,15 @@ type MealMonthSummary = { totalMeals: number; totalValue: number };
 type DishAverageRow = { name: string; quantity: number; aboveAverage: boolean; belowAverage: boolean };
 type DishBreakdownReport = { averageQuantity: number; dishes: DishAverageRow[] };
 
+type BilledIngredientRow = {
+  ingredientId: string;
+  name: string;
+  unit: string;
+  totalQuantity: number;
+  totalValue: number;
+};
+type BilledIngredientReport = { rows: BilledIngredientRow[]; grandTotal: number };
+
 function formatMonthLabel(dateStr: string) {
   return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString("hu-HU", {
     year: "numeric",
@@ -44,15 +53,17 @@ function formatFt(value: number) {
 function TurnoverCard({
   sandwichValueFt,
   mealValue,
+  ingredientValueFt,
 }: {
   sandwichValueFt: number | null;
   mealValue: number | null;
+  ingredientValueFt: number | null;
 }) {
-  const combined = (sandwichValueFt ?? 0) + (mealValue ?? 0);
+  const combined = (sandwichValueFt ?? 0) + (mealValue ?? 0) + (ingredientValueFt ?? 0);
   return (
     <section className="space-y-3">
       <h2 className="text-lg font-semibold">Forgalom</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-1">
           <div className="text-sm text-muted">Szendvics</div>
           <div className="text-2xl font-semibold">
@@ -64,6 +75,13 @@ function TurnoverCard({
           <div className="text-2xl font-semibold">
             {mealValue !== null ? formatFt(mealValue) : "…"}
           </div>
+        </div>
+        <div className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-1">
+          <div className="text-sm text-muted">Alapanyagok</div>
+          <div className="text-2xl font-semibold">
+            {ingredientValueFt !== null ? formatFt(ingredientValueFt) : "…"}
+          </div>
+          <div className="text-xs text-faint">leszámlázva ebben a hónapban</div>
         </div>
       </div>
       <div className="border border-gold bg-gold/10 rounded-2xl p-4 shadow-sm flex items-center justify-between">
@@ -140,7 +158,15 @@ function ProfitCards({
   );
 }
 
-function RankList({ title, items }: { title: string; items: ItemQuantityRow[] }) {
+function RankList({
+  title,
+  items,
+  unitById,
+}: {
+  title: string;
+  items: ItemQuantityRow[];
+  unitById?: Record<string, string>;
+}) {
   return (
     <div className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-2">
       <div className="text-sm font-medium">{title}</div>
@@ -151,7 +177,9 @@ function RankList({ title, items }: { title: string; items: ItemQuantityRow[] })
           {items.map((item) => (
             <li key={item.itemId} className="flex items-center justify-between py-1.5">
               <span>{item.itemName}</span>
-              <span className="font-medium">{item.quantity} db</span>
+              <span className="font-medium">
+                {item.quantity} {unitById?.[item.itemId] ?? "db"}
+              </span>
             </li>
           ))}
         </ul>
@@ -160,7 +188,8 @@ function RankList({ title, items }: { title: string; items: ItemQuantityRow[] })
   );
 }
 
-function TrendRow({ row }: { row: ItemTrendRow }) {
+function TrendRow({ row, unitById }: { row: ItemTrendRow; unitById?: Record<string, string> }) {
+  const unit = unitById?.[row.itemId] ?? "db";
   const label =
     row.changePercent === null
       ? row.direction === "up"
@@ -172,7 +201,7 @@ function TrendRow({ row }: { row: ItemTrendRow }) {
       <span>{row.itemName}</span>
       <span className="flex items-center gap-2">
         <span className="text-faint">
-          {row.previousQuantity} → {row.currentQuantity} db
+          {row.previousQuantity} {unit} → {row.currentQuantity} {unit}
         </span>
         <span
           className={`font-semibold ${row.direction === "up" ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
@@ -294,11 +323,53 @@ function DishAnalytics({ report, loading }: { report: DishBreakdownReport | null
   );
 }
 
+function IngredientAnalytics({
+  trends,
+  unitById,
+  loading,
+}: {
+  trends: ItemTrendRow[];
+  unitById: Record<string, string>;
+  loading: boolean;
+}) {
+  const growing = trends.filter((t) => t.direction === "up");
+  const declining = trends.filter((t) => t.direction === "down");
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-lg font-semibold">Alapanyag elemzés</h2>
+      {loading ? (
+        <p className="text-muted">Betöltés...</p>
+      ) : (
+        <div className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-2">
+          <div className="text-sm font-medium">Előző (leszámlázott) hónaphoz képest</div>
+          {growing.length === 0 && declining.length === 0 ? (
+            <p className="text-sm text-muted">
+              Nincs kiugró változás, vagy nem volt leszámlázás mindkét hónapban.
+            </p>
+          ) : (
+            <ul className="divide-y divide-surface-border">
+              {[...growing, ...declining].map((row) => (
+                <TrendRow key={row.itemId} row={row} unitById={unitById} />
+              ))}
+            </ul>
+          )}
+          <p className="text-xs text-faint">
+            Mennyiség szerinti összevetés (nem Ft-ban), mindig ugyanahhoz az alapanyaghoz képest -
+            a különböző mértékegységek (kg, db, liter) emiatt nem keverednek össze.
+          </p>
+        </div>
+      )}
+    </section>
+  );
+}
+
 export default function RiportokPage() {
   const [reportMonth, setReportMonth] = useState(() => monthStartOf(todayStr()));
 
   const [sandwichSummary, setSandwichSummary] = useState<SandwichMonthSummary | null>(null);
   const [mealSummary, setMealSummary] = useState<MealMonthSummary | null>(null);
+  const [ingredientSummary, setIngredientSummary] = useState<BilledIngredientReport | null>(null);
   const [sandwichProfit, setSandwichProfit] = useState<SandwichProfitReport | null>(null);
   const [mealProfit, setMealProfit] = useState<MealProfitReport | null>(null);
   const [dishBreakdown, setDishBreakdown] = useState<DishBreakdownReport | null>(null);
@@ -306,14 +377,19 @@ export default function RiportokPage() {
   const [topItems, setTopItems] = useState<ItemQuantityRow[]>([]);
   const [bottomItems, setBottomItems] = useState<ItemQuantityRow[]>([]);
   const [trends, setTrends] = useState<ItemTrendRow[]>([]);
+  const [ingredientTrends, setIngredientTrends] = useState<ItemTrendRow[]>([]);
+  const [ingredientUnitById, setIngredientUnitById] = useState<Record<string, string>>({});
+  const [ingredientLoading, setIngredientLoading] = useState(true);
 
   useEffect(() => {
     setSandwichSummary(null);
     setMealSummary(null);
+    setIngredientSummary(null);
     setSandwichProfit(null);
     setMealProfit(null);
     setDishBreakdown(null);
     setSandwichLoading(true);
+    setIngredientLoading(true);
 
     (async () => {
       const res = await fetch(`/api/sandwich-orders/monthly-profit?month=${reportMonth}`);
@@ -344,11 +420,37 @@ export default function RiportokPage() {
       const current = (await currentRes.json()) as SandwichMonthSummary;
       const previous = (await previousRes.json()) as SandwichMonthSummary;
       setSandwichSummary(current);
-      const { topItems: top, bottomItems: bottom } = rankSandwichItems(current.byItem);
+      const { topItems: top, bottomItems: bottom } = rankItems(current.byItem);
       setTopItems(top);
       setBottomItems(bottom);
       setTrends(computeItemTrends(current.byItem, previous.byItem));
       setSandwichLoading(false);
+    })();
+
+    (async () => {
+      const previousMonth = addMonthsStr(reportMonth, -1);
+      const [currentRes, previousRes] = await Promise.all([
+        fetch(`/api/summary/billed?month=${reportMonth}`),
+        fetch(`/api/summary/billed?month=${previousMonth}`),
+      ]);
+      const current = (await currentRes.json()) as BilledIngredientReport;
+      const previous = (await previousRes.json()) as BilledIngredientReport;
+      setIngredientSummary(current);
+
+      const unitById: Record<string, string> = {};
+      for (const row of [...current.rows, ...previous.rows]) unitById[row.ingredientId] = row.unit;
+      setIngredientUnitById(unitById);
+
+      const toItemRows = (rows: BilledIngredientRow[]): ItemQuantityRow[] =>
+        rows.map((r) => ({ itemId: r.ingredientId, itemName: r.name, quantity: r.totalQuantity }));
+      // Lower volume floor than the sandwich default (5) - ingredient units
+      // (kg, liter, db) vary too much for one absolute number to fit all of
+      // them, and a low floor here still lets the 30% threshold do the real
+      // noise filtering.
+      setIngredientTrends(
+        computeItemTrends(toItemRows(current.rows), toItemRows(previous.rows), { minQuantity: 2 })
+      );
+      setIngredientLoading(false);
     })();
   }, [reportMonth]);
 
@@ -373,6 +475,7 @@ export default function RiportokPage() {
       <TurnoverCard
         sandwichValueFt={sandwichSummary?.totalValueFt ?? null}
         mealValue={mealSummary?.totalValue ?? null}
+        ingredientValueFt={ingredientSummary?.grandTotal ?? null}
       />
       <ProfitCards sandwichProfit={sandwichProfit} mealProfit={mealProfit} />
       <SandwichAnalytics
@@ -382,6 +485,11 @@ export default function RiportokPage() {
         loading={sandwichLoading}
       />
       <DishAnalytics report={dishBreakdown} loading={!dishBreakdown} />
+      <IngredientAnalytics
+        trends={ingredientTrends}
+        unitById={ingredientUnitById}
+        loading={ingredientLoading}
+      />
 
       <Link
         href="/rendelesek"
