@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { addMonthsStr, monthStartOf, todayStr } from "@/lib/dates";
+import { addDaysStr, addMonthsStr, mondayOf, monthStartOf, todayStr } from "@/lib/dates";
 import {
   computeItemTrends,
   rankItems,
@@ -48,6 +48,13 @@ function formatMonthLabel(dateStr: string) {
 
 function formatFt(value: number) {
   return `${value.toLocaleString("hu-HU")} Ft`;
+}
+
+function formatDate(dateStr: string) {
+  return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString("hu-HU", {
+    month: "2-digit",
+    day: "2-digit",
+  });
 }
 
 function TurnoverCard({
@@ -324,28 +331,83 @@ function DishAnalytics({ report, loading }: { report: DishBreakdownReport | null
 }
 
 function IngredientAnalytics({
+  mode,
+  onModeChange,
+  monthLabel,
+  weekStart,
+  onWeekNav,
   trends,
   unitById,
   loading,
 }: {
+  mode: "month" | "week";
+  onModeChange: (mode: "month" | "week") => void;
+  monthLabel: string;
+  weekStart: string;
+  onWeekNav: (direction: -1 | 1) => void;
   trends: ItemTrendRow[];
   unitById: Record<string, string>;
   loading: boolean;
 }) {
   const growing = trends.filter((t) => t.direction === "up");
   const declining = trends.filter((t) => t.direction === "down");
+  const periodLabel =
+    mode === "month" ? monthLabel : `${formatDate(weekStart)} – ${formatDate(addDaysStr(weekStart, 6))}`;
 
   return (
     <section className="space-y-3">
       <h2 className="text-lg font-semibold">Alapanyag elemzés</h2>
+
+      <div className="flex rounded-xl border border-umber/40 overflow-hidden text-sm">
+        <button
+          type="button"
+          onClick={() => onModeChange("month")}
+          className={`flex-1 px-3 py-2 font-medium ${mode === "month" ? "bg-gold text-ink" : "active:bg-umber/15"}`}
+        >
+          Havi
+        </button>
+        <button
+          type="button"
+          onClick={() => onModeChange("week")}
+          className={`flex-1 px-3 py-2 font-medium border-l border-umber/40 ${mode === "week" ? "bg-gold text-ink" : "active:bg-umber/15"}`}
+        >
+          Heti
+        </button>
+      </div>
+
+      {mode === "week" && (
+        <div className="flex items-center justify-between gap-2">
+          <button
+            type="button"
+            onClick={() => onWeekNav(-1)}
+            className="px-3 py-2 rounded-xl border bg-umber/8 border-umber/40 text-sm font-semibold active:bg-umber/15"
+          >
+            ◀ Előző hét
+          </button>
+          <span className="text-sm text-muted">{periodLabel}</span>
+          <button
+            type="button"
+            onClick={() => onWeekNav(1)}
+            className="px-3 py-2 rounded-xl border bg-umber/8 border-umber/40 text-sm font-semibold active:bg-umber/15"
+          >
+            Következő hét ▶
+          </button>
+        </div>
+      )}
+
       {loading ? (
         <p className="text-muted">Betöltés...</p>
       ) : (
         <div className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-2">
-          <div className="text-sm font-medium">Előző (leszámlázott) hónaphoz képest</div>
+          <div className="text-sm font-medium">
+            Előző (leszámlázott) {mode === "month" ? "hónaphoz" : "héthez"} képest
+            {mode === "month" && (
+              <span className="font-normal text-muted capitalize"> — {periodLabel}</span>
+            )}
+          </div>
           {growing.length === 0 && declining.length === 0 ? (
             <p className="text-sm text-muted">
-              Nincs kiugró változás, vagy nem volt leszámlázás mindkét hónapban.
+              Nincs kiugró változás, vagy nem volt leszámlázás mindkét időszakban.
             </p>
           ) : (
             <ul className="divide-y divide-surface-border">
@@ -380,6 +442,8 @@ export default function RiportokPage() {
   const [ingredientTrends, setIngredientTrends] = useState<ItemTrendRow[]>([]);
   const [ingredientUnitById, setIngredientUnitById] = useState<Record<string, string>>({});
   const [ingredientLoading, setIngredientLoading] = useState(true);
+  const [ingredientMode, setIngredientMode] = useState<"month" | "week">("month");
+  const [ingredientWeekStart, setIngredientWeekStart] = useState(() => mondayOf(todayStr()));
 
   useEffect(() => {
     setSandwichSummary(null);
@@ -389,7 +453,6 @@ export default function RiportokPage() {
     setMealProfit(null);
     setDishBreakdown(null);
     setSandwichLoading(true);
-    setIngredientLoading(true);
 
     (async () => {
       const res = await fetch(`/api/sandwich-orders/monthly-profit?month=${reportMonth}`);
@@ -428,14 +491,31 @@ export default function RiportokPage() {
     })();
 
     (async () => {
-      const previousMonth = addMonthsStr(reportMonth, -1);
-      const [currentRes, previousRes] = await Promise.all([
-        fetch(`/api/summary/billed?month=${reportMonth}`),
-        fetch(`/api/summary/billed?month=${previousMonth}`),
-      ]);
+      const res = await fetch(`/api/summary/billed?month=${reportMonth}`);
+      setIngredientSummary(await res.json());
+    })();
+  }, [reportMonth]);
+
+  // Separate from the effect above: the ingredient trend section has its own
+  // month/week toggle, independent of the page's shared month selector (the
+  // Forgalom card above always stays monthly, driven by reportMonth alone).
+  useEffect(() => {
+    setIngredientLoading(true);
+
+    (async () => {
+      const [currentUrl, previousUrl] =
+        ingredientMode === "week"
+          ? [
+              `/api/summary/billed?week=${ingredientWeekStart}`,
+              `/api/summary/billed?week=${addDaysStr(ingredientWeekStart, -7)}`,
+            ]
+          : [
+              `/api/summary/billed?month=${reportMonth}`,
+              `/api/summary/billed?month=${addMonthsStr(reportMonth, -1)}`,
+            ];
+      const [currentRes, previousRes] = await Promise.all([fetch(currentUrl), fetch(previousUrl)]);
       const current = (await currentRes.json()) as BilledIngredientReport;
       const previous = (await previousRes.json()) as BilledIngredientReport;
-      setIngredientSummary(current);
 
       const unitById: Record<string, string> = {};
       for (const row of [...current.rows, ...previous.rows]) unitById[row.ingredientId] = row.unit;
@@ -452,7 +532,7 @@ export default function RiportokPage() {
       );
       setIngredientLoading(false);
     })();
-  }, [reportMonth]);
+  }, [ingredientMode, reportMonth, ingredientWeekStart]);
 
   return (
     <div className="space-y-8">
@@ -486,6 +566,11 @@ export default function RiportokPage() {
       />
       <DishAnalytics report={dishBreakdown} loading={!dishBreakdown} />
       <IngredientAnalytics
+        mode={ingredientMode}
+        onModeChange={setIngredientMode}
+        monthLabel={formatMonthLabel(reportMonth)}
+        weekStart={ingredientWeekStart}
+        onWeekNav={(direction) => setIngredientWeekStart(addDaysStr(ingredientWeekStart, direction * 7))}
         trends={ingredientTrends}
         unitById={ingredientUnitById}
         loading={ingredientLoading}
