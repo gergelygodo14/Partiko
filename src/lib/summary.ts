@@ -6,6 +6,7 @@ export type SummaryRow = {
   name: string;
   unit: string;
   unitPrice: number;
+  profitPerUnit: number | null;
   order: number;
   totalQuantity: number;
   totalValue: number;
@@ -35,6 +36,7 @@ export async function getSummary(fromStr: string, toStr: string) {
         name: ingredient.name,
         unit: ingredient.unit,
         unitPrice: ingredient.unitPrice,
+        profitPerUnit: ingredient.profitPerUnit,
         order: ingredient.order,
         totalQuantity,
         totalValue: totalQuantity * ingredient.unitPrice,
@@ -92,6 +94,7 @@ export async function getBilledIngredientTotals(
         name: ingredient.name,
         unit: ingredient.unit,
         unitPrice: ingredient.unitPrice,
+        profitPerUnit: ingredient.profitPerUnit,
         order: ingredient.order,
         totalQuantity,
         totalValue: totalQuantity * ingredient.unitPrice,

@@ -7,10 +7,11 @@ type Ingredient = {
   name: string;
   unit: string;
   unitPrice: number;
+  profitPerUnit: number | null;
   archived: boolean;
 };
 
-const emptyForm = { name: "", unit: "kg", unitPrice: "" };
+const emptyForm = { name: "", unit: "kg", unitPrice: "", profitPerUnit: "" };
 
 export default function IngredientsPage() {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
@@ -35,11 +36,12 @@ export default function IngredientsPage() {
     e.preventDefault();
     const unitPrice = parseInt(form.unitPrice, 10);
     if (!form.name.trim() || !form.unit.trim() || !unitPrice) return;
+    const profitPerUnit = form.profitPerUnit.trim() ? parseInt(form.profitPerUnit, 10) : null;
 
     await fetch("/api/ingredients", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: form.name.trim(), unit: form.unit.trim(), unitPrice }),
+      body: JSON.stringify({ name: form.name.trim(), unit: form.unit.trim(), unitPrice, profitPerUnit }),
     });
     setForm(emptyForm);
     await load();
@@ -47,11 +49,17 @@ export default function IngredientsPage() {
 
   function startEdit(ing: Ingredient) {
     setEditingId(ing.id);
-    setEditForm({ name: ing.name, unit: ing.unit, unitPrice: String(ing.unitPrice) });
+    setEditForm({
+      name: ing.name,
+      unit: ing.unit,
+      unitPrice: String(ing.unitPrice),
+      profitPerUnit: ing.profitPerUnit !== null ? String(ing.profitPerUnit) : "",
+    });
   }
 
   async function saveEdit(id: string) {
     const unitPrice = parseInt(editForm.unitPrice, 10);
+    const profitPerUnit = editForm.profitPerUnit.trim() ? parseInt(editForm.profitPerUnit, 10) : null;
     await fetch(`/api/ingredients/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -59,6 +67,7 @@ export default function IngredientsPage() {
         name: editForm.name.trim(),
         unit: editForm.unit.trim(),
         unitPrice,
+        profitPerUnit,
       }),
     });
     setEditingId(null);
@@ -111,6 +120,16 @@ export default function IngredientsPage() {
               onChange={(e) => setForm((f) => ({ ...f, unitPrice: e.target.value }))}
               className="border border-strong rounded-xl px-3 py-2.5 text-base w-28"
               placeholder="1350"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-muted mb-1">Nyereség/egység (Ft)</label>
+            <input
+              type="number"
+              value={form.profitPerUnit}
+              onChange={(e) => setForm((f) => ({ ...f, profitPerUnit: e.target.value }))}
+              className="border border-strong rounded-xl px-3 py-2.5 text-base w-28"
+              placeholder="opcionális"
             />
           </div>
           <button
@@ -170,6 +189,15 @@ export default function IngredientsPage() {
                       }
                       className="border border-strong rounded-xl px-3 py-2 text-base w-24"
                     />
+                    <input
+                      type="number"
+                      value={editForm.profitPerUnit}
+                      onChange={(e) =>
+                        setEditForm((f) => ({ ...f, profitPerUnit: e.target.value }))
+                      }
+                      placeholder="Nyereség/egység"
+                      className="border border-strong rounded-xl px-3 py-2 text-base w-32"
+                    />
                     <button
                       onClick={() => saveEdit(ing.id)}
                       className="bg-gold text-ink font-semibold text-sm px-4 py-2.5 rounded-xl active:bg-gold-dark"
@@ -190,6 +218,8 @@ export default function IngredientsPage() {
                       <span className="text-xs text-muted ml-2">
                         {ing.unit} · {ing.unitPrice.toLocaleString("hu-HU")} Ft/
                         {ing.unit}
+                        {ing.profitPerUnit !== null &&
+                          ` · nyereség ${ing.profitPerUnit.toLocaleString("hu-HU")} Ft/${ing.unit}`}
                         {ing.archived ? " · archiválva" : ""}
                       </span>
                     </div>

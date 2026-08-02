@@ -34,10 +34,42 @@ type BilledIngredientRow = {
   ingredientId: string;
   name: string;
   unit: string;
+  profitPerUnit: number | null;
   totalQuantity: number;
   totalValue: number;
 };
 type BilledIngredientReport = { rows: BilledIngredientRow[]; grandTotal: number };
+
+type IngredientProfitRow = {
+  ingredientId: string;
+  name: string;
+  unit: string;
+  quantity: number;
+  profitPerUnitFt: number;
+  totalProfitFt: number;
+};
+type IngredientProfitReport = { rows: IngredientProfitRow[]; totalProfitFt: number };
+
+// Ingredient profit isn't fetched separately - the billed-ingredient report
+// (ingredientSummary) already carries profitPerUnit per row, so this just
+// multiplies it through. Rows without a tracked margin (profitPerUnit null,
+// e.g. Jégsaláta/Paradicsom/Marha) are excluded rather than treated as 0,
+// since "not tracked" and "confirmed zero margin" aren't the same thing.
+function computeIngredientProfit(summary: BilledIngredientReport | null): IngredientProfitReport | null {
+  if (!summary) return null;
+  const rows: IngredientProfitRow[] = summary.rows
+    .filter((r) => r.profitPerUnit !== null && r.totalQuantity > 0)
+    .map((r) => ({
+      ingredientId: r.ingredientId,
+      name: r.name,
+      unit: r.unit,
+      quantity: r.totalQuantity,
+      profitPerUnitFt: r.profitPerUnit as number,
+      totalProfitFt: r.totalQuantity * (r.profitPerUnit as number),
+    }))
+    .sort((a, b) => b.totalProfitFt - a.totalProfitFt);
+  return { rows, totalProfitFt: rows.reduce((sum, r) => sum + r.totalProfitFt, 0) };
+}
 
 function formatMonthLabel(dateStr: string) {
   return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString("hu-HU", {
@@ -102,15 +134,20 @@ function TurnoverCard({
 function ProfitCards({
   sandwichProfit,
   mealProfit,
+  ingredientProfit,
 }: {
   sandwichProfit: SandwichProfitReport | null;
   mealProfit: MealProfitReport | null;
+  ingredientProfit: IngredientProfitReport | null;
 }) {
-  const combined = (sandwichProfit?.totalProfitFt ?? 0) + (mealProfit?.totalProfitFt ?? 0);
+  const combined =
+    (sandwichProfit?.totalProfitFt ?? 0) +
+    (mealProfit?.totalProfitFt ?? 0) +
+    (ingredientProfit?.totalProfitFt ?? 0);
   return (
     <section className="space-y-3">
       <h2 className="text-lg font-semibold">Havi nyereség</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-1">
           <div className="text-sm text-muted">Szendvics</div>
           <div className="text-2xl font-semibold">
@@ -125,6 +162,13 @@ function ProfitCards({
           {mealProfit && (
             <div className="text-xs text-faint">{mealProfit.totalMeals} adag × 500 Ft</div>
           )}
+        </div>
+        <div className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-1">
+          <div className="text-sm text-muted">Alapanyagok</div>
+          <div className="text-2xl font-semibold">
+            {ingredientProfit ? formatFt(ingredientProfit.totalProfitFt) : "…"}
+          </div>
+          <div className="text-xs text-faint">csak a nyereséggel megadott alapanyagokból</div>
         </div>
       </div>
       <div className="border border-gold bg-gold/10 rounded-2xl p-4 shadow-sm flex items-center justify-between">
@@ -154,6 +198,38 @@ function ProfitCards({
                     <td className="px-3 py-2.5 text-right">{item.quantity}</td>
                     <td className="px-3 py-2.5 text-right">{formatFt(item.profitPerUnitFt)}</td>
                     <td className="px-3 py-2.5 text-right font-medium">{formatFt(item.totalProfitFt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      )}
+
+      {ingredientProfit && ingredientProfit.rows.length > 0 && (
+        <details className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm">
+          <summary className="px-4 py-3 text-sm font-medium cursor-pointer select-none">
+            Alapanyag nyereség alapanyagonként
+          </summary>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-surface-alt text-muted">
+                <tr>
+                  <th className="text-left px-3 py-2.5">Alapanyag</th>
+                  <th className="text-right px-3 py-2.5">Mennyiség</th>
+                  <th className="text-right px-3 py-2.5">Haszon/egység</th>
+                  <th className="text-right px-3 py-2.5">Összesen</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ingredientProfit.rows.map((row) => (
+                  <tr key={row.ingredientId} className="border-t border-surface-border">
+                    <td className="px-3 py-2.5">{row.name}</td>
+                    <td className="px-3 py-2.5 text-right">
+                      {row.quantity} {row.unit}
+                    </td>
+                    <td className="px-3 py-2.5 text-right">{formatFt(row.profitPerUnitFt)}</td>
+                    <td className="px-3 py-2.5 text-right font-medium">{formatFt(row.totalProfitFt)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -557,7 +633,11 @@ export default function RiportokPage() {
         mealValue={mealSummary?.totalValue ?? null}
         ingredientValueFt={ingredientSummary?.grandTotal ?? null}
       />
-      <ProfitCards sandwichProfit={sandwichProfit} mealProfit={mealProfit} />
+      <ProfitCards
+        sandwichProfit={sandwichProfit}
+        mealProfit={mealProfit}
+        ingredientProfit={computeIngredientProfit(ingredientSummary)}
+      />
       <SandwichAnalytics
         topItems={topItems}
         bottomItems={bottomItems}

@@ -13,14 +13,15 @@ datasource db {
 }
 
 model Ingredient {
-  id        String   @id @default(cuid())
-  name      String
-  unit      String
-  unitPrice Int
-  order     Int      @default(0)
-  archived  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  entries   Entry[]
+  id            String   @id @default(cuid())
+  name          String
+  unit          String
+  unitPrice     Int
+  profitPerUnit Int?
+  order         Int      @default(0)
+  archived      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  entries       Entry[]
 }
 
 model Entry {

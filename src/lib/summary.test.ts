@@ -27,8 +27,8 @@ describe("getSummary", () => {
       { ingredientId: "i1", _sum: { quantity: 10 } },
     ]);
     findMany.mockResolvedValue([
-      { id: "i1", name: "Csirkemell", unit: "kg", unitPrice: 2000, order: 1 },
-      { id: "i2", name: "Fasírt", unit: "db", unitPrice: 500, order: 2 },
+      { id: "i1", name: "Csirkemell", unit: "kg", unitPrice: 2000, profitPerUnit: 878, order: 1 },
+      { id: "i2", name: "Fasírt", unit: "db", unitPrice: 500, profitPerUnit: null, order: 2 },
     ]);
 
     const result = await getSummary("2026-07-01", "2026-07-03");
@@ -39,6 +39,7 @@ describe("getSummary", () => {
         name: "Csirkemell",
         unit: "kg",
         unitPrice: 2000,
+        profitPerUnit: 878,
         order: 1,
         totalQuantity: 10,
         totalValue: 20000,
@@ -48,6 +49,7 @@ describe("getSummary", () => {
         name: "Fasírt",
         unit: "db",
         unitPrice: 500,
+        profitPerUnit: null,
         order: 2,
         totalQuantity: 3,
         totalValue: 1500,
@@ -98,13 +100,13 @@ describe("getBilledIngredientTotals", () => {
     ]);
     groupBy.mockResolvedValue([{ ingredientId: "i1", _sum: { quantity: 10 } }]);
     findMany.mockResolvedValue([
-      { id: "i1", name: "Csirkemell", unit: "kg", unitPrice: 2000, order: 1 },
+      { id: "i1", name: "Csirkemell", unit: "kg", unitPrice: 2000, profitPerUnit: 878, order: 1 },
     ]);
 
     const result = await getBilledIngredientTotals("2026-08-01", "2026-08-31");
 
     expect(result.rows).toEqual([
-      { ingredientId: "i1", name: "Csirkemell", unit: "kg", unitPrice: 2000, order: 1, totalQuantity: 10, totalValue: 20000 },
+      { ingredientId: "i1", name: "Csirkemell", unit: "kg", unitPrice: 2000, profitPerUnit: 878, order: 1, totalQuantity: 10, totalValue: 20000 },
     ]);
     expect(result.grandTotal).toBe(20000);
     // Queried the period's own from/to, not the report month.

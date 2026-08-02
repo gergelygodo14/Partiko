@@ -13,7 +13,7 @@ export const GET = withApiErrorHandling(async (request: NextRequest) => {
 
 export const POST = withApiErrorHandling(async (request: NextRequest) => {
   const body = await request.json();
-  const { name, unit, unitPrice } = body;
+  const { name, unit, unitPrice, profitPerUnit } = body;
 
   if (
     typeof name !== "string" ||
@@ -27,10 +27,13 @@ export const POST = withApiErrorHandling(async (request: NextRequest) => {
       { status: 400 }
     );
   }
+  if (profitPerUnit !== undefined && profitPerUnit !== null && !Number.isInteger(profitPerUnit)) {
+    return NextResponse.json({ error: "Érvénytelen profitPerUnit" }, { status: 400 });
+  }
 
   const last = await prisma.ingredient.findFirst({ orderBy: { order: "desc" } });
   const ingredient = await prisma.ingredient.create({
-    data: { name, unit, unitPrice, order: (last?.order ?? 0) + 1 },
+    data: { name, unit, unitPrice, profitPerUnit: profitPerUnit ?? null, order: (last?.order ?? 0) + 1 },
   });
   return NextResponse.json(ingredient, { status: 201 });
 });
