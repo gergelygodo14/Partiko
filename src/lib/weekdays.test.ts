@@ -57,19 +57,23 @@ describe("isDeliveryWeekday", () => {
 });
 
 describe("defaultEntryDate", () => {
-  it("keeps a weekday as-is", () => {
-    expect(defaultEntryDate("2026-07-30")).toBe("2026-07-30");
+  // A phone order taken "now" is for the next delivery day, not for today -
+  // e.g. calling in on Monday defaults the screen to Tuesday's tab.
+  it("defaults to tomorrow when today is a weekday", () => {
+    expect(defaultEntryDate("2026-07-27")).toBe("2026-07-28"); // Mon -> Tue
+    expect(defaultEntryDate("2026-07-30")).toBe("2026-07-31"); // Thu -> Fri
   });
 
   // A weekend visit must not land on a date no summary/export can read; it
   // rolls forward to the next orderable day instead.
+  it("rolls a Friday forward to the coming Monday", () => {
+    expect(defaultEntryDate("2026-07-31")).toBe("2026-08-03");
+  });
+
   it("rolls a Saturday forward to the coming Monday", () => {
     expect(defaultEntryDate("2026-08-01")).toBe("2026-08-03");
   });
 
-  // mondayOf() maps Sunday back to the Monday that started that same week, so
-  // +7 from there is the *next* Monday - this is the case a naive
-  // "mondayOf(today)" would get wrong by a full week.
   it("rolls a Sunday forward to the coming Monday", () => {
     expect(defaultEntryDate("2026-08-02")).toBe("2026-08-03");
   });

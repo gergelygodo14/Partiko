@@ -182,6 +182,7 @@ function hasPriceChange(row: PriceComparisonRow): boolean {
 export default function SzamlakPage() {
   const [supplier, setSupplier] = useState<Supplier>("BAROMFIUDVAR");
   const [comparisonFilter, setComparisonFilter] = useState<ComparisonFilter>("changed");
+  const [comparisonSearch, setComparisonSearch] = useState("");
   const [uploading, setUploading] = useState(false);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [pendingProducts, setPendingProducts] = useState<Product[]>([]);
@@ -486,6 +487,13 @@ export default function SzamlakPage() {
           <p className="text-muted">Még nincs jóváhagyott termék árelőzménye.</p>
         ) : (
           <>
+            <input
+              type="text"
+              value={comparisonSearch}
+              onChange={(e) => setComparisonSearch(e.target.value)}
+              placeholder="Termék keresése..."
+              className="w-full border border-strong rounded-xl px-3 py-2.5 text-base mb-3"
+            />
             <div className="flex flex-wrap gap-2 mb-3 text-sm">
               {COMPARISON_FILTER_OPTIONS.map((opt) => (
                 <button
@@ -502,9 +510,13 @@ export default function SzamlakPage() {
               ))}
             </div>
             {(() => {
+              const normalizedSearch = normalizeProductName(comparisonSearch);
               const filteredComparison = comparison.filter((row) => {
-                if (comparisonFilter === "both") return hasBothSuppliers(row);
-                if (comparisonFilter === "changed") return hasPriceChange(row);
+                if (comparisonFilter === "both" && !hasBothSuppliers(row)) return false;
+                if (comparisonFilter === "changed" && !hasPriceChange(row)) return false;
+                if (normalizedSearch && !normalizeProductName(row.productName).includes(normalizedSearch)) {
+                  return false;
+                }
                 return true;
               });
 

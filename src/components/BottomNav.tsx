@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 function IconPencil() {
   return (
@@ -94,29 +95,87 @@ function IconTrendUp() {
   );
 }
 
-const navItems = [
+function IconMore() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
+      <circle cx="5" cy="12" r="1.8" fill="currentColor" />
+      <circle cx="12" cy="12" r="1.8" fill="currentColor" />
+      <circle cx="19" cy="12" r="1.8" fill="currentColor" />
+    </svg>
+  );
+}
+
+// Kept fixed on mobile, per the owner's request - the rest live behind "Több".
+const primaryItems = [
   { href: "/", label: "Rögzítés", Icon: IconPencil },
-  { href: "/alapanyagok", label: "Alapanyagok", Icon: IconList },
-  { href: "/osszesites", label: "Összesítő", Icon: IconChart },
   { href: "/heti-menu", label: "Heti menü", Icon: IconCalendar },
   { href: "/rendelesek", label: "Rendelések", Icon: IconCart },
-  { href: "/szamlak", label: "Számlák", Icon: IconReceipt },
   { href: "/riportok", label: "Riportok", Icon: IconTrendUp },
 ];
 
+const moreItems = [
+  { href: "/alapanyagok", label: "Alapanyagok", Icon: IconList },
+  { href: "/osszesites", label: "Összesítő", Icon: IconChart },
+  { href: "/szamlak", label: "Számlák", Icon: IconReceipt },
+];
+
+function isActive(pathname: string, href: string) {
+  return href === "/" ? pathname === "/" : pathname.startsWith(href);
+}
+
 export default function BottomNav() {
   const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
 
   if (pathname === "/bejelentkezes") return null;
 
+  const moreActive = moreItems.some((item) => isActive(pathname, item.href));
+
   return (
     <nav
+      ref={navRef}
       className="fixed bottom-0 left-0 right-0 z-40 bg-ink pb-[env(safe-area-inset-bottom)]"
       aria-label="Fő navigáció"
     >
-      <div className="max-w-3xl mx-auto grid grid-cols-7">
-        {navItems.map(({ href, label, Icon }) => {
-          const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
+      {menuOpen && (
+        <div className="absolute bottom-full right-0 mb-2 mr-2 rounded-2xl bg-ink border border-white/10 shadow-lg overflow-hidden min-w-[180px]">
+          {moreItems.map(({ href, label, Icon }) => {
+            const active = isActive(pathname, href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setMenuOpen(false)}
+                className={`flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${
+                  active ? "text-gold" : "text-neutral-300 active:text-gold"
+                }`}
+              >
+                <Icon />
+                {label}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+      <div className="max-w-3xl mx-auto grid grid-cols-5">
+        {primaryItems.map(({ href, label, Icon }) => {
+          const active = isActive(pathname, href);
           return (
             <Link
               key={href}
@@ -130,6 +189,17 @@ export default function BottomNav() {
             </Link>
           );
         })}
+        <button
+          type="button"
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-expanded={menuOpen}
+          className={`flex flex-col items-center justify-center gap-1 py-3 min-h-[64px] transition-colors ${
+            moreActive || menuOpen ? "text-gold" : "text-neutral-400 active:text-gold"
+          }`}
+        >
+          <IconMore />
+          <span className="text-[11px] font-medium leading-none">Több</span>
+        </button>
       </div>
     </nav>
   );

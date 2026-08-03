@@ -1,4 +1,4 @@
-import { addDaysStr, mondayOf, parseDay } from "@/lib/dates";
+import { addDaysStr, parseDay } from "@/lib/dates";
 
 // Mon-Fri only, matching the business's delivery week (no weekend delivery) -
 // deliberately NOT the same as sandwichDates.ts's DAY_NAMES_HU, which is a
@@ -42,10 +42,11 @@ export function isDeliveryWeekday(dateStr: string): boolean {
   return weekdayIndexOf(dateStr) !== null;
 }
 
-/** The weekday tab to open by default: today if it's a weekday, otherwise
- *  Monday of the coming week (so a Saturday visit lands on the next day that
- *  can actually be ordered for, not on a date nothing can read). */
+/** The weekday tab to open by default: the next delivery day after today
+ *  (skipping the weekend), since a phone order taken "now" is for that day,
+ *  not for today itself - e.g. a Monday call defaults to the Tuesday tab. */
 export function defaultEntryDate(todayStr: string): string {
-  if (isDeliveryWeekday(todayStr)) return todayStr;
-  return addDaysStr(mondayOf(todayStr), 7);
+  let candidate = addDaysStr(todayStr, 1);
+  while (!isDeliveryWeekday(candidate)) candidate = addDaysStr(candidate, 1);
+  return candidate;
 }
