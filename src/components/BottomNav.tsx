@@ -153,53 +153,55 @@ export default function BottomNav() {
       className="fixed bottom-0 left-0 right-0 z-40 bg-ink pb-[env(safe-area-inset-bottom)]"
       aria-label="Fő navigáció"
     >
-      {menuOpen && (
-        <div className="absolute bottom-full right-0 mb-2 mr-2 rounded-2xl bg-ink border border-white/10 shadow-lg overflow-hidden min-w-[180px]">
-          {moreItems.map(({ href, label, Icon }) => {
+      <div className="relative max-w-3xl mx-auto">
+        {menuOpen && (
+          <div className="absolute bottom-full right-0 mb-2 rounded-2xl bg-ink border border-white/10 shadow-lg overflow-hidden min-w-[180px]">
+            {moreItems.map(({ href, label, Icon }) => {
+              const active = isActive(pathname, href);
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${
+                    active ? "text-gold" : "text-neutral-300 active:text-gold"
+                  }`}
+                >
+                  <Icon />
+                  {label}
+                </Link>
+              );
+            })}
+          </div>
+        )}
+        <div className="grid grid-cols-5">
+          {primaryItems.map(({ href, label, Icon }) => {
             const active = isActive(pathname, href);
             return (
               <Link
                 key={href}
                 href={href}
-                onClick={() => setMenuOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${
-                  active ? "text-gold" : "text-neutral-300 active:text-gold"
+                className={`flex flex-col items-center justify-center gap-1 py-3 min-h-[64px] transition-colors ${
+                  active ? "text-gold" : "text-neutral-400 active:text-gold"
                 }`}
               >
                 <Icon />
-                {label}
+                <span className="text-[11px] font-medium leading-none">{label}</span>
               </Link>
             );
           })}
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-expanded={menuOpen}
+            className={`flex flex-col items-center justify-center gap-1 py-3 min-h-[64px] transition-colors ${
+              moreActive || menuOpen ? "text-gold" : "text-neutral-400 active:text-gold"
+            }`}
+          >
+            <IconMore />
+            <span className="text-[11px] font-medium leading-none">Több</span>
+          </button>
         </div>
-      )}
-      <div className="max-w-3xl mx-auto grid grid-cols-5">
-        {primaryItems.map(({ href, label, Icon }) => {
-          const active = isActive(pathname, href);
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={`flex flex-col items-center justify-center gap-1 py-3 min-h-[64px] transition-colors ${
-                active ? "text-gold" : "text-neutral-400 active:text-gold"
-              }`}
-            >
-              <Icon />
-              <span className="text-[11px] font-medium leading-none">{label}</span>
-            </Link>
-          );
-        })}
-        <button
-          type="button"
-          onClick={() => setMenuOpen((open) => !open)}
-          aria-expanded={menuOpen}
-          className={`flex flex-col items-center justify-center gap-1 py-3 min-h-[64px] transition-colors ${
-            moreActive || menuOpen ? "text-gold" : "text-neutral-400 active:text-gold"
-          }`}
-        >
-          <IconMore />
-          <span className="text-[11px] font-medium leading-none">Több</span>
-        </button>
       </div>
     </nav>
   );
