@@ -1,11 +1,8 @@
 import { randomUUID } from "crypto";
-import Anthropic from "@anthropic-ai/sdk";
 import { prisma } from "@/lib/db";
 import { PriceSource, ProductStatus, type Supplier } from "@/generated/prisma/client";
 import { findBestProductMatch } from "@/lib/productMatching";
-
-const anthropic = new Anthropic();
-const MODEL = "claude-sonnet-5";
+import { openRouterJsonCompletion } from "@/lib/openrouter";
 
 export type ExtractedLineItem = {
   name: string;
@@ -20,60 +17,21 @@ export type ExtractedInvoice = {
   lineItems: ExtractedLineItem[];
 };
 
-const LINE_ITEM_SCHEMA = {
-  type: "object",
-  properties: {
-    invoiceDate: { anyOf: [{ type: "string", format: "date" }, { type: "null" }] },
-    lineItems: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          name: { type: "string" },
-          shortName: { type: "string" },
-          unit: { anyOf: [{ type: "string" }, { type: "null" }] },
-          quantity: { type: "number" },
-          unitPrice: { type: "number" },
-        },
-        required: ["name", "shortName", "unit", "quantity", "unitPrice"],
-        additionalProperties: false,
-      },
-    },
-  },
-  required: ["invoiceDate", "lineItems"],
-  additionalProperties: false,
-} as const;
-
 export async function extractInvoiceLineItems(imageUrl: string): Promise<ExtractedInvoice> {
-  const response = await anthropic.messages.create({
-    model: MODEL,
-    max_tokens: 8192,
-    thinking: { type: "adaptive" },
-    output_config: {
-      effort: "medium",
-      format: { type: "json_schema", schema: LINE_ITEM_SCHEMA },
-    },
-    messages: [
+  const text = await openRouterJsonCompletion({
+    maxTokens: 8192,
+    content: [
+      { type: "image_url", image_url: { url: imageUrl } },
       {
-        role: "user",
-        content: [
-          { type: "image", source: { type: "url", url: imageUrl } },
-          {
-            type: "text",
-            text: "Ez egy beszállítói számla fotója. Olvasd ki a tételsorokat (termék neve, mennyiségi egység, mennyiség, nettó egységár forintban) és a számla dátumát, ha szerepel rajta — a dátumot ISO 8601 formátumban add vissza (ÉÉÉÉ-HH-NN). Minden tételhez add meg a `shortName` mezőt is: egy rövid, köznyelvi magyar elnevezés (1-3 szó, pl. \"Csirkemell\", \"Tejföl\", \"Zsemlemorzsa\"), NEM a teljes, gyakran hosszú gyári/nagykereskedelmi terméknév (pl. \"FRISS CSIRKE MELLFILÉ FELEZETT FINOM CSIBE LÉDIG 12 KG/# HU1512EK\" helyett csak \"Csirkemell\") — ezt egy tömör árváltozás-összesítéshez használjuk. Csak a megadott séma szerinti JSON-t add vissza.",
-          },
-        ],
+        type: "text",
+        text:
+          "Ez egy beszállítói számla fotója. Olvasd ki a tételsorokat (termék neve, mennyiségi egység, mennyiség, nettó egységár forintban) és a számla dátumát, ha szerepel rajta — a dátumot ISO 8601 formátumban add vissza (ÉÉÉÉ-HH-NN). Minden tételhez add meg a `shortName` mezőt is: egy rövid, köznyelvi magyar elnevezés (1-3 szó, pl. \"Csirkemell\", \"Tejföl\", \"Zsemlemorzsa\"), NEM a teljes, gyakran hosszú gyári/nagykereskedelmi terméknév (pl. \"FRISS CSIRKE MELLFILÉ FELEZETT FINOM CSIBE LÉDIG 12 KG/# HU1512EK\" helyett csak \"Csirkemell\") — ezt egy tömör árváltozás-összesítéshez használjuk.\n\n" +
+          "Válaszolj kizárólag egy JSON objektummal, pontosan ebben a formában:\n" +
+          '{"invoiceDate": "ÉÉÉÉ-HH-NN" vagy null, "lineItems": [{"name": string, "shortName": string, "unit": string vagy null, "quantity": szám, "unitPrice": szám}, ...]}',
       },
     ],
   });
-
-  const textBlock = response.content.find(
-    (block): block is Anthropic.TextBlock => block.type === "text"
-  );
-  if (!textBlock) {
-    throw new Error("Az AI nem adott vissza szöveges választ");
-  }
-  return JSON.parse(textBlock.text) as ExtractedInvoice;
+  return JSON.parse(text) as ExtractedInvoice;
 }
 
 type PriceObservationRecord = { supplier: Supplier; unitPrice: number };

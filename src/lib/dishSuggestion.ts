@@ -1,23 +1,11 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { prisma } from "@/lib/db";
 import { addDaysStr, parseDay } from "@/lib/dates";
 import type { MenuDay } from "@/lib/weeklyMenu";
-
-const anthropic = new Anthropic();
-const MODEL = "claude-sonnet-5";
+import { openRouterJsonCompletion } from "@/lib/openrouter";
 
 // How many prior weeks' dishes are off-limits, in addition to the current
 // week - keeps the same dish from reappearing too soon.
 const LOOKBACK_WEEKS = 2;
-
-const PICK_SCHEMA = {
-  type: "object",
-  properties: {
-    index: { type: "integer" },
-  },
-  required: ["index"],
-  additionalProperties: false,
-} as const;
 
 export function normalizeDishName(name: string): string {
   return name.trim().toLowerCase();
@@ -62,8 +50,9 @@ export function buildPickPrompt(
     '"székelyes") már megjelenik ebben a listában, még akkor sem, ha a pontos név különbözik ' +
     '(pl. ha már szerepel "Székelygulyás", ne válassz "Székelykáposztát" se ugyanerre a hétre) - ' +
     "kerüld a szóismétlést és a tartalmi/témabeli hasonlóságot is, ne csak a pontos névegyezést.\n\n" +
-    "Kizárólag a fenti listából választhatsz - ne találj ki új fogást. Csak a választott fogás " +
-    "sorszámát (index) add vissza, semmi mást."
+    "Kizárólag a fenti listából választhatsz - ne találj ki új fogást.\n\n" +
+    'Válaszolj kizárólag egy JSON objektummal, pontosan ebben a formában: {"index": szám} - ' +
+    "a szám a választott fogás sorszáma a fenti listából, semmi mást ne írj."
   );
 }
 
@@ -102,21 +91,11 @@ export async function suggestDish(params: {
 
   const prompt = buildPickPrompt(candidates, sameDayDishes, weekDishes);
 
-  const response = await anthropic.messages.create({
-    model: MODEL,
-    max_tokens: 1024,
-    thinking: { type: "adaptive" },
-    output_config: { effort: "low", format: { type: "json_schema", schema: PICK_SCHEMA } },
-    messages: [{ role: "user", content: [{ type: "text", text: prompt }] }],
+  const text = await openRouterJsonCompletion({
+    maxTokens: 1024,
+    content: [{ type: "text", text: prompt }],
   });
-
-  const textBlock = response.content.find(
-    (block): block is Anthropic.TextBlock => block.type === "text"
-  );
-  if (!textBlock) {
-    throw new Error("Az AI nem adott vissza szöveges választ");
-  }
-  const parsed = JSON.parse(textBlock.text) as { index: number };
+  const parsed = JSON.parse(text) as { index: number };
   const picked = candidates[parsed.index];
   if (picked === undefined) {
     throw new Error("Az AI érvénytelen indexet adott vissza");
