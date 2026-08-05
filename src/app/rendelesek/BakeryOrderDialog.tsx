@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Loading from "@/components/Loading";
 import type { BakeryProductKey } from "@/lib/sandwichBakeryOrder";
 
 type NeedRow = { key: BakeryProductKey; label: string; needed: number };
@@ -82,7 +83,7 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
 
       <div className="max-w-3xl mx-auto px-4 py-4 space-y-4">
         {!data ? (
-          <p className="text-muted">Betöltés...</p>
+          <Loading />
         ) : sentText ? (
           <div className="space-y-3">
             <div className="border border-green-300 dark:border-green-800/60 bg-green-50 dark:bg-green-950/40 rounded-2xl p-4 space-y-2">

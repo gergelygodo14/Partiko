@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Loading from "@/components/Loading";
 import type { StoreGroup } from "@/generated/prisma/client";
 import { STORE_GROUP_LABELS, STORE_GROUP_ORDER } from "@/lib/sandwichStoreGroups";
 import { DAY_ADJECTIVES, SHORT_DAY_NAMES } from "@/lib/weekdays";
@@ -143,7 +144,7 @@ export default function StoreSettingsPanel({
           <div className="text-sm font-medium">{store.storeName} eltávolítása</div>
 
           {info === null ? (
-            <p className="text-sm text-muted">Betöltés…</p>
+            <Loading size="sm" />
           ) : (
             <>
               <p className="text-xs text-muted">

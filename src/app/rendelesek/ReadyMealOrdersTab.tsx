@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Loading from "@/components/Loading";
 import { formatCell, type OrderDayQuantities } from "@/lib/orders";
 import { FULL_DAY_NAMES, SHORT_DAY_NAMES } from "@/lib/weekdays";
 
@@ -136,7 +137,7 @@ export default function ReadyMealOrdersTab() {
   }
 
   if (loading || !summary || dayIndex === null) {
-    return <p className="text-muted">Betöltés...</p>;
+    return <Loading />;
   }
 
   const { weekDays, week } = summary;
@@ -335,7 +336,7 @@ export default function ReadyMealOrdersTab() {
           </section>
         </>
       ) : monthLoading || !monthSummary ? (
-        <p className="text-muted">Betöltés...</p>
+        <Loading />
       ) : (
         <>
           <section className="space-y-3">

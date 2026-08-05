@@ -283,3 +283,14 @@ model SandwichOrderLine {
   @@unique([orderId, itemId])
   @@index([orderId])
 }
+
+// What was actually sent to the bakery (UNIBREAD) for a given day, via the
+// "Pékáru rendelés" flow - one row per day, overwritten (upsert) if sent
+// again for the same date. Lets /rendelesfelvetel compare "what we told the
+// bakery to bring" against the live sandwich-order totals for that day.
+model SandwichBakeryOrder {
+  id     String   @id @default(cuid())
+  date   DateTime @unique
+  rows   Json // BakeryOrderRow[] ({ label, toOrder }[])
+  sentAt DateTime @default(now())
+}

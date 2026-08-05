@@ -83,7 +83,7 @@ export function computeBakeryNeeds(byItem: { itemName: string; quantity: number 
   return BAKERY_PRODUCTS.map(({ key, label }) => ({ key, label, needed: totals.get(key) ?? 0 }));
 }
 
-export type BakeryOrderRow = { label: string; toOrder: number };
+export type BakeryOrderRow = { key: BakeryProductKey; label: string; toOrder: number };
 
 /** needed - leftover, floored at 0 (can't order a negative amount). */
 export function computeBakeryOrderRows(
@@ -91,6 +91,7 @@ export function computeBakeryOrderRows(
   leftovers: Partial<Record<BakeryProductKey, number>>
 ): BakeryOrderRow[] {
   return needs.map(({ key, label, needed }) => ({
+    key,
     label,
     toOrder: Math.max(needed - (leftovers[key] ?? 0), 0),
   }));

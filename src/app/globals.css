@@ -101,3 +101,34 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Loading indicator (components/Loading.tsx): the logo spins like a tray
+   being carried, while a separate wrapper bobs it up and down - two
+   independent animations rather than one combined keyframe, so the spin
+   stays perfectly linear/constant-speed while the bob eases in and out. */
+@keyframes partiko-loading-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes partiko-loading-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-partiko-loading-bob {
+  animation: partiko-loading-bob 1.4s ease-in-out infinite;
+}
+
+.animate-partiko-loading-spin {
+  animation: partiko-loading-spin 1.8s linear infinite;
+}

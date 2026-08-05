@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useCallback } from "react";
+import Loading from "@/components/Loading";
 
 type Ingredient = {
   id: string;
@@ -145,7 +146,7 @@ export default function DailyEntryPage() {
       </div>
 
       {loading ? (
-        <p className="text-muted">Betöltés...</p>
+        <Loading />
       ) : ingredients.length === 0 ? (
         <p className="text-muted">
           Nincs még alapanyag felvéve. Vedd fel az{" "}

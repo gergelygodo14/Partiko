@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Loading from "@/components/Loading";
 import { addDaysStr, addMonthsStr, mondayOf, monthStartOf, todayStr } from "@/lib/dates";
 import {
   computeItemTrends,
@@ -314,7 +315,7 @@ function SandwichAnalytics({
     <section className="space-y-3">
       <h2 className="text-lg font-semibold">Szendvics elemzés</h2>
       {loading ? (
-        <p className="text-muted">Betöltés...</p>
+        <Loading />
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -344,7 +345,7 @@ function DishAnalytics({ report, loading }: { report: DishBreakdownReport | null
     return (
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Készétel elemzés</h2>
-        <p className="text-muted">Betöltés...</p>
+        <Loading />
       </section>
     );
   }
@@ -472,7 +473,7 @@ function IngredientAnalytics({
       )}
 
       {loading ? (
-        <p className="text-muted">Betöltés...</p>
+        <Loading />
       ) : (
         <div className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-2">
           <div className="text-sm font-medium">

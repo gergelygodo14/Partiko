@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Loading from "@/components/Loading";
 import { addDaysStr, mondayOf, todayStr } from "@/lib/dates";
 import { DAY_NAMES, emptyWeek, type MenuDay } from "@/lib/weeklyMenu";
 
@@ -277,7 +278,7 @@ export default function WeeklyMenuPage() {
       </div>
 
       {loading ? (
-        <p className="text-muted">Betöltés...</p>
+        <Loading />
       ) : (
         <div className="space-y-4">
           {DAY_NAMES.map((name, i) => (

@@ -2,14 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { withApiErrorHandling } from "@/lib/apiRoute";
 import { addDaysStr, budapestTodayStr } from "@/lib/dates";
 import { prisma } from "@/lib/db";
-import { buildSandwichBulkEntryNotificationText } from "@/lib/sandwichBulkNotification";
 import {
   getSandwichDayGrid,
   saveSandwichDayGrid,
   type DaySaveStoreInput,
 } from "@/lib/sandwichDayGrid";
 import { isValidSandwichOrderItems } from "@/lib/sandwichOrders";
-import { sendTelegramMessage } from "@/lib/telegram";
 import { isValidDateStr } from "@/lib/validate";
 import { weekdayIndexOf } from "@/lib/weekdays";
 
@@ -103,22 +101,6 @@ export const PUT = withApiErrorHandling(async (request: NextRequest) => {
   }
 
   const result = await saveSandwichDayGrid(validated.date, parsed);
-
-  // Best-effort, exactly like the public order route: a Telegram outage must
-  // never fail a save the owner just spent a phone call collecting.
-  try {
-    const text = buildSandwichBulkEntryNotificationText({
-      date: result.date,
-      weekday: validated.weekday,
-      changedStoreNames: result.changedStoreNames,
-      storeCount: parsed.length,
-      totalQuantity: result.totalQuantity,
-      totalValueFt: result.totalValueFt,
-    });
-    if (text) await sendTelegramMessage(text);
-  } catch (error) {
-    console.error(error);
-  }
 
   return NextResponse.json(result);
 });

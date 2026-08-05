@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { normalizeProductName } from "@/lib/productMatching";
+import Loading from "@/components/Loading";
 
 type Supplier = "SAJTFUTAR" | "BAROMFIUDVAR";
 
@@ -482,7 +483,7 @@ export default function SzamlakPage() {
       <section>
         <h2 className="text-lg font-semibold mb-3">Ár-összehasonlítás</h2>
         {loading ? (
-          <p className="text-muted">Betöltés...</p>
+          <Loading />
         ) : comparison.length === 0 ? (
           <p className="text-muted">Még nincs jóváhagyott termék árelőzménye.</p>
         ) : (
@@ -614,7 +615,7 @@ export default function SzamlakPage() {
       <section>
         <h2 className="text-lg font-semibold mb-3">Feltöltött számlák</h2>
         {loading ? (
-          <p className="text-muted">Betöltés...</p>
+          <Loading />
         ) : invoices.length === 0 ? (
           <p className="text-muted">Még nincs feltöltött számla.</p>
         ) : (

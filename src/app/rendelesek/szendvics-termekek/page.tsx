@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Loading from "@/components/Loading";
 
 type SandwichItem = {
   id: string;
@@ -147,7 +148,7 @@ export default function SandwichItemsPage() {
         </div>
 
         {loading ? (
-          <p className="text-muted">Betöltés...</p>
+          <Loading />
         ) : (
           <ul className="space-y-2">
             {visible.map((item) => (

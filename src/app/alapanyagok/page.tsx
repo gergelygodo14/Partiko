@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Loading from "@/components/Loading";
 
 type Ingredient = {
   id: string;
@@ -155,7 +156,7 @@ export default function IngredientsPage() {
         </div>
 
         {loading ? (
-          <p className="text-muted">Betöltés...</p>
+          <Loading />
         ) : (
           <ul className="space-y-2">
             {visible.map((ing) => (

@@ -109,9 +109,9 @@ describe("buildBakeryOrderNotificationText", () => {
       dayName: "Hétfő",
       isEstimate: false,
       rows: [
-        { label: "Vekni", toOrder: 15 },
-        { label: "Sós papucs", toOrder: 0 },
-        { label: "Kmol", toOrder: 8 },
+        { key: "vekni", label: "Vekni", toOrder: 15 },
+        { key: "sosPapucs", label: "Sós papucs", toOrder: 0 },
+        { key: "kmol", label: "Kmol", toOrder: 8 },
       ],
     });
     expect(text).toContain("Vekni: 15db");
@@ -124,7 +124,7 @@ describe("buildBakeryOrderNotificationText", () => {
       date: "2026-08-04",
       dayName: "Kedd",
       isEstimate: true,
-      rows: [{ label: "Vekni", toOrder: 5 }],
+      rows: [{ key: "vekni", label: "Vekni", toOrder: 5 }],
     });
     expect(text).toContain("becslés");
   });
@@ -134,7 +134,7 @@ describe("buildBakeryOrderNotificationText", () => {
       date: "2026-08-03",
       dayName: "Hétfő",
       isEstimate: false,
-      rows: [{ label: "Vekni", toOrder: 0 }],
+      rows: [{ key: "vekni", label: "Vekni", toOrder: 0 }],
     });
     expect(text).toContain("nincs rendelendő tétel");
   });

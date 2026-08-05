@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Loading from "@/components/Loading";
 
 type SummaryRow = {
   ingredientId: string;
@@ -50,7 +51,7 @@ async function fetchSummary(from: string, to: string): Promise<Summary> {
 }
 
 function SummaryTable({ summary }: { summary: Summary | null }) {
-  if (!summary) return <p className="text-muted">Betöltés...</p>;
+  if (!summary) return <Loading />;
   if (summary.rows.length === 0) {
     return <p className="text-muted">Nincs rögzített adat ebben az időszakban.</p>;
   }

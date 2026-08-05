@@ -10,6 +10,7 @@ import {
   computeBakeryOrderRows,
   type BakeryProductKey,
 } from "@/lib/sandwichBakeryOrder";
+import { saveBakeryOrder } from "@/lib/sandwichBakeryOrderStore";
 import { sendTelegramMessage } from "@/lib/telegram";
 
 // Saturday is the only day tomorrow's (= Monday's) store orders are already
@@ -46,6 +47,12 @@ export const POST = withApiErrorHandling(async (request: NextRequest) => {
   const { date, dayName, isEstimate, needs } = await computeNeedsForNow();
   const rows = computeBakeryOrderRows(needs, leftovers);
   const text = buildBakeryOrderNotificationText({ date, dayName, isEstimate, rows });
+
+  // Recorded regardless of whether the Telegram send below succeeds - this is
+  // the order the owner was shown and would place manually in Viber either
+  // way, and /rendelesfelvetel's comparison should reflect that decision even
+  // if the notification channel had a hiccup.
+  await saveBakeryOrder(date, rows);
 
   const result = await sendTelegramMessage(text);
   return NextResponse.json({ text, sent: result.ok, error: result.ok ? null : result.error });

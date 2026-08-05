@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { StoreGroup } from "@/generated/prisma/client";
+import Loading from "@/components/Loading";
 import { addDaysStr, budapestTodayStr, mondayOf } from "@/lib/dates";
 import { getSandwichExportDay } from "@/lib/sandwichDates";
+import { computeBakeryNeeds, type BakeryOrderRow } from "@/lib/sandwichBakeryOrder";
 import {
   applyTemplate,
   applyTemplates,
@@ -93,6 +95,11 @@ export default function OrderEntryScreen() {
   const [sending, setSending] = useState(false);
   const [sendResult, setSendResult] = useState<DaySaveResult | null>(null);
 
+  // What was actually sent to the bakery for this date (null = nothing sent
+  // yet), fetched separately from the grid so switching days doesn't need to
+  // wait on it - see the pékáru summary block below the table.
+  const [bakeryOrdered, setBakeryOrdered] = useState<BakeryOrderRow[] | null>(null);
+
   const draft = useMemo(() => draftsByDate[date] ?? {}, [draftsByDate, date]);
   const saved = useMemo(() => savedByDate[date] ?? {}, [savedByDate, date]);
   const dirty = useMemo(() => diffDirtyStores(saved, draft), [saved, draft]);
@@ -101,6 +108,30 @@ export default function OrderEntryScreen() {
     () => gridTotals(grid?.items ?? [], draft),
     [grid?.items, draft]
   );
+  const bakeryNeeds = useMemo(
+    () =>
+      computeBakeryNeeds(
+        (grid?.items ?? []).map((item) => ({
+          itemName: item.name,
+          quantity: totals.byItem[item.itemId] ?? 0,
+        }))
+      ),
+    [grid?.items, totals.byItem]
+  );
+  // Compares what was actually sent to the bakery for this date (null = never
+  // sent) against the exact need computed live from today's grid, so the
+  // owner can catch a shortfall before it becomes a problem.
+  const bakeryComparisonRows = useMemo(() => {
+    const orderedByKey = new Map((bakeryOrdered ?? []).map((row) => [row.key, row.toOrder]));
+    return bakeryNeeds
+      .map((row) => ({
+        key: row.key,
+        label: row.label,
+        exact: row.needed,
+        ordered: bakeryOrdered ? (orderedByKey.get(row.key) ?? 0) : null,
+      }))
+      .filter((row) => row.exact > 0 || (row.ordered ?? 0) > 0);
+  }, [bakeryNeeds, bakeryOrdered]);
 
   // --- view mode: matrix on a real screen, list on a phone --------------------
   useEffect(() => {
@@ -163,6 +194,14 @@ export default function OrderEntryScreen() {
   useEffect(() => {
     loadDay(date);
   }, [date, loadDay]);
+
+  useEffect(() => {
+    setBakeryOrdered(null);
+    fetch(`/api/rendelesfelvetel/bakery-order?date=${date}`)
+      .then((res) => res.json())
+      .then((body: { rows: BakeryOrderRow[] | null }) => setBakeryOrdered(body.rows))
+      .catch(() => setBakeryOrdered(null));
+  }, [date]);
 
   // --- persist drafts ---------------------------------------------------------
   const draftsRef = useRef(draftsByDate);
@@ -513,8 +552,17 @@ export default function OrderEntryScreen() {
         </p>
       )}
 
+      {!loading && grid && (
+        <div className="text-center bg-gold/10 border border-gold/40 rounded-2xl px-4 py-3">
+          <span className="text-sm font-medium">
+            Ezen a napon <span className="font-bold">{totals.totalQuantity}</span> szendvics volt
+            összesen
+          </span>
+        </div>
+      )}
+
       {/* --- the grid itself --- */}
-      {loading && <p className="text-center text-muted py-10">Betöltés…</p>}
+      {loading && <Loading />}
 
       {!loading && grid && grid.stores.length === 0 && (
         <p className="text-center text-muted py-10">
@@ -544,6 +592,57 @@ export default function OrderEntryScreen() {
             />
           )}
         </>
+      )}
+
+      {!loading && grid && (
+        <section className="space-y-2">
+          <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">
+            Pékáru – megrendelve vs. pontos igény
+          </h2>
+          {bakeryComparisonRows.length === 0 ? (
+            <p className="text-sm text-muted">Erre a napra nincs pékáru-igényt jelentő szendvics.</p>
+          ) : (
+            <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm">
+              <table className="w-full text-sm">
+                <thead className="bg-surface-alt text-muted">
+                  <tr>
+                    <th className="text-left px-3 py-2">Pékáru</th>
+                    <th className="text-right px-3 py-2">Megrendelve</th>
+                    <th className="text-right px-3 py-2">Pontos igény</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bakeryComparisonRows.map((row) => {
+                    const short = row.ordered !== null && row.ordered < row.exact;
+                    return (
+                      <tr key={row.key} className="border-t border-surface-border">
+                        <td className="px-3 py-2">{row.label}</td>
+                        <td className="px-3 py-2 text-right">
+                          {row.ordered === null ? (
+                            <span className="text-faint">nincs rendelve</span>
+                          ) : (
+                            `${row.ordered} db`
+                          )}
+                        </td>
+                        <td
+                          className={`px-3 py-2 text-right font-medium ${
+                            short ? "text-red-600 dark:text-red-400" : ""
+                          }`}
+                        >
+                          {row.exact} db
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <p className="text-xs text-faint">
+            A "Megrendelve" a pékáru rendelés gombbal ténylegesen elküldött mennyiség erre a napra, a
+            "Pontos igény" pedig az ezen a napon most rögzített rendelésekből számolt friss szükséglet.
+          </p>
+        </section>
       )}
 
       {openStore && grid && (

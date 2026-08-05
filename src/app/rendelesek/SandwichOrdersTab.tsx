@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Loading from "@/components/Loading";
 import { addDaysStr, addMonthsStr } from "@/lib/dates";
 import { FULL_DAY_NAMES, SHORT_DAY_NAMES } from "@/lib/weekdays";
 import BakeryOrderDialog from "./BakeryOrderDialog";
@@ -375,7 +376,7 @@ export default function SandwichOrdersTab() {
   }
 
   if (loading || !weekSummary) {
-    return <p className="text-muted">Betöltés...</p>;
+    return <Loading />;
   }
 
   return (
@@ -519,7 +520,7 @@ export default function SandwichOrdersTab() {
           </div>
 
           {dayBreakdownLoading || !dayBreakdown ? (
-            <p className="text-muted">Betöltés...</p>
+            <Loading />
           ) : (
             <DayItemsTable day={dayBreakdown.days[selectedDayIndex]} dayIndex={selectedDayIndex} />
           )}
@@ -545,13 +546,13 @@ export default function SandwichOrdersTab() {
           </div>
 
           {monthGridLoading || !monthGrid ? (
-            <p className="text-muted">Betöltés...</p>
+            <Loading />
           ) : (
             <MonthGridTable grid={monthGrid} />
           )}
         </>
       ) : monthLoading || !monthSummary ? (
-        <p className="text-muted">Betöltés...</p>
+        <Loading />
       ) : (
         <>
           <h2 className="text-lg font-semibold capitalize">
