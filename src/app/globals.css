@@ -116,12 +116,17 @@ body {
   }
 }
 
+/* A flat rotate() here made the elliptical ring tumble in the picture plane
+   (its long axis sweeping through vertical mid-spin, looking like it was
+   flipping rather than spinning). rotateY under a perspective instead spins
+   it around a vertical axis - like a basketball on a fingertip - so it just
+   narrows and widens while staying upright. */
 @keyframes partiko-loading-spin {
   from {
-    transform: rotate(0deg);
+    transform: perspective(600px) rotateY(0deg);
   }
   to {
-    transform: rotate(360deg);
+    transform: perspective(600px) rotateY(360deg);
   }
 }
 
