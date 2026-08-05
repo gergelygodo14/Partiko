@@ -19,7 +19,16 @@ export default function Loading({ size = "md" }: { size?: keyof typeof SIZE_CLAS
   return (
     <div className={`flex items-center justify-center ${wrapper}`} role="status">
       <div className={`relative ${icon} animate-partiko-loading-bob`}>
-        <Image src="/logo-icon-penguin.png" alt="" fill sizes="80px" className="object-contain" />
+        {/* The penguin PNG is white, drawn for the always-dark header - invert
+            it to near-black on the light theme's near-white page background,
+            where it would otherwise be nearly invisible. */}
+        <Image
+          src="/logo-icon-penguin.png"
+          alt=""
+          fill
+          sizes="80px"
+          className="object-contain invert dark:invert-0"
+        />
         <Image
           src="/logo-icon-ring.png"
           alt=""
