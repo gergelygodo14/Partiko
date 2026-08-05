@@ -83,18 +83,25 @@ export function computeBakeryNeeds(byItem: { itemName: string; quantity: number 
   return BAKERY_PRODUCTS.map(({ key, label }) => ({ key, label, needed: totals.get(key) ?? 0 }));
 }
 
-export type BakeryOrderRow = { key: BakeryProductKey; label: string; toOrder: number };
+export type BakeryOrderRow = {
+  key: BakeryProductKey;
+  label: string;
+  toOrder: number;
+  leftover: number;
+};
 
-/** needed - leftover, floored at 0 (can't order a negative amount). */
+/** needed - leftover, floored at 0 (can't order a negative amount). Keeps
+ *  leftover on the row (not just folded into toOrder) so a later reader
+ *  (see /rendelesfelvetel's bakery comparison) can reconstruct the total
+ *  actually on hand for that day - toOrder alone would understate it. */
 export function computeBakeryOrderRows(
   needs: BakeryNeedRow[],
   leftovers: Partial<Record<BakeryProductKey, number>>
 ): BakeryOrderRow[] {
-  return needs.map(({ key, label, needed }) => ({
-    key,
-    label,
-    toOrder: Math.max(needed - (leftovers[key] ?? 0), 0),
-  }));
+  return needs.map(({ key, label, needed }) => {
+    const leftover = leftovers[key] ?? 0;
+    return { key, label, toOrder: Math.max(needed - leftover, 0), leftover };
+  });
 }
 
 export function buildBakeryOrderNotificationText(params: {

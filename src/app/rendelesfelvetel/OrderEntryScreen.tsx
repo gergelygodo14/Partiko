@@ -118,19 +118,26 @@ export default function OrderEntryScreen() {
       ),
     [grid?.items, totals.byItem]
   );
-  // Compares what was actually sent to the bakery for this date (null = never
-  // sent) against the exact need computed live from today's grid, so the
-  // owner can catch a shortfall before it becomes a problem.
+  // Compares what will actually be on hand for this date (freshly ordered +
+  // whatever leftover was already in stock when that order was placed)
+  // against the exact need computed live from today's grid - toOrder alone
+  // would understate supply and flag a false shortage whenever there was
+  // leftover stock. null = nothing was ever sent for this date.
   const bakeryComparisonRows = useMemo(() => {
-    const orderedByKey = new Map((bakeryOrdered ?? []).map((row) => [row.key, row.toOrder]));
+    const orderedByKey = new Map((bakeryOrdered ?? []).map((row) => [row.key, row]));
     return bakeryNeeds
-      .map((row) => ({
-        key: row.key,
-        label: row.label,
-        exact: row.needed,
-        ordered: bakeryOrdered ? (orderedByKey.get(row.key) ?? 0) : null,
-      }))
-      .filter((row) => row.exact > 0 || (row.ordered ?? 0) > 0);
+      .map((row) => {
+        const ordered = orderedByKey.get(row.key);
+        return {
+          key: row.key,
+          label: row.label,
+          exact: row.needed,
+          available: bakeryOrdered ? (ordered?.toOrder ?? 0) + (ordered?.leftover ?? 0) : null,
+          toOrder: ordered?.toOrder ?? 0,
+          leftover: ordered?.leftover ?? 0,
+        };
+      })
+      .filter((row) => row.exact > 0 || (row.available ?? 0) > 0);
   }, [bakeryNeeds, bakeryOrdered]);
 
   // --- view mode: matrix on a real screen, list on a phone --------------------
@@ -597,7 +604,7 @@ export default function OrderEntryScreen() {
       {!loading && grid && (
         <section className="space-y-2">
           <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">
-            Pékáru – megrendelve vs. pontos igény
+            Pékáru – rendelkezésre áll vs. pontos igény
           </h2>
           {bakeryComparisonRows.length === 0 ? (
             <p className="text-sm text-muted">Erre a napra nincs pékáru-igényt jelentő szendvics.</p>
@@ -607,21 +614,28 @@ export default function OrderEntryScreen() {
                 <thead className="bg-surface-alt text-muted">
                   <tr>
                     <th className="text-left px-3 py-2">Pékáru</th>
-                    <th className="text-right px-3 py-2">Megrendelve</th>
+                    <th className="text-right px-3 py-2">Rendelkezésre áll</th>
                     <th className="text-right px-3 py-2">Pontos igény</th>
                   </tr>
                 </thead>
                 <tbody>
                   {bakeryComparisonRows.map((row) => {
-                    const short = row.ordered !== null && row.ordered < row.exact;
+                    const short = row.available !== null && row.available < row.exact;
                     return (
                       <tr key={row.key} className="border-t border-surface-border">
                         <td className="px-3 py-2">{row.label}</td>
                         <td className="px-3 py-2 text-right">
-                          {row.ordered === null ? (
+                          {row.available === null ? (
                             <span className="text-faint">nincs rendelve</span>
                           ) : (
-                            `${row.ordered} db`
+                            <>
+                              {row.available} db
+                              {row.leftover > 0 && (
+                                <div className="text-xs text-faint">
+                                  {row.toOrder} rendelve + {row.leftover} maradék
+                                </div>
+                              )}
+                            </>
                           )}
                         </td>
                         <td
@@ -639,8 +653,9 @@ export default function OrderEntryScreen() {
             </div>
           )}
           <p className="text-xs text-faint">
-            A "Megrendelve" a pékáru rendelés gombbal ténylegesen elküldött mennyiség erre a napra, a
-            "Pontos igény" pedig az ezen a napon most rögzített rendelésekből számolt friss szükséglet.
+            A "Rendelkezésre áll" a pékáru rendelés gombbal ténylegesen elküldött mennyiség PLUSZ az
+            akkor megadott maradék erre a napra, a "Pontos igény" pedig az ezen a napon most rögzített
+            rendelésekből számolt friss szükséglet.
           </p>
         </section>
       )}

@@ -21,7 +21,7 @@ beforeEach(() => {
 
 describe("saveBakeryOrder", () => {
   it("upserts by date so a second send for the same day overwrites the first", async () => {
-    const rows = [{ key: "vekni" as const, label: "Vekni", toOrder: 12 }];
+    const rows = [{ key: "vekni" as const, label: "Vekni", toOrder: 12, leftover: 2 }];
     await saveBakeryOrder("2026-08-03", rows);
 
     expect(upsert).toHaveBeenCalledTimes(1);
@@ -34,7 +34,7 @@ describe("saveBakeryOrder", () => {
 
 describe("getBakeryOrderForDate", () => {
   it("returns the stored rows when a record exists", async () => {
-    const rows = [{ key: "kmol", label: "Kmol", toOrder: 4 }];
+    const rows = [{ key: "kmol", label: "Kmol", toOrder: 4, leftover: 0 }];
     findUnique.mockResolvedValue({ id: "1", rows, sentAt: new Date() });
 
     const result = await getBakeryOrderForDate("2026-08-03");

@@ -98,7 +98,15 @@ describe("computeBakeryOrderRows", () => {
   it("treats a missing leftover as 0", () => {
     const needs = computeBakeryNeeds([{ itemName: "Nagyi kifli", quantity: 5 }]);
     const rows = computeBakeryOrderRows(needs, {});
-    expect(rows.find((r) => r.label === "nagyi")?.toOrder).toBe(5);
+    const row = rows.find((r) => r.label === "nagyi");
+    expect(row?.toOrder).toBe(5);
+    expect(row?.leftover).toBe(0);
+  });
+
+  it("keeps the leftover figure on the row, not just folded into toOrder", () => {
+    const needs = computeBakeryNeeds([{ itemName: "Sajtburger", quantity: 10 }]);
+    const rows = computeBakeryOrderRows(needs, { sajtburger: 3 });
+    expect(rows.find((r) => r.label === "Sajtburger")?.leftover).toBe(3);
   });
 });
 
@@ -109,9 +117,9 @@ describe("buildBakeryOrderNotificationText", () => {
       dayName: "Hétfő",
       isEstimate: false,
       rows: [
-        { key: "vekni", label: "Vekni", toOrder: 15 },
-        { key: "sosPapucs", label: "Sós papucs", toOrder: 0 },
-        { key: "kmol", label: "Kmol", toOrder: 8 },
+        { key: "vekni", label: "Vekni", toOrder: 15, leftover: 0 },
+        { key: "sosPapucs", label: "Sós papucs", toOrder: 0, leftover: 0 },
+        { key: "kmol", label: "Kmol", toOrder: 8, leftover: 0 },
       ],
     });
     expect(text).toContain("Vekni: 15db");
@@ -124,7 +132,7 @@ describe("buildBakeryOrderNotificationText", () => {
       date: "2026-08-04",
       dayName: "Kedd",
       isEstimate: true,
-      rows: [{ key: "vekni", label: "Vekni", toOrder: 5 }],
+      rows: [{ key: "vekni", label: "Vekni", toOrder: 5, leftover: 0 }],
     });
     expect(text).toContain("becslés");
   });
@@ -134,7 +142,7 @@ describe("buildBakeryOrderNotificationText", () => {
       date: "2026-08-03",
       dayName: "Hétfő",
       isEstimate: false,
-      rows: [{ key: "vekni", label: "Vekni", toOrder: 0 }],
+      rows: [{ key: "vekni", label: "Vekni", toOrder: 0, leftover: 0 }],
     });
     expect(text).toContain("nincs rendelendő tétel");
   });
