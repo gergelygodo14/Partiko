@@ -5,7 +5,14 @@ import Loading from "@/components/Loading";
 import type { BakeryProductKey } from "@/lib/sandwichBakeryOrder";
 
 type NeedRow = { key: BakeryProductKey; label: string; needed: number };
-type NeedsResponse = { date: string; dayName: string; isEstimate: boolean; needs: NeedRow[] };
+type NeedsResponse = {
+  date: string;
+  dayName: string;
+  isEstimate: boolean;
+  sourceDayName: string;
+  needs: NeedRow[];
+};
+type NeedsApiResponse = NeedsResponse | { noOrderToday: true };
 
 function formatDate(dateStr: string) {
   return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString("hu-HU", {
@@ -14,8 +21,23 @@ function formatDate(dateStr: string) {
   });
 }
 
+// Adjectival ("-i") form for the "előző heti X-i rendelések alapján" sentence
+// below - Hungarian day-name suffixing isn't a mechanical rule (hétfői,
+// keddi, szerdai, csütörtöki, pénteki, szombati, vasárnapi all differ), so
+// this is a plain lookup rather than a generated suffix.
+const DAY_NAME_ADJECTIVE: Record<string, string> = {
+  Vasárnap: "vasárnapi",
+  Hétfő: "hétfői",
+  Kedd: "keddi",
+  Szerda: "szerdai",
+  Csütörtök: "csütörtöki",
+  Péntek: "pénteki",
+  Szombat: "szombati",
+};
+
 export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) {
   const [data, setData] = useState<NeedsResponse | null>(null);
+  const [noOrderToday, setNoOrderToday] = useState(false);
   const [leftovers, setLeftovers] = useState<Partial<Record<BakeryProductKey, string>>>({});
   const [sending, setSending] = useState(false);
   const [sentText, setSentText] = useState<string | null>(null);
@@ -24,7 +46,13 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
   useEffect(() => {
     fetch("/api/sandwich-orders/bakery-order")
       .then((res) => res.json())
-      .then(setData)
+      .then((body: NeedsApiResponse) => {
+        if ("noOrderToday" in body) {
+          setNoOrderToday(true);
+        } else {
+          setData(body);
+        }
+      })
       .catch(() => setError("Nem sikerült betölteni a szendvics összesítést."));
   }, []);
 
@@ -82,7 +110,12 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
       </div>
 
       <div className="max-w-3xl mx-auto px-4 py-4 space-y-4">
-        {!data ? (
+        {noOrderToday ? (
+          <p className="text-sm text-muted bg-surface-alt rounded-xl px-3 py-3">
+            Ma nincs pékáru rendelés — a szerdai szállítmány már fedezi a pénteki igényt, csütörtökön
+            és pénteken nem kell újat rendelni.
+          </p>
+        ) : !data ? (
           <Loading />
         ) : sentText ? (
           <div className="space-y-3">
@@ -102,12 +135,15 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
           <>
             {data.isEstimate ? (
               <p className="text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-xl px-3 py-2.5">
-                Ma nem szombat van, ezért a szükséges mennyiség csak becslés — az előző hét ugyanerre
-                a napra ({data.dayName}) leadott rendelések alapján.
+                A szükséges mennyiség csak becslés: a holnap ({data.dayName}) érkező kenyérből a
+                konyha a rákövetkező munkanapra dolgozik, ezért az előző heti{" "}
+                {DAY_NAME_ADJECTIVE[data.sourceDayName] ?? data.sourceDayName} rendelések alapján
+                becsüljük.
               </p>
             ) : (
               <p className="text-xs text-muted bg-surface-alt rounded-xl px-3 py-2.5">
-                Szombat van, ezért a mennyiség pontos — a holnapi (hétfői) rendelések alapján.
+                Szombat van, ezért a mennyiség pontos — a{" "}
+                {DAY_NAME_ADJECTIVE[data.sourceDayName] ?? data.sourceDayName} rendelések alapján.
               </p>
             )}
 

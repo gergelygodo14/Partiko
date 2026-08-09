@@ -1,3 +1,6 @@
+import { addDaysStr, budapestTodayStr, parseDay } from "@/lib/dates";
+import { toTargetDay } from "@/lib/sandwichDates";
+
 // Maps sandwich catalog items to the bread/dough product the kitchen orders
 // them on from the bakery supplier (UNIBREAD) - several sandwiches share the
 // same underlying bread, so the bakery order is placed per bread type, not
@@ -81,6 +84,47 @@ export function computeBakeryNeeds(byItem: { itemName: string; quantity: number 
     totals.set(key, (totals.get(key) ?? 0) + item.quantity);
   }
   return BAKERY_PRODUCTS.map(({ key, label }) => ({ key, label, needed: totals.get(key) ?? 0 }));
+}
+
+export type BakeryOrderPlan = {
+  deliveryDate: string;
+  dayName: string;
+  demandDate: string;
+  sourceDayName: string;
+  isEstimate: boolean;
+};
+
+// Full weekly cycle, confirmed with the owner (2026-08-06). The owner orders
+// bread "for tomorrow" (deliveryDate), and the kitchen uses it THAT day to
+// prep for the day after (demandDate) - so the order must be sized off
+// demandDate's sandwich-order volume, not deliveryDate's. This is NOT a
+// weekday-only pattern: bread is delivered even on Sunday (for Monday's
+// prep), which is why this uses plain +1/+2 day math rather than any
+// business-day-skipping helper.
+//
+// Thursday and Friday place no order at all (null): Wednesday's delivery
+// (used Thursday) already covers Friday's demand, and there's no
+// Saturday/Sunday customer demand a Thursday- or Friday-placed order could
+// be for.
+//
+// Saturday is the one EXACT day: stores don't operate weekends, so Monday's
+// orders are already final by Saturday (nothing can change before Monday
+// itself). Every other active day is an estimate off demandDate's weekday
+// total from one week earlier, since demandDate's own order window is still
+// open at order time.
+export function bakeryOrderPlan(now: Date = new Date()): BakeryOrderPlan | null {
+  const today = budapestTodayStr(now);
+  const weekday = parseDay(today).getUTCDay(); // 0=Sun..6=Sat
+  if (weekday === 4 || weekday === 5) return null; // Thursday, Friday: no order
+  const deliveryDate = addDaysStr(today, 1);
+  const demandDate = addDaysStr(today, 2);
+  return {
+    deliveryDate,
+    dayName: toTargetDay(deliveryDate).dayName,
+    demandDate,
+    sourceDayName: toTargetDay(demandDate).dayName,
+    isEstimate: weekday !== 6, // Saturday is the only exact day
+  };
 }
 
 export type BakeryOrderRow = {

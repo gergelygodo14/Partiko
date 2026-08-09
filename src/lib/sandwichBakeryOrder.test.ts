@@ -1,10 +1,79 @@
 import { describe, expect, it } from "vitest";
 import {
   BAKERY_PRODUCTS,
+  bakeryOrderPlan,
   buildBakeryOrderNotificationText,
   computeBakeryNeeds,
   computeBakeryOrderRows,
 } from "@/lib/sandwichBakeryOrder";
+
+// `hour` is Budapest local time; construct the equivalent UTC instant by
+// subtracting the offset (CET=+1 in winter, CEST=+2 in summer).
+function budapestInstant(dateStr: string, hour: number, utcOffsetHours: number): Date {
+  const utcMidnight = new Date(`${dateStr}T00:00:00.000Z`).getTime();
+  return new Date(utcMidnight + hour * 3600_000 - utcOffsetHours * 3600_000);
+}
+
+// Week of 2026-08-03 (Mon) - 2026-08-09 (Sun), summer => Budapest is CEST (+2).
+describe("bakeryOrderPlan", () => {
+  it("Sunday orders for Monday delivery, sized off Tuesday demand (estimate)", () => {
+    expect(bakeryOrderPlan(budapestInstant("2026-08-09", 12, 2))).toEqual({
+      deliveryDate: "2026-08-10",
+      dayName: "Hétfő",
+      demandDate: "2026-08-11",
+      sourceDayName: "Kedd",
+      isEstimate: true,
+    });
+  });
+
+  it("Monday orders for Tuesday delivery, sized off Wednesday demand (estimate)", () => {
+    expect(bakeryOrderPlan(budapestInstant("2026-08-03", 12, 2))).toEqual({
+      deliveryDate: "2026-08-04",
+      dayName: "Kedd",
+      demandDate: "2026-08-05",
+      sourceDayName: "Szerda",
+      isEstimate: true,
+    });
+  });
+
+  it("Tuesday orders for Wednesday delivery, sized off Thursday demand (estimate)", () => {
+    expect(bakeryOrderPlan(budapestInstant("2026-08-04", 12, 2))).toEqual({
+      deliveryDate: "2026-08-05",
+      dayName: "Szerda",
+      demandDate: "2026-08-06",
+      sourceDayName: "Csütörtök",
+      isEstimate: true,
+    });
+  });
+
+  it("Wednesday orders for Thursday delivery, sized off Friday demand (estimate)", () => {
+    expect(bakeryOrderPlan(budapestInstant("2026-08-05", 12, 2))).toEqual({
+      deliveryDate: "2026-08-06",
+      dayName: "Csütörtök",
+      demandDate: "2026-08-07",
+      sourceDayName: "Péntek",
+      isEstimate: true,
+    });
+  });
+
+  it("Thursday places no order", () => {
+    expect(bakeryOrderPlan(budapestInstant("2026-08-06", 12, 2))).toBeNull();
+  });
+
+  it("Friday places no order", () => {
+    expect(bakeryOrderPlan(budapestInstant("2026-08-07", 12, 2))).toBeNull();
+  });
+
+  it("Saturday orders for Sunday delivery, sized off Monday demand (exact, no estimate)", () => {
+    expect(bakeryOrderPlan(budapestInstant("2026-08-08", 12, 2))).toEqual({
+      deliveryDate: "2026-08-09",
+      dayName: "Vasárnap",
+      demandDate: "2026-08-10",
+      sourceDayName: "Hétfő",
+      isEstimate: false,
+    });
+  });
+});
 
 describe("computeBakeryNeeds", () => {
   it("sums multiple sandwich items that share the same bread into one bakery product", () => {

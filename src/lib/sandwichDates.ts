@@ -64,12 +64,3 @@ export function getSandwichExportDay(now: Date = new Date()): SandwichTargetDay 
   return toTargetDay(target);
 }
 
-/** Whether "today" (Budapest wall-clock) is a Saturday - confirmed with the
- *  owner as the only day the bakery order can be precise: Saturday morning
- *  Monday's store orders are already closed, so getSandwichExportDay's
- *  target (which lands on Monday from a Saturday "now") is final. Every
- *  other day it's an estimate off last week's same weekday instead. */
-export function isTodaySaturdayInBudapest(now: Date = new Date()): boolean {
-  const { dateStr } = budapestDateAndHour(now);
-  return parseDay(dateStr).getUTCDay() === 6;
-}
