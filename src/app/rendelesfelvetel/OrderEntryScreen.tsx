@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { StoreGroup } from "@/generated/prisma/client";
 import Loading from "@/components/Loading";
 import { addDaysStr, budapestTodayStr, mondayOf } from "@/lib/dates";
-import { getSandwichExportDay, toTargetDay } from "@/lib/sandwichDates";
+import { getSandwichExportDay } from "@/lib/sandwichDates";
 import { computeBakeryNeeds, type BakeryOrderRow } from "@/lib/sandwichBakeryOrder";
 import {
   applyTemplate,
@@ -100,46 +100,6 @@ export default function OrderEntryScreen() {
   // wait on it - see the pékáru summary block below the table.
   const [bakeryOrdered, setBakeryOrdered] = useState<BakeryOrderRow[] | null>(null);
 
-  // Bread delivered on a given date is used THAT day to prep for the day
-  // after (confirmed with the owner, 2026-08-06: e.g. Monday's bread is
-  // consumed prepping Tuesday's orders) - so the live demand the comparison
-  // below needs is the NEXT calendar day's order totals, not this date's
-  // own. Plain +1 day, not a business-day skip: this screen only ever shows
-  // Monday-Thursday as `date` (Friday deliberately gets no fresh bakery
-  // order - see bakeryOrderPlan in sandwichBakeryOrder.ts), so the one case
-  // that would land on a weekend (viewing Friday -> Saturday) has no bakery
-  // order or live grid to show anyway, and /api/rendelesfelvetel/day
-  // rejects weekend dates - the fetch below just comes back empty then,
-  // which is the correct "nothing to compare" state.
-  const nextCalendarDate = useMemo(() => addDaysStr(date, 1), [date]);
-  const [nextDayNeeds, setNextDayNeeds] = useState<{ itemName: string; quantity: number }[] | null>(
-    null
-  );
-
-  useEffect(() => {
-    let cancelled = false;
-    setNextDayNeeds(null);
-    fetch(`/api/rendelesfelvetel/day?date=${nextCalendarDate}`)
-      .then((res) => (res.ok ? (res.json() as Promise<DayGrid>) : null))
-      .then((data) => {
-        if (cancelled) return;
-        if (!data) {
-          setNextDayNeeds([]);
-          return;
-        }
-        const quantities: GridQuantities = {};
-        for (const store of data.stores) quantities[store.customerId] = { ...store.saved };
-        const { byItem } = gridTotals(data.items, quantities);
-        setNextDayNeeds(data.items.map((item) => ({ itemName: item.name, quantity: byItem[item.itemId] ?? 0 })));
-      })
-      .catch(() => {
-        if (!cancelled) setNextDayNeeds([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [nextCalendarDate]);
-
   const draft = useMemo(() => draftsByDate[date] ?? {}, [draftsByDate, date]);
   const saved = useMemo(() => savedByDate[date] ?? {}, [savedByDate, date]);
   const dirty = useMemo(() => diffDirtyStores(saved, draft), [saved, draft]);
@@ -148,13 +108,25 @@ export default function OrderEntryScreen() {
     () => gridTotals(grid?.items ?? [], draft),
     [grid?.items, draft]
   );
-  const bakeryNeeds = useMemo(() => computeBakeryNeeds(nextDayNeeds ?? []), [nextDayNeeds]);
+  const bakeryNeeds = useMemo(
+    () =>
+      computeBakeryNeeds(
+        (grid?.items ?? []).map((item) => ({
+          itemName: item.name,
+          quantity: totals.byItem[item.itemId] ?? 0,
+        }))
+      ),
+    [grid?.items, totals.byItem]
+  );
   // Compares what will actually be on hand for this date (freshly ordered +
   // whatever leftover was already in stock when that order was placed)
-  // against the exact need computed live from the NEXT calendar day's grid
-  // (see nextCalendarDate above) - toOrder alone would understate supply and
-  // flag a false shortage whenever there was leftover stock. null = nothing
-  // was ever sent for this date.
+  // against the exact need computed live from today's grid - toOrder alone
+  // would understate supply and flag a false shortage whenever there was
+  // leftover stock. null = nothing was ever sent for this date. Deliberately
+  // same-day on both sides (not the demand-day shift used by the actual
+  // bakery order estimate in sandwichBakeryOrder.ts) - this table's job is a
+  // same-day sanity check: did we order enough bread to cover what got
+  // entered into today's grid (confirmed with the owner, 2026-08-10).
   const bakeryComparisonRows = useMemo(() => {
     const orderedByKey = new Map((bakeryOrdered ?? []).map((row) => [row.key, row]));
     return bakeryNeeds
@@ -419,10 +391,6 @@ export default function OrderEntryScreen() {
   // --- derived UI bits --------------------------------------------------------
   const weekday = weekdayIndexOf(date) ?? 0;
   const dayLabel = `${FULL_DAY_NAMES[weekday]} (${formatShortDate(date)})`;
-  // toTargetDay (not FULL_DAY_NAMES/weekdayIndexOf) because nextCalendarDate
-  // can land on a Saturday when `date` is Friday (see the comment above
-  // nextCalendarDate) - FULL_DAY_NAMES only covers Mon-Fri.
-  const nextDayLabel = `${toTargetDay(nextCalendarDate).dayName} (${formatShortDate(nextCalendarDate)})`;
   const openStore = grid?.stores.find((s) => s.customerId === openStoreId) ?? null;
   const alreadyExported = date <= getSandwichExportDay().date;
 
@@ -643,15 +611,15 @@ export default function OrderEntryScreen() {
             Pékáru – rendelkezésre áll vs. pontos igény
           </h2>
           {bakeryComparisonRows.length === 0 ? (
-            <p className="text-sm text-muted">A {nextDayLabel} napra nincs pékáru-igényt jelentő szendvics.</p>
+            <p className="text-sm text-muted">Erre a napra nincs pékáru-igényt jelentő szendvics.</p>
           ) : (
             <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm">
               <table className="w-full text-sm">
                 <thead className="bg-surface-alt text-muted">
                   <tr>
                     <th className="text-left px-3 py-2">Pékáru</th>
-                    <th className="text-right px-3 py-2">Rendelkezésre áll ({dayLabel})</th>
-                    <th className="text-right px-3 py-2">Pontos igény ({nextDayLabel})</th>
+                    <th className="text-right px-3 py-2">Rendelkezésre áll</th>
+                    <th className="text-right px-3 py-2">Pontos igény</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -690,9 +658,8 @@ export default function OrderEntryScreen() {
           )}
           <p className="text-xs text-faint">
             A "Rendelkezésre áll" a pékáru rendelés gombbal ténylegesen elküldött mennyiség PLUSZ az
-            akkor megadott maradék erre a napra ({dayLabel}). A "Pontos igény" viszont a {nextDayLabel}{" "}
-            napi rendelésekből számolt friss szükséglet — az ezen a napon ({dayLabel}) beérkező
-            kenyeret a konyha ezen a napon a következő napra használja fel.
+            akkor megadott maradék erre a napra, a "Pontos igény" pedig az ezen a napon most rögzített
+            rendelésekből számolt friss szükséglet.
           </p>
         </section>
       )}
