@@ -7,7 +7,7 @@ import {
   bakeryOrderPlan,
   buildBakeryOrderNotificationText,
   computeBakeryNeeds,
-  computeBakeryOrderRows,
+  type BakeryOrderRow,
   type BakeryProductKey,
 } from "@/lib/sandwichBakeryOrder";
 import { saveBakeryOrder } from "@/lib/sandwichBakeryOrderStore";
@@ -40,9 +40,13 @@ export const GET = withApiErrorHandling(async () => {
   return NextResponse.json(result ?? { noOrderToday: true });
 });
 
-// Recomputes the needs server-side rather than trusting whatever the client
-// last rendered - the modal can stay open a while, and the owner shouldn't
-// end up sending a Telegram order built off a stale need figure.
+// Still recomputes `date` server-side rather than trusting whatever the
+// client last rendered - the modal can stay open a while, and a stale
+// `date` would save/send the wrong day's order. The actual quantities,
+// though, come straight from the client: the owner can edit the "rendelendő"
+// estimate before sending (see BakeryOrderDialog), and the whole point is
+// that the number that goes out is the number they typed, not a
+// server-recomputed estimate that would silently discard their edit.
 export const POST = withApiErrorHandling(async (request: NextRequest) => {
   const computed = await computeNeedsForNow();
   if (!computed) {
@@ -50,19 +54,25 @@ export const POST = withApiErrorHandling(async (request: NextRequest) => {
   }
 
   const body = await request.json().catch(() => ({}));
-  const leftovers: Partial<Record<BakeryProductKey, number>> = {};
-  if (body?.leftovers && typeof body.leftovers === "object") {
-    for (const { key } of BAKERY_PRODUCTS) {
-      const value = body.leftovers[key];
-      if (typeof value === "number" && Number.isFinite(value) && value > 0) {
-        leftovers[key] = value;
-      }
-    }
+  const rowsInput = Array.isArray(body?.rows) ? body.rows : [];
+  const rowByKey = new Map<BakeryProductKey, { toOrder: number; leftover: number }>();
+  for (const entry of rowsInput) {
+    const key = entry?.key;
+    if (!BAKERY_PRODUCTS.some((p) => p.key === key)) continue;
+    const toOrder = Number(entry?.toOrder);
+    const leftover = Number(entry?.leftover);
+    rowByKey.set(key, {
+      toOrder: Number.isFinite(toOrder) && toOrder > 0 ? Math.round(toOrder) : 0,
+      leftover: Number.isFinite(leftover) && leftover > 0 ? Math.round(leftover) : 0,
+    });
   }
+  const rows: BakeryOrderRow[] = BAKERY_PRODUCTS.map(({ key, label }) => {
+    const entry = rowByKey.get(key);
+    return { key, label, toOrder: entry?.toOrder ?? 0, leftover: entry?.leftover ?? 0 };
+  });
 
-  const { date, dayName, isEstimate, needs } = computed;
-  const rows = computeBakeryOrderRows(needs, leftovers);
-  const text = buildBakeryOrderNotificationText({ date, dayName, isEstimate, rows });
+  const { date } = computed;
+  const text = buildBakeryOrderNotificationText({ rows });
 
   // Recorded regardless of whether the Telegram send below succeeds - this is
   // the order the owner was shown and would place manually in Viber either

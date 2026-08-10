@@ -148,19 +148,18 @@ export function computeBakeryOrderRows(
   });
 }
 
-export function buildBakeryOrderNotificationText(params: {
-  date: string;
-  dayName: string;
-  isEstimate: boolean;
-  rows: BakeryOrderRow[];
-}): string {
-  const { date, dayName, isEstimate, rows } = params;
-  const nonZero = rows.filter((row) => row.toOrder > 0);
+// Deliberately phrased as a ready-to-send chat message, not an internal
+// report - the owner copies this straight into Viber to place the real
+// order with the supplier, so it carries no date/day-name/estimate-vs-exact
+// framing (that context lives in the app's own UI, not in the message the
+// bakery reads). deliveryDate in bakeryOrderPlan is always literally
+// "tomorrow" relative to when the order is placed, so "holnapra" is always
+// accurate without needing to spell out which date that is.
+export function buildBakeryOrderNotificationText(params: { rows: BakeryOrderRow[] }): string {
+  const nonZero = params.rows.filter((row) => row.toOrder > 0);
   const body =
     nonZero.length > 0
       ? nonZero.map((row) => `${row.label}: ${row.toOrder}db`).join("\n")
       : "(nincs rendelendő tétel)";
-  const title = isEstimate ? "🥖 Pékáru rendelés (becslés, előző hét alapján)" : "🥖 Pékáru rendelés";
-
-  return `${title} – ${dayName} (${date})\n\n${body}`;
+  return `Szia. holnapra ezeket szeretném rendelni:\n${body}\nKöszi!`;
 }

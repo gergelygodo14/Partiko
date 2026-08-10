@@ -182,9 +182,6 @@ describe("computeBakeryOrderRows", () => {
 describe("buildBakeryOrderNotificationText", () => {
   it("lists only nonzero rows, one per line as 'label: Ndb'", () => {
     const text = buildBakeryOrderNotificationText({
-      date: "2026-08-03",
-      dayName: "Hétfő",
-      isEstimate: false,
       rows: [
         { key: "vekni", label: "Vekni", toOrder: 15, leftover: 0 },
         { key: "sosPapucs", label: "Sós papucs", toOrder: 0, leftover: 0 },
@@ -196,21 +193,15 @@ describe("buildBakeryOrderNotificationText", () => {
     expect(text).not.toContain("Sós papucs");
   });
 
-  it("marks the message as an estimate when isEstimate is true", () => {
+  it("wraps the list in a ready-to-copy chat message, with no date/day-name/estimate framing", () => {
     const text = buildBakeryOrderNotificationText({
-      date: "2026-08-04",
-      dayName: "Kedd",
-      isEstimate: true,
       rows: [{ key: "vekni", label: "Vekni", toOrder: 5, leftover: 0 }],
     });
-    expect(text).toContain("becslés");
+    expect(text).toBe("Szia. holnapra ezeket szeretném rendelni:\nVekni: 5db\nKöszi!");
   });
 
   it("says so when nothing needs ordering", () => {
     const text = buildBakeryOrderNotificationText({
-      date: "2026-08-03",
-      dayName: "Hétfő",
-      isEstimate: false,
       rows: [{ key: "vekni", label: "Vekni", toOrder: 0, leftover: 0 }],
     });
     expect(text).toContain("nincs rendelendő tétel");

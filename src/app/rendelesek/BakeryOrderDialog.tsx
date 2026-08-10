@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Loading from "@/components/Loading";
-import type { BakeryProductKey } from "@/lib/sandwichBakeryOrder";
+import { computeBakeryOrderRows, type BakeryProductKey } from "@/lib/sandwichBakeryOrder";
 
 type NeedRow = { key: BakeryProductKey; label: string; needed: number };
 type NeedsResponse = {
@@ -39,6 +39,14 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
   const [data, setData] = useState<NeedsResponse | null>(null);
   const [noOrderToday, setNoOrderToday] = useState(false);
   const [leftovers, setLeftovers] = useState<Partial<Record<BakeryProductKey, string>>>({});
+  // Lets the owner override the "rendelendő" estimate row-by-row before
+  // sending, so the Telegram message can carry the number actually being
+  // ordered (which may differ from the raw estimate for reasons the app has
+  // no visibility into) instead of having to be hand-edited after the fact
+  // inside Telegram/Viber. undefined = untouched, still tracks the live
+  // estimate as `leftover` changes; once set, it sticks even if `leftover`
+  // changes afterwards (the owner's explicit number wins).
+  const [orderOverrides, setOrderOverrides] = useState<Partial<Record<BakeryProductKey, string>>>({});
   const [sending, setSending] = useState(false);
   const [sentText, setSentText] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -58,25 +66,28 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
 
   const rows = useMemo(() => {
     if (!data) return [];
-    return data.needs.map((row) => {
-      const leftover = Number(leftovers[row.key] ?? 0) || 0;
-      return { ...row, leftover, toOrder: Math.max(row.needed - leftover, 0) };
+    const leftoverNumbers: Partial<Record<BakeryProductKey, number>> = {};
+    for (const [key, value] of Object.entries(leftovers)) {
+      const n = Number(value);
+      if (Number.isFinite(n) && n > 0) leftoverNumbers[key as BakeryProductKey] = n;
+    }
+    return computeBakeryOrderRows(data.needs, leftoverNumbers).map((row) => {
+      const override = orderOverrides[row.key];
+      const toOrder = override === undefined ? row.toOrder : Math.max(Number(override) || 0, 0);
+      return { ...row, needed: data.needs.find((n) => n.key === row.key)?.needed ?? 0, toOrder };
     });
-  }, [data, leftovers]);
+  }, [data, leftovers, orderOverrides]);
 
   async function send() {
     setSending(true);
     setError(null);
     try {
-      const numericLeftovers: Partial<Record<BakeryProductKey, number>> = {};
-      for (const [key, value] of Object.entries(leftovers)) {
-        const n = Number(value);
-        if (Number.isFinite(n) && n > 0) numericLeftovers[key as BakeryProductKey] = n;
-      }
       const res = await fetch("/api/sandwich-orders/bakery-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ leftovers: numericLeftovers }),
+        body: JSON.stringify({
+          rows: rows.map((row) => ({ key: row.key, toOrder: row.toOrder, leftover: row.leftover })),
+        }),
       });
       const body = await res.json();
       if (!res.ok) throw new Error(body?.error ?? `Hiba történt (${res.status})`);
@@ -153,7 +164,10 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
               </p>
             )}
 
-            <p className="text-sm text-muted">Írd be, miből mennyi maradt a raktárban:</p>
+            <p className="text-sm text-muted">
+              Írd be, miből mennyi maradt a raktárban, a "rendelendő" mennyiséget pedig felül is
+              írhatod, ha nem a becsült számot szeretnéd elküldeni:
+            </p>
 
             <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm divide-y divide-surface-border">
               {rows.map((row) => (
@@ -162,19 +176,31 @@ export default function BakeryOrderDialog({ onClose }: { onClose: () => void }) 
                     <div className="font-medium">{row.label}</div>
                     <div className="text-xs text-faint">szükséges: {row.needed} db</div>
                   </div>
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    min={0}
-                    placeholder="maradék"
-                    value={leftovers[row.key] ?? ""}
-                    onChange={(e) =>
-                      setLeftovers((prev) => ({ ...prev, [row.key]: e.target.value }))
-                    }
-                    className="w-24 border border-strong rounded-lg px-2.5 py-1.5 text-right text-sm"
-                  />
-                  <div className="w-20 text-right">
-                    <div className="font-semibold">{row.toOrder}</div>
+                  <div className="flex flex-col items-center gap-0.5">
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={0}
+                      placeholder="maradék"
+                      value={leftovers[row.key] ?? ""}
+                      onChange={(e) =>
+                        setLeftovers((prev) => ({ ...prev, [row.key]: e.target.value }))
+                      }
+                      className="w-20 border border-strong rounded-lg px-2.5 py-1.5 text-right text-sm"
+                    />
+                    <div className="text-[10px] text-faint">maradék</div>
+                  </div>
+                  <div className="flex flex-col items-center gap-0.5">
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={0}
+                      value={orderOverrides[row.key] ?? String(row.toOrder)}
+                      onChange={(e) =>
+                        setOrderOverrides((prev) => ({ ...prev, [row.key]: e.target.value }))
+                      }
+                      className="w-20 border border-strong rounded-lg px-2.5 py-1.5 text-right text-sm font-semibold"
+                    />
                     <div className="text-[10px] text-faint">rendelendő</div>
                   </div>
                 </div>
