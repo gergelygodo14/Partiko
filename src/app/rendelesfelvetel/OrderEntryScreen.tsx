@@ -99,39 +99,44 @@ export default function OrderEntryScreen() {
   // yet) - see the pékáru summary block below the table.
   const [bakeryOrdered, setBakeryOrdered] = useState<BakeryOrderRow[] | null>(null);
 
-  // The pékáru summary is a live "do we physically have enough bread right
-  // now" check, so it's pinned to calendar-today regardless of which day
+  // The pékáru summary is a live "do we have enough bread for tomorrow's
+  // prep" check, pinned to calendar-today/-tomorrow regardless of which day
   // tab is open - the tab defaults to TOMORROW (see defaultEntryDate), and
   // tying this to the viewed tab meant it read as broken ("nincs rendelve")
-  // whenever nobody had entered orders for a future day's tab yet or sent
-  // its bakery order, even though today's own stock was fine (confirmed
-  // with the owner, 2026-08-11 - reverts the previous same-as-viewed-tab
-  // behavior). Fetched once, not per tab switch, since `today` doesn't
-  // change while the screen stays open.
-  const [todayNeeds, setTodayNeeds] = useState<{ itemName: string; quantity: number }[] | null>(null);
+  // whenever nobody had sent that future tab's bakery order yet, even
+  // though today's own stock was fine. Bread delivered/leftover TODAY is
+  // what the kitchen has on hand to prep sandwiches for TOMORROW's orders
+  // (confirmed with the owner, 2026-08-11) - so "Rendelkezésre áll" reads
+  // off today (bakeryOrdered below), while "Pontos igény" reads off
+  // tomorrow's grid (tomorrowNeeds). Fetched once, not per tab switch,
+  // since `today` doesn't change while the screen stays open.
+  const tomorrow = useMemo(() => addDaysStr(today, 1), [today]);
+  const [tomorrowNeeds, setTomorrowNeeds] = useState<{ itemName: string; quantity: number }[] | null>(
+    null
+  );
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/rendelesfelvetel/day?date=${today}`)
+    fetch(`/api/rendelesfelvetel/day?date=${tomorrow}`)
       .then((res) => (res.ok ? (res.json() as Promise<DayGrid>) : null))
       .then((data) => {
         if (cancelled) return;
         if (!data) {
-          setTodayNeeds([]);
+          setTomorrowNeeds([]);
           return;
         }
         const quantities: GridQuantities = {};
         for (const store of data.stores) quantities[store.customerId] = { ...store.saved };
         const { byItem } = gridTotals(data.items, quantities);
-        setTodayNeeds(data.items.map((item) => ({ itemName: item.name, quantity: byItem[item.itemId] ?? 0 })));
+        setTomorrowNeeds(data.items.map((item) => ({ itemName: item.name, quantity: byItem[item.itemId] ?? 0 })));
       })
       .catch(() => {
-        if (!cancelled) setTodayNeeds([]);
+        if (!cancelled) setTomorrowNeeds([]);
       });
     return () => {
       cancelled = true;
     };
-  }, [today]);
+  }, [tomorrow]);
 
   const draft = useMemo(() => draftsByDate[date] ?? {}, [draftsByDate, date]);
   const saved = useMemo(() => savedByDate[date] ?? {}, [savedByDate, date]);
@@ -141,10 +146,10 @@ export default function OrderEntryScreen() {
     () => gridTotals(grid?.items ?? [], draft),
     [grid?.items, draft]
   );
-  const bakeryNeeds = useMemo(() => computeBakeryNeeds(todayNeeds ?? []), [todayNeeds]);
+  const bakeryNeeds = useMemo(() => computeBakeryNeeds(tomorrowNeeds ?? []), [tomorrowNeeds]);
   // Compares what will actually be on hand today (freshly ordered + whatever
   // leftover was already in stock when that order was placed) against the
-  // exact need computed live from today's own grid (todayNeeds above) -
+  // exact need computed live from tomorrow's grid (tomorrowNeeds above) -
   // toOrder alone would understate supply and flag a false shortage whenever
   // there was leftover stock. null = nothing was ever sent for today.
   const bakeryComparisonRows = useMemo(() => {
@@ -410,9 +415,10 @@ export default function OrderEntryScreen() {
   // --- derived UI bits --------------------------------------------------------
   const weekday = weekdayIndexOf(date) ?? 0;
   const dayLabel = `${FULL_DAY_NAMES[weekday]} (${formatShortDate(date)})`;
-  // toTargetDay (not FULL_DAY_NAMES/weekdayIndexOf) because `today` can be a
-  // weekend day - FULL_DAY_NAMES only covers Mon-Fri.
+  // toTargetDay (not FULL_DAY_NAMES/weekdayIndexOf) because `today`/`tomorrow`
+  // can land on a weekend - FULL_DAY_NAMES only covers Mon-Fri.
   const todayLabel = `${toTargetDay(today).dayName} (${formatShortDate(today)})`;
+  const tomorrowLabel = `${toTargetDay(tomorrow).dayName} (${formatShortDate(tomorrow)})`;
   const openStore = grid?.stores.find((s) => s.customerId === openStoreId) ?? null;
   const alreadyExported = date <= getSandwichExportDay().date;
 
@@ -633,22 +639,25 @@ export default function OrderEntryScreen() {
             <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">
               Pékáru – rendelkezésre áll vs. pontos igény
             </h2>
-            {/* Always today, regardless of which day tab is open above - see
-                the todayNeeds/bakeryOrdered comments near the top of this
-                component. Spelled out here so it's never mistaken for the
-                currently viewed tab's day. */}
-            <p className="text-xs text-faint">Ma: {todayLabel}</p>
+            {/* Always today/tomorrow, regardless of which day tab is open
+                above - see the tomorrowNeeds/bakeryOrdered comments near the
+                top of this component. Spelled out here so it's never
+                mistaken for the currently viewed tab's day. */}
+            <p className="text-xs text-faint">
+              A ma kapott kenyérrel a konyha holnapra készít elő, ezért: ma = {todayLabel}, holnap ={" "}
+              {tomorrowLabel}.
+            </p>
           </div>
           {bakeryComparisonRows.length === 0 ? (
-            <p className="text-sm text-muted">Mára nincs pékáru-igényt jelentő szendvics.</p>
+            <p className="text-sm text-muted">Holnapra nincs pékáru-igényt jelentő szendvics.</p>
           ) : (
             <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm">
               <table className="w-full text-sm">
                 <thead className="bg-surface-alt text-muted">
                   <tr>
                     <th className="text-left px-3 py-2">Pékáru</th>
-                    <th className="text-right px-3 py-2">Rendelkezésre áll</th>
-                    <th className="text-right px-3 py-2">Pontos igény</th>
+                    <th className="text-right px-3 py-2">Rendelkezésre áll (ma)</th>
+                    <th className="text-right px-3 py-2">Pontos igény (holnap)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -686,9 +695,9 @@ export default function OrderEntryScreen() {
             </div>
           )}
           <p className="text-xs text-faint">
-            A "Rendelkezésre áll" a pékáru rendelés gombbal ténylegesen elküldött mennyiség PLUSZ az
-            akkor megadott maradék mára, a "Pontos igény" pedig a mai napra most rögzített
-            rendelésekből számolt friss szükséglet.
+            A "Rendelkezésre áll" a pékáru rendelés gombbal mára ténylegesen elküldött mennyiség PLUSZ
+            az akkor megadott maradék, a "Pontos igény" pedig a holnapra most rögzített rendelésekből
+            számolt friss szükséglet.
           </p>
         </section>
       )}
