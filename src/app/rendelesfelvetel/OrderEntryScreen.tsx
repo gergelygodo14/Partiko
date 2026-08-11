@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { StoreGroup } from "@/generated/prisma/client";
 import Loading from "@/components/Loading";
 import { addDaysStr, budapestTodayStr, mondayOf } from "@/lib/dates";
-import { getSandwichExportDay } from "@/lib/sandwichDates";
+import { getSandwichExportDay, toTargetDay } from "@/lib/sandwichDates";
 import { computeBakeryNeeds, type BakeryOrderRow } from "@/lib/sandwichBakeryOrder";
 import {
   applyTemplate,
@@ -95,10 +95,43 @@ export default function OrderEntryScreen() {
   const [sending, setSending] = useState(false);
   const [sendResult, setSendResult] = useState<DaySaveResult | null>(null);
 
-  // What was actually sent to the bakery for this date (null = nothing sent
-  // yet), fetched separately from the grid so switching days doesn't need to
-  // wait on it - see the pékáru summary block below the table.
+  // What was actually sent to the bakery for TODAY (null = nothing sent
+  // yet) - see the pékáru summary block below the table.
   const [bakeryOrdered, setBakeryOrdered] = useState<BakeryOrderRow[] | null>(null);
+
+  // The pékáru summary is a live "do we physically have enough bread right
+  // now" check, so it's pinned to calendar-today regardless of which day
+  // tab is open - the tab defaults to TOMORROW (see defaultEntryDate), and
+  // tying this to the viewed tab meant it read as broken ("nincs rendelve")
+  // whenever nobody had entered orders for a future day's tab yet or sent
+  // its bakery order, even though today's own stock was fine (confirmed
+  // with the owner, 2026-08-11 - reverts the previous same-as-viewed-tab
+  // behavior). Fetched once, not per tab switch, since `today` doesn't
+  // change while the screen stays open.
+  const [todayNeeds, setTodayNeeds] = useState<{ itemName: string; quantity: number }[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/rendelesfelvetel/day?date=${today}`)
+      .then((res) => (res.ok ? (res.json() as Promise<DayGrid>) : null))
+      .then((data) => {
+        if (cancelled) return;
+        if (!data) {
+          setTodayNeeds([]);
+          return;
+        }
+        const quantities: GridQuantities = {};
+        for (const store of data.stores) quantities[store.customerId] = { ...store.saved };
+        const { byItem } = gridTotals(data.items, quantities);
+        setTodayNeeds(data.items.map((item) => ({ itemName: item.name, quantity: byItem[item.itemId] ?? 0 })));
+      })
+      .catch(() => {
+        if (!cancelled) setTodayNeeds([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [today]);
 
   const draft = useMemo(() => draftsByDate[date] ?? {}, [draftsByDate, date]);
   const saved = useMemo(() => savedByDate[date] ?? {}, [savedByDate, date]);
@@ -108,25 +141,12 @@ export default function OrderEntryScreen() {
     () => gridTotals(grid?.items ?? [], draft),
     [grid?.items, draft]
   );
-  const bakeryNeeds = useMemo(
-    () =>
-      computeBakeryNeeds(
-        (grid?.items ?? []).map((item) => ({
-          itemName: item.name,
-          quantity: totals.byItem[item.itemId] ?? 0,
-        }))
-      ),
-    [grid?.items, totals.byItem]
-  );
-  // Compares what will actually be on hand for this date (freshly ordered +
-  // whatever leftover was already in stock when that order was placed)
-  // against the exact need computed live from today's grid - toOrder alone
-  // would understate supply and flag a false shortage whenever there was
-  // leftover stock. null = nothing was ever sent for this date. Deliberately
-  // same-day on both sides (not the demand-day shift used by the actual
-  // bakery order estimate in sandwichBakeryOrder.ts) - this table's job is a
-  // same-day sanity check: did we order enough bread to cover what got
-  // entered into today's grid (confirmed with the owner, 2026-08-10).
+  const bakeryNeeds = useMemo(() => computeBakeryNeeds(todayNeeds ?? []), [todayNeeds]);
+  // Compares what will actually be on hand today (freshly ordered + whatever
+  // leftover was already in stock when that order was placed) against the
+  // exact need computed live from today's own grid (todayNeeds above) -
+  // toOrder alone would understate supply and flag a false shortage whenever
+  // there was leftover stock. null = nothing was ever sent for today.
   const bakeryComparisonRows = useMemo(() => {
     const orderedByKey = new Map((bakeryOrdered ?? []).map((row) => [row.key, row]));
     return bakeryNeeds
@@ -207,12 +227,11 @@ export default function OrderEntryScreen() {
   }, [date, loadDay]);
 
   useEffect(() => {
-    setBakeryOrdered(null);
-    fetch(`/api/rendelesfelvetel/bakery-order?date=${date}`)
+    fetch(`/api/rendelesfelvetel/bakery-order?date=${today}`)
       .then((res) => res.json())
       .then((body: { rows: BakeryOrderRow[] | null }) => setBakeryOrdered(body.rows))
       .catch(() => setBakeryOrdered(null));
-  }, [date]);
+  }, [today]);
 
   // --- persist drafts ---------------------------------------------------------
   const draftsRef = useRef(draftsByDate);
@@ -391,6 +410,9 @@ export default function OrderEntryScreen() {
   // --- derived UI bits --------------------------------------------------------
   const weekday = weekdayIndexOf(date) ?? 0;
   const dayLabel = `${FULL_DAY_NAMES[weekday]} (${formatShortDate(date)})`;
+  // toTargetDay (not FULL_DAY_NAMES/weekdayIndexOf) because `today` can be a
+  // weekend day - FULL_DAY_NAMES only covers Mon-Fri.
+  const todayLabel = `${toTargetDay(today).dayName} (${formatShortDate(today)})`;
   const openStore = grid?.stores.find((s) => s.customerId === openStoreId) ?? null;
   const alreadyExported = date <= getSandwichExportDay().date;
 
@@ -607,11 +629,18 @@ export default function OrderEntryScreen() {
 
       {!loading && grid && (
         <section className="space-y-2">
-          <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">
-            Pékáru – rendelkezésre áll vs. pontos igény
-          </h2>
+          <div>
+            <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">
+              Pékáru – rendelkezésre áll vs. pontos igény
+            </h2>
+            {/* Always today, regardless of which day tab is open above - see
+                the todayNeeds/bakeryOrdered comments near the top of this
+                component. Spelled out here so it's never mistaken for the
+                currently viewed tab's day. */}
+            <p className="text-xs text-faint">Ma: {todayLabel}</p>
+          </div>
           {bakeryComparisonRows.length === 0 ? (
-            <p className="text-sm text-muted">Erre a napra nincs pékáru-igényt jelentő szendvics.</p>
+            <p className="text-sm text-muted">Mára nincs pékáru-igényt jelentő szendvics.</p>
           ) : (
             <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm">
               <table className="w-full text-sm">
@@ -658,7 +687,7 @@ export default function OrderEntryScreen() {
           )}
           <p className="text-xs text-faint">
             A "Rendelkezésre áll" a pékáru rendelés gombbal ténylegesen elküldött mennyiség PLUSZ az
-            akkor megadott maradék erre a napra, a "Pontos igény" pedig az ezen a napon most rögzített
+            akkor megadott maradék mára, a "Pontos igény" pedig a mai napra most rögzített
             rendelésekből számolt friss szükséglet.
           </p>
         </section>
