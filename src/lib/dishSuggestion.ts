@@ -156,18 +156,21 @@ export async function suggestDishes(params: {
 
   const prompt = buildPickPrompt(candidates, sameDayDishes, weekDishes, SUGGESTION_COUNT);
 
-  // Two real production failures in a row (2026-08-13, confirmed via Vercel
-  // logs): first an empty-content response at the original maxTokens: 1024
-  // (raised to 8192, matching invoiceProcessing.ts, to rule out a genuinely
-  // truncated answer), then - even with the bigger budget - a request that
-  // ran the full 60s and got killed by Vercel's platform timeout. Neither
-  // looks like a token-budget problem on reflection (a direct test against
-  // OpenRouter with a similarly-shaped prompt showed 0 reasoning tokens and
-  // a ~2s response); it reads as one-off OpenRouter routing flakiness -
-  // hence the bounded timeout + one retry here, not another maxTokens guess.
+  // A direct test against OpenRouter with an EMPTY avoid-list looked fast
+  // (~2s, 0 reasoning tokens) and briefly pointed at "one-off flakiness" as
+  // the explanation for the prior two failures - but retesting the actual
+  // payload shape a real click sends (real weekDishes/avoidDishes content,
+  // which the prompt asks the model to weigh every candidate against for
+  // thematic similarity, not just exact-match) showed this is normal,
+  // repeatable behavior: 13.6s-26.9s across 6 real requests, not a rare
+  // spike. The previous 25s-per-attempt timeout was tighter than some
+  // perfectly legitimate responses actually needed (26.9s > 25s) - it was
+  // aborting real, in-progress successes, not just genuine hangs. Widened
+  // with real margin over the observed worst case, and maxDuration raised
+  // to match (see the route).
   const text = await openRouterJsonCompletion({
     maxTokens: 8192,
-    timeoutMs: 25_000,
+    timeoutMs: 40_000,
     maxAttempts: 2,
     content: [{ type: "text", text: prompt }],
   });
