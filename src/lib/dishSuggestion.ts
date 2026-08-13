@@ -156,15 +156,19 @@ export async function suggestDishes(params: {
 
   const prompt = buildPickPrompt(candidates, sameDayDishes, weekDishes, SUGGESTION_COUNT);
 
-  // 1024 (the original budget here) intermittently produced a hard failure
-  // in production ("Az AI nem adott vissza szöveges választ", 2026-08-13,
-  // confirmed via Vercel logs) - the visible JSON answer is tiny (3 indices),
-  // but Sonnet can spend a chunk of max_tokens on hidden reasoning before
-  // emitting it, especially with a 60-candidate list plus the variety/theme
-  // instructions to weigh. Matches invoiceProcessing.ts's budget, which
-  // hasn't shown this failure, rather than re-guessing a smaller number.
+  // Two real production failures in a row (2026-08-13, confirmed via Vercel
+  // logs): first an empty-content response at the original maxTokens: 1024
+  // (raised to 8192, matching invoiceProcessing.ts, to rule out a genuinely
+  // truncated answer), then - even with the bigger budget - a request that
+  // ran the full 60s and got killed by Vercel's platform timeout. Neither
+  // looks like a token-budget problem on reflection (a direct test against
+  // OpenRouter with a similarly-shaped prompt showed 0 reasoning tokens and
+  // a ~2s response); it reads as one-off OpenRouter routing flakiness -
+  // hence the bounded timeout + one retry here, not another maxTokens guess.
   const text = await openRouterJsonCompletion({
     maxTokens: 8192,
+    timeoutMs: 25_000,
+    maxAttempts: 2,
     content: [{ type: "text", text: prompt }],
   });
   const parsed = JSON.parse(text) as { indices: number[] };
