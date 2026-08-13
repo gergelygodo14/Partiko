@@ -37,6 +37,7 @@ export default function WeeklyMenuPage() {
   const [publishing, setPublishing] = useState(false);
   const [savedMessage, setSavedMessage] = useState(false);
   const [suggestingKey, setSuggestingKey] = useState<string | null>(null);
+  const [suggestError, setSuggestError] = useState<string | null>(null);
   const [suggestionPicker, setSuggestionPicker] = useState<{
     day: number;
     letter: DishLetter;
@@ -162,6 +163,7 @@ export default function WeeklyMenuPage() {
   async function suggestDish(dayIndex: number, letter: "a" | "b" | "c") {
     const key = `${dayIndex}-${letter}`;
     setSuggestingKey(key);
+    setSuggestError(null);
     try {
       const avoidDishes = days.flatMap((d) => [d.a, d.b, d.c]);
       const otherLetters = (["a", "b", "c"] as const).filter((l) => l !== letter);
@@ -176,10 +178,25 @@ export default function WeeklyMenuPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ weekStart, avoidDishes, sameDayDishes, weekDishes }),
       });
-      const data = await res.json();
+      // Previously read straight off `data.dishes` with no `res.ok`/parse-
+      // failure handling - any server error (rate limit, timeout, bad AI
+      // response) or a non-JSON body (e.g. a platform timeout page) meant
+      // this just silently did nothing, which is exactly what got reported
+      // as "I click the button and nothing happens" (2026-08-13). Now every
+      // failure surfaces as a visible message instead of vanishing.
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data) {
+        throw new Error(
+          (data && typeof data.error === "string" && data.error) || `Hiba történt (${res.status})`
+        );
+      }
       if (Array.isArray(data.dishes) && data.dishes.length > 0) {
         setSuggestionPicker({ day: dayIndex, letter, options: data.dishes });
+      } else {
+        throw new Error("Az AI nem adott vissza javaslatot");
       }
+    } catch (e) {
+      setSuggestError(e instanceof Error ? e.message : "Hiba történt az AI javaslat lekérésekor");
     } finally {
       setSuggestingKey(null);
     }
@@ -291,6 +308,20 @@ export default function WeeklyMenuPage() {
               Mégse
             </button>
           </div>
+        </div>
+      )}
+
+      {suggestError && (
+        <div className="flex items-start justify-between gap-3 border border-red-300 dark:border-red-800/60 bg-red-50 dark:bg-red-950/40 rounded-xl px-3.5 py-2.5 text-sm text-red-700 dark:text-red-400">
+          <span>Az AI javaslat nem sikerült: {suggestError}</span>
+          <button
+            type="button"
+            onClick={() => setSuggestError(null)}
+            className="shrink-0 font-semibold"
+            aria-label="Bezárás"
+          >
+            ✕
+          </button>
         </div>
       )}
 

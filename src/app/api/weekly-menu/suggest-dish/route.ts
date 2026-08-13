@@ -3,7 +3,10 @@ import { withApiErrorHandling } from "@/lib/apiRoute";
 import { isValidDateStr } from "@/lib/validate";
 import { suggestDishes } from "@/lib/dishSuggestion";
 
-export const maxDuration = 30;
+// Matches szamlak/invoices' AI route - a single non-streaming Sonnet call
+// through OpenRouter measured at ~17s for a realistic prompt (60 candidates
+// + variety instructions), so 30s left little margin for provider slowness.
+export const maxDuration = 60;
 
 export const POST = withApiErrorHandling(async (request: NextRequest) => {
   const body = await request.json();
