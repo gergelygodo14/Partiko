@@ -7,7 +7,7 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
-const { buildCandidatePool, buildPickPrompt, normalizeDishName } = await import(
+const { buildCandidatePool, buildPickPrompt, normalizeDishName, SUGGESTION_COUNT } = await import(
   "@/lib/dishSuggestion"
 );
 
@@ -46,6 +46,34 @@ describe("buildCandidatePool", () => {
 
   it("can exclude everything, leaving an empty pool", () => {
     expect(buildCandidatePool(pool, pool)).toEqual([]);
+  });
+
+  it("catches the same dish under a reordered name with an extra suffix (real reported case)", () => {
+    const result = buildCandidatePool(
+      ["Carbonara spagetti", "Rakott karfiol"],
+      ["Spagetti carbonara reszelt sajttal"]
+    );
+    expect(result).toEqual(["Rakott karfiol"]);
+  });
+
+  it("catches a reordered duplicate the other way round too", () => {
+    const result = buildCandidatePool(
+      ["Spagetti carbonara reszelt sajttal", "Rakott karfiol"],
+      ["Carbonara spagetti"]
+    );
+    expect(result).toEqual(["Rakott karfiol"]);
+  });
+
+  it("does not flag different dishes that merely share one common word", () => {
+    // Both start with "Rántott" but are different dishes (different main
+    // ingredient) - the near-duplicate check must not treat that as a match.
+    const result = buildCandidatePool(["Rántott sertésszelet"], ["Rántott csirkemell"]);
+    expect(result).toEqual(["Rántott sertésszelet"]);
+  });
+
+  it("does not flag unrelated dishes that happen to share no words", () => {
+    const result = buildCandidatePool(["Túrós csusza"], ["Rakott karfiol"]);
+    expect(result).toEqual(["Túrós csusza"]);
   });
 });
 
@@ -95,5 +123,22 @@ describe("buildPickPrompt", () => {
   it("instructs the model to avoid thematic/word repetition across the week, not just exact names", () => {
     const prompt = buildPickPrompt(["Csirkemell rizzsel"], [], ["Székelygulyás"]);
     expect(prompt).toContain("kerüld a szóismétlést és a tartalmi/témabeli hasonlóságot is");
+  });
+
+  it("asks for the given count of distinct picks as an indices array", () => {
+    const prompt = buildPickPrompt(["Csirkemell rizzsel", "Rakott karfiol", "Túrós csusza"], [], [], 3);
+    expect(prompt).toContain("3 KÜLÖNBÖZŐ");
+    expect(prompt).toContain('{"indices": [szám, szám, ...]}');
+    expect(prompt).toContain("pontosan 3 db, egymástól különböző sorszám");
+  });
+
+  it("defaults the count to SUGGESTION_COUNT when not given", () => {
+    const prompt = buildPickPrompt(["Csirkemell rizzsel"], []);
+    expect(prompt).toContain(`${SUGGESTION_COUNT} KÜLÖNBÖZŐ`);
+  });
+
+  it("instructs the model to make the picks distinct from each other, not just from the exclusions", () => {
+    const prompt = buildPickPrompt(["Csirkemell rizzsel"], []);
+    expect(prompt).toContain("választott fogás EGYMÁSTÓL is különbözzön");
   });
 });

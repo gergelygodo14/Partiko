@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withApiErrorHandling } from "@/lib/apiRoute";
 import { isValidDateStr } from "@/lib/validate";
-import { suggestDish } from "@/lib/dishSuggestion";
+import { suggestDishes } from "@/lib/dishSuggestion";
 
 export const maxDuration = 30;
 
@@ -25,6 +25,6 @@ export const POST = withApiErrorHandling(async (request: NextRequest) => {
     return NextResponse.json({ error: "weekDishes csak string[] lehet" }, { status: 400 });
   }
 
-  const dish = await suggestDish({ weekStart, avoidDishes, sameDayDishes, weekDishes });
-  return NextResponse.json({ dish });
+  const dishes = await suggestDishes({ weekStart, avoidDishes, sameDayDishes, weekDishes });
+  return NextResponse.json({ dishes });
 });

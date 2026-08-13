@@ -37,6 +37,11 @@ export default function WeeklyMenuPage() {
   const [publishing, setPublishing] = useState(false);
   const [savedMessage, setSavedMessage] = useState(false);
   const [suggestingKey, setSuggestingKey] = useState<string | null>(null);
+  const [suggestionPicker, setSuggestionPicker] = useState<{
+    day: number;
+    letter: DishLetter;
+    options: string[];
+  } | null>(null);
   const [dragSource, setDragSource] = useState<Slot | null>(null);
   const [dragOverSlot, setDragOverSlot] = useState<Slot | null>(null);
   const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
@@ -172,12 +177,19 @@ export default function WeeklyMenuPage() {
         body: JSON.stringify({ weekStart, avoidDishes, sameDayDishes, weekDishes }),
       });
       const data = await res.json();
-      if (typeof data.dish === "string") {
-        updateDay(dayIndex, { [letter]: data.dish } as Partial<MenuDay>);
+      if (Array.isArray(data.dishes) && data.dishes.length > 0) {
+        setSuggestionPicker({ day: dayIndex, letter, options: data.dishes });
       }
     } finally {
       setSuggestingKey(null);
     }
+  }
+
+  function chooseSuggestion(dish: string) {
+    if (suggestionPicker) {
+      updateDay(suggestionPicker.day, { [suggestionPicker.letter]: dish } as Partial<MenuDay>);
+    }
+    setSuggestionPicker(null);
   }
 
   async function save() {
@@ -244,6 +256,41 @@ export default function WeeklyMenuPage() {
           style={{ left: dragPos.x, top: dragPos.y }}
         >
           {dragSource.letter.toUpperCase()}. {days[dragSource.day][dragSource.letter] || "(üres)"}
+        </div>
+      )}
+
+      {suggestionPicker && (
+        <div
+          className="fixed inset-0 z-50 bg-ink/40 flex items-end sm:items-center justify-center p-4"
+          onClick={() => setSuggestionPicker(null)}
+        >
+          <div
+            className="w-full sm:max-w-sm bg-surface rounded-2xl border border-surface-border shadow-lg p-4 space-y-3"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="font-semibold text-sm text-muted">
+              {DAY_NAMES[suggestionPicker.day]} · {suggestionPicker.letter.toUpperCase()}. — válassz egyet
+            </div>
+            <div className="space-y-2">
+              {suggestionPicker.options.map((dish, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => chooseSuggestion(dish)}
+                  className="w-full text-left border border-strong rounded-xl px-3.5 py-2.5 active:bg-surface-alt"
+                >
+                  {dish}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => setSuggestionPicker(null)}
+              className="w-full text-sm text-muted px-3 py-2"
+            >
+              Mégse
+            </button>
+          </div>
         </div>
       )}
 
