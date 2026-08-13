@@ -53,7 +53,14 @@ export async function openRouterJsonCompletion(params: {
   const data = await res.json();
   const text = data?.choices?.[0]?.message?.content;
   if (typeof text !== "string" || !text) {
-    throw new Error("Az AI nem adott vissza szöveges választ");
+    // finish_reason ("length" = ran out of max_tokens, often mid-reasoning
+    // for a thinking-capable model) is the main diagnostic signal here -
+    // included so a repeat of this failure is readable from the error
+    // banner the caller shows, not just from Vercel's server logs.
+    const reason = data?.choices?.[0]?.finish_reason;
+    throw new Error(
+      `Az AI nem adott vissza szöveges választ${reason ? ` (finish_reason: ${reason})` : ""}`
+    );
   }
   return text;
 }

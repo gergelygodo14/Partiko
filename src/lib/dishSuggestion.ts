@@ -156,8 +156,15 @@ export async function suggestDishes(params: {
 
   const prompt = buildPickPrompt(candidates, sameDayDishes, weekDishes, SUGGESTION_COUNT);
 
+  // 1024 (the original budget here) intermittently produced a hard failure
+  // in production ("Az AI nem adott vissza szöveges választ", 2026-08-13,
+  // confirmed via Vercel logs) - the visible JSON answer is tiny (3 indices),
+  // but Sonnet can spend a chunk of max_tokens on hidden reasoning before
+  // emitting it, especially with a 60-candidate list plus the variety/theme
+  // instructions to weigh. Matches invoiceProcessing.ts's budget, which
+  // hasn't shown this failure, rather than re-guessing a smaller number.
   const text = await openRouterJsonCompletion({
-    maxTokens: 1024,
+    maxTokens: 8192,
     content: [{ type: "text", text: prompt }],
   });
   const parsed = JSON.parse(text) as { indices: number[] };
