@@ -97,10 +97,30 @@ function mondayIndexOf(dateStr: string): number {
   return day === 0 ? 6 : day - 1; // 0=Mon..6=Sun
 }
 
+// ONE-TIME EXCEPTION (added 2026-08-18 at the owner's request, dead after
+// 2026-08-20 - safe to delete this block once it's no longer relevant).
+// August 20, 2026 is a public holiday (kitchen closed); 2026-08-19 is the
+// last delivery before it. The normal Thursday-10:00 switch to next week's
+// ordering would otherwise land ON the holiday, when nobody's there to
+// receive orders placed right at the cutoff - so the owner asked for the
+// switch to happen two days early instead, just this once ("nem kell máskor
+// is így frissülnie csak most"). Bounded to this exact date range (through
+// end of the holiday itself, not just up to it) so it can never bleed into
+// a future week's normal cutoff, and so Thursday morning doesn't flip back
+// to "current week" for a few hours before the real 10:00 cutoff would
+// have caught up - the whole day is covered explicitly instead.
+const ONE_TIME_EARLY_SWITCH_START = "2026-08-18";
+const ONE_TIME_EARLY_SWITCH_END = "2026-08-20"; // inclusive
+
 /** Which week customers currently order against, per the Thursday-10:00 cutoff. */
 export function getActiveOrderWeek(now: Date): ActiveOrderWeek {
   const { dateStr, hour } = budapestDateAndHour(now);
   const currentWeekStart = mondayOf(dateStr);
+
+  if (dateStr >= ONE_TIME_EARLY_SWITCH_START && dateStr <= ONE_TIME_EARLY_SWITCH_END) {
+    return { weekStart: addDaysStr(currentWeekStart, 7), isCurrentWeek: false };
+  }
+
   const dayIndex = mondayIndexOf(dateStr);
   const isBeforeCutoff =
     dayIndex < ORDER_CUTOFF_DAY_INDEX ||

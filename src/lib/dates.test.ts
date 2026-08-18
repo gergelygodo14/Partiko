@@ -185,6 +185,39 @@ describe("getActiveOrderWeek", () => {
     const now = budapestInstant("2026-10-26", 1, 1);
     expect(getActiveOrderWeek(now)).toEqual({ weekStart: "2026-10-26", isCurrentWeek: true });
   });
+
+  describe("2026-08-18..20 one-time early switch (August 20 holiday closure)", () => {
+    // Week of 2026-08-17 (Mon) - 2026-08-23 (Sun); next week starts 2026-08-24.
+    it("forces next week on Tuesday, well before the normal cutoff", () => {
+      const now = budapestInstant("2026-08-18", 9, 2);
+      expect(getActiveOrderWeek(now)).toEqual({ weekStart: "2026-08-24", isCurrentWeek: false });
+    });
+
+    it("forces next week on Wednesday too", () => {
+      const now = budapestInstant("2026-08-19", 15, 2);
+      expect(getActiveOrderWeek(now)).toEqual({ weekStart: "2026-08-24", isCurrentWeek: false });
+    });
+
+    it("forces next week on Thursday even before the normal 10:00 cutoff (no flip-back)", () => {
+      const now = budapestInstant("2026-08-20", 8, 2);
+      expect(getActiveOrderWeek(now)).toEqual({ weekStart: "2026-08-24", isCurrentWeek: false });
+    });
+
+    it("reverts to normal (already-consistent) cutoff logic on Friday", () => {
+      const now = budapestInstant("2026-08-21", 8, 2);
+      expect(getActiveOrderWeek(now)).toEqual({ weekStart: "2026-08-24", isCurrentWeek: false });
+    });
+
+    it("does not affect the Monday just before the exception window", () => {
+      const now = budapestInstant("2026-08-17", 9, 2);
+      expect(getActiveOrderWeek(now)).toEqual({ weekStart: "2026-08-17", isCurrentWeek: true });
+    });
+
+    it("does not affect an ordinary Thursday morning in a different week", () => {
+      const now = budapestInstant("2026-07-02", 9, 2);
+      expect(getActiveOrderWeek(now)).toEqual({ weekStart: "2026-06-29", isCurrentWeek: true });
+    });
+  });
 });
 
 describe("getExportDay", () => {
