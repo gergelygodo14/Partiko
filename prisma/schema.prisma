@@ -62,6 +62,11 @@ enum StoreGroup {
   COOP
   EGYEB
   VIDEK
+  // Iskolák - önálló, fix heti rendeléses kör (2026-08-24 óta), ugyanúgy
+  // teljesen külön kezelve mint a VIDEK: saját blokk a rendelésfelvételi
+  // rácson és saját lap(ok) a konyhai exportban, sosem keveredik a városi
+  // boltokkal.
+  ISKOLA
 }
 
 model Customer {

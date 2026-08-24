@@ -1,16 +1,19 @@
 import type { StoreGroup } from "@/generated/prisma/client";
+import { isIskolaStore } from "@/lib/sandwichIskolaStores";
 import { isVidekStore } from "@/lib/sandwichVidekStores";
 
-/** Display/print order of the groups. Vidék goes last everywhere because it
- *  is physically a separate delivery round (its own .xlsx sheet, its own
- *  table on the entry screen), not just another section of the same list. */
-export const STORE_GROUP_ORDER: StoreGroup[] = ["FAV", "COOP", "EGYEB", "VIDEK"];
+/** Display/print order of the groups. Vidék and Iskola go last everywhere
+ *  because each is physically/logistically a separate round (its own .xlsx
+ *  sheet, its own table on the entry screen), not just another section of
+ *  the same list. */
+export const STORE_GROUP_ORDER: StoreGroup[] = ["FAV", "COOP", "EGYEB", "VIDEK", "ISKOLA"];
 
 export const STORE_GROUP_LABELS: Record<StoreGroup, string> = {
   FAV: "FAV boltok",
   COOP: "Coop boltok",
   EGYEB: "Egyéb",
   VIDEK: "Vidék (külön kör)",
+  ISKOLA: "Iskolák (külön kör)",
 };
 
 // Stores whose group cannot be read off the name at all - the owner told us
@@ -28,7 +31,7 @@ const STORE_GROUP_OVERRIDES = new Map<string, StoreGroup>([["ná", "COOP"]]);
  *  it. Used to seed the column during backfill/import and to pre-select the
  *  dropdown when adding a new store.
  *
- *  Order matters. Explicit overrides win outright; then vidék, because
+ *  Order matters. Explicit overrides win outright; then vidék/iskola, because
  *  "COOP MÓRA" is a countryside store despite the Coop prefix. The old
  *  hardcoded logic got the vidék precedence right only because
  *  generateSandwichOrdersXlsx filtered vidék out before ever calling
@@ -37,6 +40,7 @@ export function suggestStoreGroup(storeName: string): StoreGroup {
   const override = STORE_GROUP_OVERRIDES.get(storeName.trim().toLowerCase());
   if (override) return override;
   if (isVidekStore(storeName)) return "VIDEK";
+  if (isIskolaStore(storeName)) return "ISKOLA";
   const name = storeName.trim();
   if (/^fav\b/i.test(name)) return "FAV";
   if (/^coop\b/i.test(name)) return "COOP";

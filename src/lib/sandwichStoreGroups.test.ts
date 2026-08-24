@@ -73,6 +73,12 @@ describe("suggestStoreGroup", () => {
     expect(suggestStoreGroup("Omv")).toBe("VIDEK");
   });
 
+  it("classifies known schools as ISKOLA", () => {
+    expect(suggestStoreGroup("GYÍK")).toBe("ISKOLA");
+    expect(suggestStoreGroup("Szent Benedek")).toBe("ISKOLA");
+    expect(suggestStoreGroup("  déry ")).toBe("ISKOLA");
+  });
+
   it("groups FAV and Coop prefixes regardless of casing", () => {
     expect(suggestStoreGroup("FAV Mars")).toBe("FAV");
     expect(suggestStoreGroup("Fav vedres")).toBe("FAV");
@@ -101,6 +107,7 @@ describe("compareStoresForGrid", () => {
 
   it("orders by group first, per STORE_GROUP_ORDER", () => {
     const sorted = [
+      store("I", "ISKOLA", 0),
       store("V", "VIDEK", 0),
       store("E", "EGYEB", 0),
       store("C", "COOP", 0),
@@ -141,6 +148,15 @@ describe("groupStoresForGrid", () => {
       { storeName: "Coop 116", storeGroup: "COOP", storeOrder: 2 },
     ]);
     expect(blocks.map((b) => b.group)).toEqual(["COOP", "VIDEK"]);
+  });
+
+  it("puts iskola after vidék so it also renders as its own separate block", () => {
+    const blocks = groupStoresForGrid([
+      { storeName: "GYÍK", storeGroup: "ISKOLA", storeOrder: 1 },
+      { storeName: "KISSZÁLLÁS", storeGroup: "VIDEK", storeOrder: 2 },
+      { storeName: "Coop 116", storeGroup: "COOP", storeOrder: 3 },
+    ]);
+    expect(blocks.map((b) => b.group)).toEqual(["COOP", "VIDEK", "ISKOLA"]);
   });
 
   it("does not mutate its input", () => {

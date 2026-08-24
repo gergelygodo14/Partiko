@@ -218,11 +218,16 @@ export async function generateSandwichOrdersXlsx(
   // own dedicated sheet(s) entirely, before any other grouping/splitting.
   // FAV stores get the same treatment (2026-08-01, owner request) - they used
   // to just be grouped adjacent within the regular sheet(s), but the owner
-  // packs FAV stores as a fully separate run, same as vidék.
+  // packs FAV stores as a fully separate run, same as vidék. Schools
+  // (2026-08-24, owner request) are a standing institutional order, also
+  // fully separate - same treatment again.
   const videkRows = rows.filter((row) => row.storeGroup === "VIDEK");
   const favRows = rows.filter((row) => row.storeGroup === "FAV");
+  const iskolaRows = rows.filter((row) => row.storeGroup === "ISKOLA");
   const regularRows = groupAdjacentByStoreGroup(
-    rows.filter((row) => row.storeGroup !== "VIDEK" && row.storeGroup !== "FAV")
+    rows.filter(
+      (row) => row.storeGroup !== "VIDEK" && row.storeGroup !== "FAV" && row.storeGroup !== "ISKOLA"
+    )
   );
 
   // Chunk stores into as many sheets as needed so each one still prints
@@ -254,6 +259,15 @@ export async function generateSandwichOrdersXlsx(
       const chunk = videkRows.slice(i * STORES_PER_SHEET, (i + 1) * STORES_PER_SHEET);
       const suffix = videkSheetCount > 1 ? ` ${i + 1}` : "";
       buildSheet(workbook, `SZENDVICS ${label} VIDÉK${suffix}`, label, items, chunk);
+    }
+  }
+
+  if (iskolaRows.length > 0) {
+    const iskolaSheetCount = Math.ceil(iskolaRows.length / STORES_PER_SHEET);
+    for (let i = 0; i < iskolaSheetCount; i++) {
+      const chunk = iskolaRows.slice(i * STORES_PER_SHEET, (i + 1) * STORES_PER_SHEET);
+      const suffix = iskolaSheetCount > 1 ? ` ${i + 1}` : "";
+      buildSheet(workbook, `SZENDVICS ${label} ISKOLA${suffix}`, label, items, chunk);
     }
   }
 

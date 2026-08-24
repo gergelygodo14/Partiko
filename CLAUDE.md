@@ -138,11 +138,20 @@ A készétel-rendelés mellett egy **teljesen független második rendelési ren
 
 ### Bolt-csoportosítás: `Customer.storeGroup` az egyetlen forrás (2026-07-30 óta)
 
-- `enum StoreGroup { FAV COOP EGYEB VIDEK }` + `Customer.storeOrder`. **Korábban ez két helyen volt hardkódolva**: `sandwichVidekStores.ts` (5 szó szerinti név) és a `groupFavAndCoopAdjacent()` `/^fav\b/i` + `/^coop\b/i` regexei a `generateSandwichOrdersXlsx.ts`-ben.
+- `enum StoreGroup { FAV COOP EGYEB VIDEK ISKOLA }` + `Customer.storeOrder`. **Korábban ez két helyen volt hardkódolva**: `sandwichVidekStores.ts` (5 szó szerinti név) és a `groupFavAndCoopAdjacent()` `/^fav\b/i` + `/^coop\b/i` regexei a `generateSandwichOrdersXlsx.ts`-ben.
 - **A VIDEK erősebb a COOP-nál**: a "COOP MÓRA" vidéki bolt a Coop előtag ellenére. A régi kód csak azért kezelte helyesen, mert a vidéket szűrte ki ELŐBB — a `suggestStoreGroup()`-ban (`src/lib/sandwichStoreGroups.ts`) ez már explicit sorrend.
 - Az export átállt a `row.storeGroup` olvasására (`groupAdjacentByStoreGroup`), de **csak a csoport-KULCS forrása változott** — az első-előfordulás szerinti kosár-sorrend, a mennyiség szerint csökkenő bemenet és a lapnevek érintetlenek. **A `Customer.storeOrder`-t az export SOSEM használhatja**, az megváltoztatná a nyomtatványt. A `generateSandwichOrdersXlsx.test.ts` egy teszt-lokális másolatot tart a régi regexes implementációból, és azonos oszlopfejléc-sorrendet követel — ez a paritás-garancia.
 - `isVidekStore()` **nincs törölve**: a `suggestStoreGroup()` heurisztikája használja új bolt felvételekor és a backfillnél.
 - **2026-08-01 óta a csoport a felületről is átállítható** (`/rendelesfelvetel` → bolt → "Bolt beállításai"), a `PATCH /api/rendelesfelvetel/stores/[id]`-n keresztül. Ez azért kellett, mert a névből tippelő heurisztika elvi okból nem tud mindent eltalálni (lásd a NÁ-esetet, ami korábban kézi DB-javítást igényelt). **Következmény: a `scripts/backfill-store-groups.ts --apply` újrafuttatása némán visszaírná a kézi javításokat**, mert az a nevekből származtat — a script fejlécében ez most figyelmeztetésként szerepel, de a védelem emberi, nem kódszintű.
+
+### Iskolák: `ISKOLA` store-csoport (2026-08-24 óta)
+
+- **Miért külön csoport**: az iskolák egy teljesen más ügyfél-típus — intézményi, heti fix rendelés, nem napi telefonos rendelés — a felhasználó kifejezetten kérte, hogy "teljesen külön legyen kezelve, úgy mint a vidék boltok". Ugyanaz a teljes elkülönítés, mint a VIDEK-nél: saját blokk a rendelésfelvételi rácson (`OrderGrid.tsx`, `iskola` blokk a `videk` mellett) ÉS saját lap(ok) a konyhai `.xlsx` exportban (`generateSandwichOrdersXlsx.ts`, `iskolaRows` a `videkRows`/`favRows` mintájára), sosem keveredik a városi boltokkal egyik helyen sem.
+- `sandwichIskolaStores.ts` (`isIskolaStore`) — ugyanaz a minta, mint `sandwichVidekStores.ts`: kézzel felvett névlista, amit a `suggestStoreGroup()` a VIDEK-ellenőrzés után néz meg, hogy egy 7. iskola felvételekor (ha valaha lesz) a névből tippelő logika is helyesen ajánlja fel az ISKOLA csoportot.
+- **6 iskola, 2026-08-24-én importálva** (egyszeri szkript, nem maradt a repóban — mintázata megegyezik a `scripts/import-fix-orders.ts`-ével: dry-run alapértelmezett, `--apply` ír): GYÍK, CSONKA, DÉRY, DEÁK, RADNÓTI, Szent Benedek. A tulaj Drive-ra feltöltött referenciafotójáról kézzel átírva, **minden oszlop összege ellenőrizve a nyomtatott végösszeg ellen** (mind a 6 stimmelt) mielőtt bármi az élő DB-be került.
+  - **`SandwichFixOrder.weekday = 1` (kedd), NEM a végleges rend** — a felhasználó szerint a valódi visszatérő nap hétfő lenne, de mivel 2026-09-01 (az első élő rendelésük napja) kedd, most szándékosan keddre van állítva, és a tulaj kézzel fogja hétfőre állítani a felületen, miután beindult. **Ha valaki ezt kódból "javítaná" hétfőre, az felülírná a tulaj szándékát** — ez explicit, egyszeri döntés volt, nem hiba.
+  - **"Sonkás-túrós" tétel szándékosan kimaradt** (a képen Csonka:1, Deák:1 db-bal szerepelt) — a felhasználó megerősítette, hogy ez a szendvics már nincs a kínálatban, nem kell érte új `SandwichItem`-et létrehozni.
+  - Az iskolák rövid néven (nem a teljes hivatalos iskolanévvel) és a referenciafotón szereplő azonosító szám NÉLKÜL kerültek be (`storeName`), a felhasználó kifejezett döntése alapján.
 
 ### Bolt-lista szerkesztése a rendelésfelvételen (2026-08-01 óta)
 

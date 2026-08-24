@@ -19,9 +19,9 @@ type Props = {
 /** The Excel-style matrix: sandwiches down the rows, stores across the columns,
  *  exactly like the sheet this replaces.
  *
- *  Vidék renders as a physically separate table below the in-town one, mirroring
- *  the kitchen export's separate sheet - a divider column would not survive the
- *  horizontal scroll. */
+ *  Vidék and Iskola each render as their own physically separate table below
+ *  the in-town one, mirroring the kitchen export's separate sheets - a
+ *  divider column would not survive the horizontal scroll. */
 export default function OrderGrid({
   items,
   stores,
@@ -32,8 +32,9 @@ export default function OrderGrid({
   onOpenStore,
 }: Props) {
   const blocks = groupStoresForGrid(stores);
-  const inTown = blocks.filter((block) => block.group !== "VIDEK");
+  const inTown = blocks.filter((block) => block.group !== "VIDEK" && block.group !== "ISKOLA");
   const videk = blocks.find((block) => block.group === "VIDEK");
+  const iskola = blocks.find((block) => block.group === "ISKOLA");
 
   return (
     <div className="space-y-6">
@@ -54,6 +55,19 @@ export default function OrderGrid({
         <GridTable
           caption="VIDÉK — külön kör"
           blocks={[videk]}
+          items={items}
+          quantities={quantities}
+          totals={totals}
+          dirty={dirty}
+          onSetQuantity={onSetQuantity}
+          onOpenStore={onOpenStore}
+        />
+      )}
+
+      {iskola && (
+        <GridTable
+          caption="ISKOLÁK — külön kör"
+          blocks={[iskola]}
           items={items}
           quantities={quantities}
           totals={totals}
