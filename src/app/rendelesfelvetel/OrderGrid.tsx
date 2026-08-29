@@ -19,9 +19,12 @@ type Props = {
 /** The Excel-style matrix: sandwiches down the rows, stores across the columns,
  *  exactly like the sheet this replaces.
  *
- *  Vidék and Iskola each render as their own physically separate table below
- *  the in-town one, mirroring the kitchen export's separate sheets - a
- *  divider column would not survive the horizontal scroll. */
+ *  Vidék and Iskola each render as their own physically separate table,
+ *  mirroring the kitchen export's separate sheets - a divider column would
+ *  not survive the horizontal scroll. They share one row (side by side, not
+ *  stacked) so the short Iskola table doesn't push the page a whole extra
+ *  screen down below Vidék - there's room next to it, and they wrap onto
+ *  their own line automatically once the viewport is too narrow for both. */
 export default function OrderGrid({
   items,
   stores,
@@ -39,45 +42,63 @@ export default function OrderGrid({
   return (
     <div className="space-y-6">
       {inTown.length > 0 && (
-        <GridTable
-          caption="Városi körök"
-          blocks={inTown}
-          items={items}
-          quantities={quantities}
-          totals={totals}
-          dirty={dirty}
-          onSetQuantity={onSetQuantity}
-          onOpenStore={onOpenStore}
-        />
+        <FullBleed>
+          <GridTable
+            caption="Városi körök"
+            blocks={inTown}
+            items={items}
+            quantities={quantities}
+            totals={totals}
+            dirty={dirty}
+            onSetQuantity={onSetQuantity}
+            onOpenStore={onOpenStore}
+          />
+        </FullBleed>
       )}
 
-      {videk && (
-        <GridTable
-          caption="VIDÉK — külön kör"
-          blocks={[videk]}
-          items={items}
-          quantities={quantities}
-          totals={totals}
-          dirty={dirty}
-          onSetQuantity={onSetQuantity}
-          onOpenStore={onOpenStore}
-        />
-      )}
+      {(videk || iskola) && (
+        <FullBleed>
+          <div className="flex flex-wrap items-start gap-6">
+            {videk && (
+              <GridTable
+                caption="VIDÉK — külön kör"
+                blocks={[videk]}
+                items={items}
+                quantities={quantities}
+                totals={totals}
+                dirty={dirty}
+                onSetQuantity={onSetQuantity}
+                onOpenStore={onOpenStore}
+              />
+            )}
 
-      {iskola && (
-        <GridTable
-          caption="ISKOLÁK — külön kör"
-          blocks={[iskola]}
-          items={items}
-          quantities={quantities}
-          totals={totals}
-          dirty={dirty}
-          onSetQuantity={onSetQuantity}
-          onOpenStore={onOpenStore}
-        />
+            {iskola && (
+              <GridTable
+                caption="ISKOLÁK — külön kör"
+                blocks={[iskola]}
+                items={items}
+                quantities={quantities}
+                totals={totals}
+                dirty={dirty}
+                onSetQuantity={onSetQuantity}
+                onOpenStore={onOpenStore}
+              />
+            )}
+          </div>
+        </FullBleed>
       )}
     </div>
   );
+}
+
+/** Full-bleed from md up: the store columns need more than the shared
+ *  layout's max-w-3xl. Below md the store list is the default view anyway,
+ *  so the constrained width there is fine. Shared by the caller so that two
+ *  side-by-side tables (Vidék + Iskola) break out of max-w-3xl TOGETHER as
+ *  one row, instead of each independently claiming the full viewport width
+ *  and forcing themselves back onto separate lines. */
+function FullBleed({ children }: { children: React.ReactNode }) {
+  return <div className="md:relative md:left-1/2 md:w-screen md:-translate-x-1/2 md:px-4">{children}</div>;
 }
 
 function GridTable({
@@ -97,137 +118,132 @@ function GridTable({
   if (columns.length === 0) return null;
 
   return (
-    <section className="space-y-2">
+    <section className="space-y-2 shrink-0">
       <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">{caption}</h2>
 
-      {/* Full-bleed from md up: 30 store columns need more than the shared
-          layout's max-w-3xl. Below md the store list is the default view
-          anyway, so the constrained width there is fine. */}
-      <div className="md:relative md:left-1/2 md:w-screen md:-translate-x-1/2 md:px-4">
-        <div className="border border-surface-border bg-surface rounded-2xl shadow-sm overflow-x-auto">
-          <table className="text-sm border-collapse">
-            <thead>
-              <tr className="bg-surface-alt text-muted">
+      <div className="border border-surface-border bg-surface rounded-2xl shadow-sm overflow-x-auto">
+        <table className="text-sm border-collapse">
+          <thead>
+            <tr className="bg-surface-alt text-muted">
+              <th
+                rowSpan={2}
+                className="sticky left-0 z-[2] bg-surface-alt text-left px-3 py-2 align-bottom border-r border-strong min-w-[10rem]"
+              >
+                Szendvics
+              </th>
+              {blocks.map((block) => (
                 <th
-                  rowSpan={2}
-                  className="sticky left-0 z-[2] bg-surface-alt text-left px-3 py-2 align-bottom border-r border-strong min-w-[10rem]"
+                  key={block.group}
+                  colSpan={block.stores.length}
+                  className="px-2 py-1.5 text-center text-xs font-semibold uppercase tracking-wide border-l-2 border-strong"
                 >
-                  Szendvics
+                  {STORE_GROUP_LABELS[block.group]}
                 </th>
-                {blocks.map((block) => (
-                  <th
-                    key={block.group}
-                    colSpan={block.stores.length}
-                    className="px-2 py-1.5 text-center text-xs font-semibold uppercase tracking-wide border-l-2 border-strong"
-                  >
-                    {STORE_GROUP_LABELS[block.group]}
-                  </th>
-                ))}
-                <th rowSpan={2} className="px-3 py-2 text-right align-bottom border-l-2 border-strong">
-                  Össz.
-                </th>
-              </tr>
-              <tr className="bg-surface-alt text-muted">
-                {blocks.flatMap((block) =>
-                  block.stores.map((store, i) => (
-                    <th
-                      key={store.customerId}
-                      className={`px-1 py-2 align-bottom font-medium min-w-[3.5rem] ${
-                        i === 0 ? "border-l-2 border-strong" : "border-l border-surface-border"
-                      }`}
-                    >
-                      {/* Tapping a store header opens the single-store editor -
-                          the escape hatch from cell-by-cell typing. */}
-                      <button
-                        type="button"
-                        onClick={() => onOpenStore(store.customerId)}
-                        className="w-full text-[11px] leading-tight break-words hover:underline active:opacity-70"
-                        title={`${store.storeName} szerkesztése`}
-                      >
-                        {store.storeName}
-                        {dirty.has(store.customerId) && (
-                          <span className="block text-umber-dark" aria-label="mentetlen">
-                            ●
-                          </span>
-                        )}
-                      </button>
-                    </th>
-                  ))
-                )}
-              </tr>
-            </thead>
-
-            <tbody>
-              {items.map((item) => (
-                <tr key={item.itemId} className="border-t border-surface-border">
-                  <th
-                    scope="row"
-                    className="sticky left-0 z-[1] bg-surface text-left font-normal px-3 py-1.5 whitespace-nowrap border-r border-strong"
-                    title={item.name}
-                  >
-                    {item.shortLabel}
-                  </th>
-                  {blocks.flatMap((block) =>
-                    block.stores.map((store, i) => (
-                      <td
-                        key={store.customerId}
-                        className={`p-0 text-center ${
-                          i === 0 ? "border-l-2 border-strong" : "border-l border-surface-border"
-                        }`}
-                      >
-                        <EditableQty
-                          value={quantities[store.customerId]?.[item.itemId] ?? 0}
-                          onCommit={(value) => onSetQuantity(store.customerId, item.itemId, value)}
-                          ariaLabel={`${store.storeName} – ${item.name}`}
-                          placeholder="·"
-                          className="w-full min-w-[3.5rem] px-1 py-1.5 text-center tabular-nums"
-                        />
-                      </td>
-                    ))
-                  )}
-                  <td className="px-3 py-1.5 text-right tabular-nums text-muted border-l-2 border-strong">
-                    {totals.byItem[item.itemId] || ""}
-                  </td>
-                </tr>
               ))}
-            </tbody>
+              <th rowSpan={2} className="px-3 py-2 text-right align-bottom border-l-2 border-strong">
+                Össz.
+              </th>
+            </tr>
+            <tr className="bg-surface-alt text-muted">
+              {blocks.flatMap((block) =>
+                block.stores.map((store, i) => (
+                  <th
+                    key={store.customerId}
+                    className={`px-1 py-2 align-bottom font-medium min-w-[3.5rem] ${
+                      i === 0 ? "border-l-2 border-strong" : "border-l border-surface-border"
+                    }`}
+                  >
+                    {/* Tapping a store header opens the single-store editor -
+                        the escape hatch from cell-by-cell typing. */}
+                    <button
+                      type="button"
+                      onClick={() => onOpenStore(store.customerId)}
+                      className="w-full text-[11px] leading-tight break-words hover:underline active:opacity-70"
+                      title={`${store.storeName} szerkesztése`}
+                    >
+                      {store.storeName}
+                      {dirty.has(store.customerId) && (
+                        <span className="block text-umber-dark" aria-label="mentetlen">
+                          ●
+                        </span>
+                      )}
+                    </button>
+                  </th>
+                ))
+              )}
+            </tr>
+          </thead>
 
-            <tfoot>
-              <tr className="border-t-2 border-strong bg-surface-alt font-semibold">
-                <th className="sticky left-0 z-[1] bg-surface-alt text-left px-3 py-2 border-r border-strong">
-                  Összesen
+          <tbody>
+            {items.map((item) => (
+              <tr key={item.itemId} className="border-t border-surface-border">
+                <th
+                  scope="row"
+                  className="sticky left-0 z-[1] bg-surface text-left font-normal px-3 py-1.5 whitespace-nowrap border-r border-strong"
+                  title={item.name}
+                >
+                  {item.shortLabel}
                 </th>
                 {blocks.flatMap((block) =>
                   block.stores.map((store, i) => (
                     <td
                       key={store.customerId}
-                      className={`px-1 py-2 text-center tabular-nums ${
+                      className={`p-0 text-center ${
                         i === 0 ? "border-l-2 border-strong" : "border-l border-surface-border"
                       }`}
                     >
-                      {totals.byStore[store.customerId]?.quantity || ""}
+                      <EditableQty
+                        value={quantities[store.customerId]?.[item.itemId] ?? 0}
+                        onCommit={(value) => onSetQuantity(store.customerId, item.itemId, value)}
+                        ariaLabel={`${store.storeName} – ${item.name}`}
+                        placeholder="·"
+                        className="w-full min-w-[3.5rem] px-1 py-1.5 text-center tabular-nums"
+                      />
                     </td>
                   ))
                 )}
-                <td className="px-3 py-2 text-right tabular-nums border-l-2 border-strong">
-                  {columns.reduce(
-                    (sum, store) => sum + (totals.byStore[store.customerId]?.quantity ?? 0),
-                    0
-                  )}
+                <td className="px-3 py-1.5 text-right tabular-nums text-muted border-l-2 border-strong">
+                  {totals.byItem[item.itemId] || ""}
                 </td>
               </tr>
-            </tfoot>
-          </table>
-        </div>
+            ))}
+          </tbody>
 
-        <p className="mt-1.5 px-1 text-xs text-faint md:px-0">
-          Érték:{" "}
-          {formatFt(
-            columns.reduce((sum, store) => sum + (totals.byStore[store.customerId]?.valueFt ?? 0), 0)
-          )}{" "}
-          · koppints egy bolt nevére a teljes képernyős szerkesztéshez
-        </p>
+          <tfoot>
+            <tr className="border-t-2 border-strong bg-surface-alt font-semibold">
+              <th className="sticky left-0 z-[1] bg-surface-alt text-left px-3 py-2 border-r border-strong">
+                Összesen
+              </th>
+              {blocks.flatMap((block) =>
+                block.stores.map((store, i) => (
+                  <td
+                    key={store.customerId}
+                    className={`px-1 py-2 text-center tabular-nums ${
+                      i === 0 ? "border-l-2 border-strong" : "border-l border-surface-border"
+                    }`}
+                  >
+                    {totals.byStore[store.customerId]?.quantity || ""}
+                  </td>
+                ))
+              )}
+              <td className="px-3 py-2 text-right tabular-nums border-l-2 border-strong">
+                {columns.reduce(
+                  (sum, store) => sum + (totals.byStore[store.customerId]?.quantity ?? 0),
+                  0
+                )}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
+
+      <p className="mt-1.5 px-1 text-xs text-faint md:px-0">
+        Érték:{" "}
+        {formatFt(
+          columns.reduce((sum, store) => sum + (totals.byStore[store.customerId]?.valueFt ?? 0), 0)
+        )}{" "}
+        · koppints egy bolt nevére a teljes képernyős szerkesztéshez
+      </p>
     </section>
   );
 }
