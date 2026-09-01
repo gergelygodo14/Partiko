@@ -101,6 +101,21 @@ export function groupAdjacentByStoreGroup(
 
 type Item = { itemId: string; name: string; order: number };
 
+// A phantom "store" with no name and no order - reserves one column on the
+// first regular sheet for a customer who calls in after that sheet was
+// already printed, without adding a whole extra page (owner request,
+// 2026-08-29). Shares buildSheet's normal column code path (same font,
+// width-budget-splitting, borders), so it costs nothing to keep in step with
+// the rest of the format; it just carries zero quantities everywhere,
+// so it never shows up in any total.
+const BLANK_PHONE_ORDER_COLUMN: SandwichDayCustomerOrder = {
+  customerId: "__blank_phone_order_column__",
+  storeName: "",
+  storeGroup: "EGYEB",
+  lines: [],
+  totalQuantity: 0,
+};
+
 // One printable A4-landscape page for a subset of stores - split out so a
 // busy day (many stores) becomes two narrower sheets instead of one sheet
 // squeezed illegibly small to fit-to-width.
@@ -238,11 +253,28 @@ export async function generateSandwichOrdersXlsx(
   // room).
   const STORES_PER_SHEET = 12;
   const label = dayName || date;
-  const sheetCount = Math.max(1, Math.ceil(regularRows.length / STORES_PER_SHEET));
-  for (let i = 0; i < sheetCount; i++) {
-    const chunk = regularRows.slice(i * STORES_PER_SHEET, (i + 1) * STORES_PER_SHEET);
-    buildSheet(workbook, `SZENDVICS ${label} ${i + 1}`, label, items, chunk);
+
+  // The first regular (in-town) sheet is the one at the counter, so it keeps
+  // one store's worth of capacity spare for whoever calls in after this was
+  // already printed - its real-store capacity is one less than every other
+  // sheet's, always, regardless of how many stores that day actually has.
+  // Only this one tab changes; later regular sheets and the separate FAV/
+  // VIDÉK/ISKOLA sheets keep their normal 12-per-sheet chunking untouched
+  // (owner request, 2026-08-29).
+  const FIRST_SHEET_CAPACITY = STORES_PER_SHEET - 1;
+  const regularChunks: SandwichDayCustomerOrder[][] = [];
+  if (regularRows.length <= FIRST_SHEET_CAPACITY) {
+    regularChunks.push(regularRows);
+  } else {
+    regularChunks.push(regularRows.slice(0, FIRST_SHEET_CAPACITY));
+    for (let idx = FIRST_SHEET_CAPACITY; idx < regularRows.length; idx += STORES_PER_SHEET) {
+      regularChunks.push(regularRows.slice(idx, idx + STORES_PER_SHEET));
+    }
   }
+  regularChunks.forEach((chunk, i) => {
+    const sheetRows = i === 0 ? [...chunk, BLANK_PHONE_ORDER_COLUMN] : chunk;
+    buildSheet(workbook, `SZENDVICS ${label} ${i + 1}`, label, items, sheetRows);
+  });
 
   if (favRows.length > 0) {
     const favSheetCount = Math.ceil(favRows.length / STORES_PER_SHEET);
