@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import { addDaysStr, parseDay } from "@/lib/dates";
 import type { MenuDay } from "@/lib/weeklyMenu";
-import { openRouterJsonCompletion } from "@/lib/openrouter";
+import { anthropicJsonCompletion } from "@/lib/anthropic";
 
 // How many neighboring weeks' dishes are off-limits (both before and after
 // the week being edited), in addition to the current week - keeps the same
@@ -23,6 +23,23 @@ const MAX_CANDIDATES = 60;
 // How many options the AI button offers per click - lets the user pick one
 // instead of re-clicking and waiting on a fresh round-trip for every retry.
 export const SUGGESTION_COUNT = 3;
+
+// json_schema-constrained output (direct Anthropic API only, restored
+// 2026-09-03) - the model can only emit exactly this shape, so it can't ramble
+// or wrap the answer in prose the way OpenRouter's prompt-enforced JSON mode
+// sometimes needed extra tokens to avoid. No minItems/maxItems on the array -
+// confirmed live (2026-09-03) that Anthropic's json_schema output_config
+// rejects those on an array type (400: "property 'maxItems' is not
+// supported") - the exact count is enforced by the prompt text instead
+// (buildPickPrompt), with the top-up loop below as a runtime backstop.
+const PICK_SCHEMA = {
+  type: "object",
+  properties: {
+    indices: { type: "array", items: { type: "integer" } },
+  },
+  required: ["indices"],
+  additionalProperties: false,
+} as const;
 
 export function normalizeDishName(name: string): string {
   return name.trim().toLowerCase();
@@ -156,22 +173,20 @@ export async function suggestDishes(params: {
 
   const prompt = buildPickPrompt(candidates, sameDayDishes, weekDishes, SUGGESTION_COUNT);
 
-  // A direct test against OpenRouter with an EMPTY avoid-list looked fast
-  // (~2s, 0 reasoning tokens) and briefly pointed at "one-off flakiness" as
-  // the explanation for the prior two failures - but retesting the actual
-  // payload shape a real click sends (real weekDishes/avoidDishes content,
-  // which the prompt asks the model to weigh every candidate against for
-  // thematic similarity, not just exact-match) showed this is normal,
-  // repeatable behavior: 13.6s-26.9s across 6 real requests, not a rare
-  // spike. The previous 25s-per-attempt timeout was tighter than some
-  // perfectly legitimate responses actually needed (26.9s > 25s) - it was
-  // aborting real, in-progress successes, not just genuine hangs. Widened
-  // with real margin over the observed worst case, and maxDuration raised
-  // to match (see the route).
-  const text = await openRouterJsonCompletion({
+  // Historical note: while this ran over OpenRouter (2026-08-05 - 2026-09-03),
+  // real clicks measured 13.6s-26.9s round-trip even with an empty avoid-list
+  // baseline testing ~2s - normal, repeatable slowness from that path, not a
+  // rare flake (the 25s-per-attempt timeout at the time was actually too
+  // tight and aborted legitimate in-flight successes). Back on the direct
+  // Anthropic API with json_schema-constrained output now (see
+  // src/lib/anthropic.ts) - the timeout/retry budget below is left wide for
+  // now since it cost nothing to keep, but is a candidate to tighten once
+  // real timings on this path are in.
+  const text = await anthropicJsonCompletion({
     maxTokens: 8192,
     timeoutMs: 40_000,
     maxAttempts: 2,
+    schema: PICK_SCHEMA,
     content: [{ type: "text", text: prompt }],
   });
   const parsed = JSON.parse(text) as { indices: number[] };

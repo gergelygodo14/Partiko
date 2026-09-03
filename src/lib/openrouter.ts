@@ -1,3 +1,8 @@
+// UNUSED as of 2026-09-03 - both callers (dishSuggestion.ts,
+// invoiceProcessing.ts) switched back to the direct Anthropic API
+// (src/lib/anthropic.ts) now that ANTHROPIC_API_KEY has credit again.
+// Deliberately left in place, same as OPENROUTER_API_KEY in .env.local, in
+// case that key runs out again and this needs to come back quickly.
 const OPENROUTER_API_BASE = "https://openrouter.ai/api/v1";
 
 // Same model as before the 2026-08-05 switch, just billed from the
