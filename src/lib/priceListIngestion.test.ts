@@ -5,6 +5,8 @@ const importRunCreate = vi.fn();
 const productFindMany = vi.fn();
 const productCreate = vi.fn();
 const observationCreateMany = vi.fn();
+const observationFindFirst = vi.fn();
+const sendTelegramMessage = vi.fn();
 
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -18,11 +20,18 @@ vi.mock("@/lib/db", () => ({
     },
     priceObservation: {
       createMany: (...args: unknown[]) => observationCreateMany(...args),
+      findFirst: (...args: unknown[]) => observationFindFirst(...args),
     },
   },
 }));
 
-const { ingestPriceList, buildPriceListNotificationText } = await import("@/lib/priceListIngestion");
+vi.mock("@/lib/telegram", () => ({
+  sendTelegramMessage: (...args: unknown[]) => sendTelegramMessage(...args),
+}));
+
+const { ingestPriceList, buildPriceListNotificationText, buildPriceJumpAlertText } = await import(
+  "@/lib/priceListIngestion"
+);
 
 beforeEach(() => {
   importRunFindUnique.mockReset();
@@ -30,6 +39,10 @@ beforeEach(() => {
   productFindMany.mockReset();
   productCreate.mockReset();
   observationCreateMany.mockReset();
+  observationFindFirst.mockReset();
+  observationFindFirst.mockResolvedValue(null);
+  sendTelegramMessage.mockReset();
+  sendTelegramMessage.mockResolvedValue({ ok: true });
 });
 
 describe("ingestPriceList", () => {
@@ -122,6 +135,79 @@ describe("ingestPriceList", () => {
 
     const observedDate = observationCreateMany.mock.calls[0][0].data[0].observedDate as Date;
     expect(observedDate.getTime()).toBeGreaterThan(Date.now() - 5000);
+  });
+
+  it("alerts on Telegram for a >=20% jump against the same supplier's last price, but still saves it", async () => {
+    importRunFindUnique.mockResolvedValue(null);
+    productFindMany.mockResolvedValue([{ id: "prod-1", name: "Csirkemell" }]);
+    observationFindFirst.mockResolvedValue({ unitPrice: 1000 });
+    observationCreateMany.mockResolvedValue({ count: 1 });
+    importRunCreate.mockResolvedValue({});
+
+    const result = await ingestPriceList("msg-6", "BAROMFIUDVAR", {
+      validFrom: null,
+      items: [{ name: "Csirkemell", unit: "kg", unitPrice: 1300 }],
+    });
+
+    expect(observationCreateMany).toHaveBeenCalled();
+    expect(sendTelegramMessage).toHaveBeenCalledWith(expect.stringContaining("Csirkemell"));
+    expect(sendTelegramMessage).toHaveBeenCalledWith(expect.stringContaining("1000 → 1300 Ft"));
+    expect(result).toEqual({ status: "imported", productCount: 1 });
+  });
+
+  it("does not alert for a change under the 20% threshold", async () => {
+    importRunFindUnique.mockResolvedValue(null);
+    productFindMany.mockResolvedValue([{ id: "prod-1", name: "Csirkemell" }]);
+    observationFindFirst.mockResolvedValue({ unitPrice: 1000 });
+    observationCreateMany.mockResolvedValue({ count: 1 });
+    importRunCreate.mockResolvedValue({});
+
+    await ingestPriceList("msg-7", "BAROMFIUDVAR", {
+      validFrom: null,
+      items: [{ name: "Csirkemell", unit: "kg", unitPrice: 1050 }],
+    });
+
+    expect(sendTelegramMessage).not.toHaveBeenCalled();
+  });
+
+  it("does not alert for a brand-new product with no prior price on record", async () => {
+    importRunFindUnique.mockResolvedValue(null);
+    productFindMany.mockResolvedValue([]);
+    productCreate.mockResolvedValue({ id: "prod-new", name: "Új termék" });
+    observationFindFirst.mockResolvedValue(null);
+    observationCreateMany.mockResolvedValue({ count: 1 });
+    importRunCreate.mockResolvedValue({});
+
+    await ingestPriceList("msg-8", "BAROMFIUDVAR", {
+      validFrom: null,
+      items: [{ name: "Új termék", unit: "kg", unitPrice: 5000 }],
+    });
+
+    expect(sendTelegramMessage).not.toHaveBeenCalled();
+  });
+});
+
+describe("buildPriceJumpAlertText", () => {
+  it("returns an empty string for no jumps", () => {
+    expect(buildPriceJumpAlertText([])).toBe("");
+  });
+
+  it("lists each jump with direction and percentage", () => {
+    const text = buildPriceJumpAlertText([
+      { productName: "Csirkemell", supplier: "BAROMFIUDVAR", priorPrice: 1000, newPrice: 1300 },
+    ]);
+    expect(text).toContain("Csirkemell (Baromfiudvar)");
+    expect(text).toContain("1000 → 1300 Ft");
+    expect(text).toContain("30%-kal drágább");
+    expect(text).toContain("📈");
+  });
+
+  it("marks a decrease with the down arrow and 'olcsóbb'", () => {
+    const text = buildPriceJumpAlertText([
+      { productName: "Sertéskaraj", supplier: "SAJTFUTAR", priorPrice: 2000, newPrice: 1500 },
+    ]);
+    expect(text).toContain("📉");
+    expect(text).toContain("25%-kal olcsóbb");
   });
 });
 

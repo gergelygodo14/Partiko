@@ -3,6 +3,13 @@ import { prisma } from "@/lib/db";
 import { PriceSource, ProductStatus, type Supplier } from "@/generated/prisma/client";
 import { findBestProductMatch } from "@/lib/productMatching";
 import { anthropicJsonCompletion } from "@/lib/anthropic";
+import { isLargePriceChange, LARGE_PRICE_CHANGE_THRESHOLD } from "@/lib/priceChangeThreshold";
+import { sendTelegramMessage } from "@/lib/telegram";
+
+// Re-exported for anything still importing the threshold from here (kept
+// this file's public surface unchanged when the constant moved out to be
+// shared with priceListIngestion.ts, 2026-09-06).
+export { LARGE_PRICE_CHANGE_THRESHOLD };
 
 export type ExtractedLineItem = {
   name: string;
@@ -122,8 +129,8 @@ export function buildHighlightSummary(notes: PriceChangeNote[]): string {
 // put a 750 Ft item's price on a 1200 Ft item). Rather than trust every
 // number the vision model returns, a jump this large against the product's
 // own last same-supplier price gets held back for a manual look before it's
-// allowed to become real price history.
-export const LARGE_PRICE_CHANGE_THRESHOLD = 0.2;
+// allowed to become real price history. (Threshold + predicate now live in
+// priceChangeThreshold.ts, shared with priceListIngestion.ts.)
 
 export type PendingPriceItem = {
   id: string;
@@ -136,11 +143,6 @@ export type PendingPriceItem = {
   priorPrice: number;
   observedDate: string;
 };
-
-function isLargePriceChange(newPrice: number, priorPrice: number): boolean {
-  if (priorPrice === 0) return false;
-  return Math.abs(newPrice - priorPrice) / priorPrice >= LARGE_PRICE_CHANGE_THRESHOLD;
-}
 
 export function buildPendingReviewNote(items: PendingPriceItem[]): string {
   if (items.length === 0) return "";
@@ -281,6 +283,18 @@ export async function processInvoiceLineItems(
   // processed" fallback would be misleading here, so skip it in that case.
   const detail = notes.length > 0 || pendingLineItems.length === 0 ? formatPriceChangeSummary(notes) : "";
   const summaryText = [pendingNote, highlight, detail].filter(Boolean).join("\n\n");
+
+  // A >=20% jump used to only surface as a badge on /szamlak, which the
+  // owner might not open for hours - Telegram gets it in front of them
+  // immediately, same channel as order/price-list notifications (owner
+  // request, 2026-09-06). Never allowed to fail the upload itself.
+  if (pendingLineItems.length > 0) {
+    try {
+      await sendTelegramMessage(`⚠️ ${pendingNote}`);
+    } catch (e) {
+      console.error("Telegram price-jump alert failed:", e);
+    }
+  }
 
   return { summaryText, highlightText: highlight || null, pendingLineItems };
 }

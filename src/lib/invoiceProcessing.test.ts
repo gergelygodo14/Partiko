@@ -4,6 +4,7 @@ const findFirst = vi.fn();
 const findMany = vi.fn();
 const productCreate = vi.fn();
 const observationCreate = vi.fn();
+const sendTelegramMessage = vi.fn();
 
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -16,6 +17,10 @@ vi.mock("@/lib/db", () => ({
       create: (...args: unknown[]) => observationCreate(...args),
     },
   },
+}));
+
+vi.mock("@/lib/telegram", () => ({
+  sendTelegramMessage: (...args: unknown[]) => sendTelegramMessage(...args),
 }));
 
 const {
@@ -31,6 +36,8 @@ beforeEach(() => {
   findMany.mockReset();
   productCreate.mockReset();
   observationCreate.mockReset();
+  sendTelegramMessage.mockReset();
+  sendTelegramMessage.mockResolvedValue({ ok: true });
 });
 
 describe("buildPriceChangeNote", () => {
@@ -302,6 +309,7 @@ describe("processInvoiceLineItems", () => {
     ]);
     expect(result.summaryText).toContain("Toast sonka: 750 → 1200 Ft");
     expect(result.summaryText).toContain("megerősítés szükséges");
+    expect(sendTelegramMessage).toHaveBeenCalledWith(expect.stringContaining("Toast sonka: 750 → 1200 Ft"));
   });
 
   it("still auto-saves a change below the threshold (existing behavior unchanged)", async () => {
@@ -319,6 +327,7 @@ describe("processInvoiceLineItems", () => {
 
     expect(observationCreate).toHaveBeenCalled();
     expect(result.pendingLineItems).toEqual([]);
+    expect(sendTelegramMessage).not.toHaveBeenCalled();
   });
 
   it("never holds back an item that has no prior price to compare against", async () => {
