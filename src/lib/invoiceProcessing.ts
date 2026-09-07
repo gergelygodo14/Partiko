@@ -193,7 +193,13 @@ export function formatPriceChangeSummary(notes: PriceChangeNote[]): string {
 export async function processInvoiceLineItems(
   invoiceId: string,
   supplier: Supplier,
-  extraction: ExtractedInvoice
+  extraction: ExtractedInvoice,
+  // Defaults to the original (only) caller's source - photo upload. The NAV
+  // integration (navInvoiceIngestion.ts, 2026-09-07) passes PriceSource.NAV
+  // instead, reusing this same pipeline (product matching, price-jump
+  // hold-back, Telegram alert) rather than duplicating it, since NAV line
+  // items arrive in the exact same ExtractedInvoice shape.
+  source: PriceSource = PriceSource.INVOICE_PHOTO
 ): Promise<{ summaryText: string; highlightText: string | null; pendingLineItems: PendingPriceItem[] }> {
   const observedDate = extraction.invoiceDate ? new Date(extraction.invoiceDate) : new Date();
   const confirmedProducts = await prisma.product.findMany({
@@ -258,7 +264,7 @@ export async function processInvoiceLineItems(
         unitPrice,
         unit: item.unit ?? undefined,
         observedDate,
-        source: PriceSource.INVOICE_PHOTO,
+        source,
         rawText: item.name,
         invoiceId,
       },

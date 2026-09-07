@@ -26,7 +26,10 @@ type PendingPriceItem = {
 type Invoice = {
   id: string;
   supplier: Supplier;
-  photoUrl: string;
+  photoUrl: string | null;
+  // Set only for a NAV-sourced row (src/lib/navInvoiceIngestion.ts) - null
+  // for a photo upload. Used below only to show a small "NAV" badge.
+  navInvoiceNumber: string | null;
   status: "UPLOADED" | "PROCESSING" | "PROCESSED" | "FAILED";
   uploadedAt: string;
   summaryText: string | null;
@@ -629,6 +632,11 @@ export default function SzamlakPage() {
                   <span>
                     {SUPPLIER_LABEL[inv.supplier]} ·{" "}
                     {new Date(inv.uploadedAt).toLocaleDateString("hu-HU")}
+                    {inv.navInvoiceNumber && (
+                      <span className="ml-1.5 rounded-full bg-umber/10 px-2 py-0.5 text-umber-dark">
+                        NAV
+                      </span>
+                    )}
                   </span>
                   <span
                     className={

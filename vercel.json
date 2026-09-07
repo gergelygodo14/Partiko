@@ -1,5 +1,6 @@
 {
   "crons": [
-    { "path": "/api/cron/fetch-price-list", "schedule": "0 6 * * *" }
+    { "path": "/api/cron/fetch-price-list", "schedule": "0 6 * * *" },
+    { "path": "/api/cron/fetch-nav-invoices", "schedule": "30 6 * * *" }
   ]
 }

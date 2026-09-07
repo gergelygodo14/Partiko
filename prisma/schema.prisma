@@ -132,6 +132,7 @@ enum PriceSource {
   EMAIL_PRICELIST
   INVOICE_PHOTO
   MANUAL
+  NAV
 }
 
 model Product {
@@ -172,8 +173,15 @@ model PriceObservation {
 model Invoice {
   id                String             @id @default(cuid())
   supplier          Supplier
-  photoUrl          String
+  // Optional since 2026-09-07: a NAV-sourced row (see navInvoiceNumber below)
+  // has no photo at all - only a photo-upload row sets this.
+  photoUrl          String?
   photoBlobPathname String?
+  // NAV Online Számla's own invoice number, set only for rows imported via
+  // the NAV integration (src/lib/navInvoiceIngestion.ts) - the dedup key
+  // that keeps the daily cron from re-importing the same invoice. Null for
+  // photo-uploaded rows, same pattern as PriceListImportRun.emailMessageId.
+  navInvoiceNumber  String?
   status            InvoiceStatus      @default(UPLOADED)
   uploadedAt        DateTime           @default(now())
   processedAt       DateTime?
@@ -194,6 +202,11 @@ model Invoice {
   pendingLineItems  Json?
   priceObservations PriceObservation[]
   createdAt         DateTime           @default(now())
+
+  // Postgres treats multiple NULLs as distinct, so this only actually
+  // constrains the NAV-sourced rows (photo-upload rows all have
+  // navInvoiceNumber: null and never collide with each other or with this).
+  @@unique([supplier, navInvoiceNumber])
 }
 
 model PriceListImportRun {
