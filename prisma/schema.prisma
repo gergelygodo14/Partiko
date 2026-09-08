@@ -172,14 +172,31 @@ model PriceObservation {
 
 model Invoice {
   id                String             @id @default(cuid())
-  supplier          Supplier
+  // Optional since 2026-09-08: a NAV row from a supplier OUTSIDE the 2-
+  // supplier price-tracking scope (see NAV_SUPPLIER_TAX_NUMBER in
+  // navInvoiceIngestion.ts) has no Supplier enum value to hold - it's a
+  // "ledger-only" row (see supplierName/supplierTaxNumber below), recorded
+  // for the "Összes számla"/Kiadások expense reporting only, never for price
+  // comparison. Still always set for photo uploads and the 2 tracked
+  // suppliers' NAV rows.
+  supplier          Supplier?
+  // NAV's own supplier tax number and display name, set for every NAV-sourced
+  // row (tracked or not) - supplierTaxNumber is the real dedup key (a raw
+  // navInvoiceNumber string can collide across two different suppliers' own
+  // numbering schemes, so [supplier, navInvoiceNumber] alone wasn't safe
+  // once untracked suppliers - which have no `supplier` enum value at all -
+  // entered the picture). supplierName is what the "Összes számla" ledger
+  // displays for a row outside the 2 tracked suppliers (they get the app's
+  // own friendly label instead - see supplierDisplayName in expenseSummary.ts).
+  // Both null for photo-uploaded rows.
+  supplierTaxNumber String?
+  supplierName      String?
   // Optional since 2026-09-07: a NAV-sourced row (see navInvoiceNumber below)
   // has no photo at all - only a photo-upload row sets this.
   photoUrl          String?
   photoBlobPathname String?
   // NAV Online Számla's own invoice number, set only for rows imported via
-  // the NAV integration (src/lib/navInvoiceIngestion.ts) - the dedup key
-  // that keeps the daily cron from re-importing the same invoice. Null for
+  // the NAV integration (src/lib/navInvoiceIngestion.ts) - null for
   // photo-uploaded rows, same pattern as PriceListImportRun.emailMessageId.
   navInvoiceNumber  String?
   // The following three are populated only for NAV-sourced rows (from
@@ -216,7 +233,9 @@ model Invoice {
   // Postgres treats multiple NULLs as distinct, so this only actually
   // constrains the NAV-sourced rows (photo-upload rows all have
   // navInvoiceNumber: null and never collide with each other or with this).
-  @@unique([supplier, navInvoiceNumber])
+  // Keyed on supplierTaxNumber, not the supplier enum (see above) - an
+  // untracked-supplier row has no enum value to key on.
+  @@unique([supplierTaxNumber, navInvoiceNumber])
   @@index([issueDate])
 }
 

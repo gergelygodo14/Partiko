@@ -15,6 +15,7 @@ export const GET = withApiErrorHandling(async () => {
     select: {
       id: true,
       supplier: true,
+      supplierName: true,
       navInvoiceNumber: true,
       issueDate: true,
       uploadedAt: true,

@@ -25,11 +25,13 @@ type SandwichProfitReport = {
 
 type MealProfitReport = { totalMeals: number; totalProfitFt: number };
 
-type Supplier = "SAJTFUTAR" | "BAROMFIUDVAR";
-const SUPPLIER_LABEL: Record<Supplier, string> = { SAJTFUTAR: "Sajtfutár", BAROMFIUDVAR: "Baromfiudvar" };
-
+// Every incoming NAV invoice, not just the 2 price-tracked suppliers (owner
+// request, 2026-09-08) - bySupplier is a plain ranked list, not keyed by a
+// fixed 2-value enum, since the real supplier set is however many NAV
+// actually reports.
+type SupplierExpenseRow = { name: string; netHUF: number; grossHUF: number; invoiceCount: number };
 type MonthlyExpenseSummary = {
-  bySupplier: Partial<Record<Supplier, { netHUF: number; grossHUF: number }>>;
+  bySupplier: SupplierExpenseRow[];
   totalNetHUF: number;
   totalGrossHUF: number;
   invoiceCount: number;
@@ -146,24 +148,30 @@ function TurnoverCard({
 // suppliers, same as everywhere else in Számlák. Gross (bruttó, net+VAT) is
 // the headline figure since "kiadás" means what actually left the bank
 // account; net is shown as a smaller sub-line for cost analysis.
+// Ranked list, not fixed cards - the supplier set is every NAV-reported
+// supplier now (owner request, 2026-09-08), not just the 2 tracked ones, so
+// a fixed grid stopped making sense.
 function ExpensesCard({ summary }: { summary: MonthlyExpenseSummary | null }) {
   return (
     <section className="space-y-3">
       <h2 className="text-lg font-semibold">Kiadások</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {(["SAJTFUTAR", "BAROMFIUDVAR"] as Supplier[]).map((supplier) => (
-          <div key={supplier} className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-1">
-            <div className="text-sm text-muted">{SUPPLIER_LABEL[supplier]}</div>
-            <div className="text-2xl font-semibold">
-              {summary ? formatFt(summary.bySupplier[supplier]?.grossHUF ?? 0) : "…"}
-            </div>
-          </div>
-        ))}
-      </div>
       <div className="border border-gold bg-gold/10 rounded-2xl p-4 shadow-sm flex items-center justify-between">
         <span className="text-sm font-medium">Összesen (bruttó)</span>
         <span className="font-semibold text-lg">{summary ? formatFt(summary.totalGrossHUF) : "…"}</span>
       </div>
+      {summary && summary.bySupplier.length > 0 && (
+        <div className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-2">
+          <div className="text-sm font-medium">Beszállítónként</div>
+          <ul className="text-sm divide-y divide-surface-border">
+            {summary.bySupplier.map((row) => (
+              <li key={row.name} className="flex items-center justify-between py-1.5">
+                <span>{row.name}</span>
+                <span className="font-medium">{formatFt(row.grossHUF)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       {summary && (
         <p className="text-xs text-faint">
           {summary.invoiceCount} NAV-számla alapján · nettó {formatFt(summary.totalNetHUF)}

@@ -21,7 +21,7 @@ export const GET = withApiErrorHandling(async (request: NextRequest) => {
 
   const rows = await prisma.invoice.findMany({
     where: { navInvoiceNumber: { not: null }, issueDate: { gte, lt } },
-    select: { supplier: true, netAmountHUF: true, vatAmountHUF: true },
+    select: { supplier: true, supplierName: true, netAmountHUF: true, vatAmountHUF: true },
   });
 
   return NextResponse.json({ monthStart, monthEnd, ...summarizeMonthlyExpenses(rows) });

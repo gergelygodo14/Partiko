@@ -32,6 +32,16 @@ export const POST = withApiErrorHandling(async (
   if (!item) {
     return NextResponse.json({ error: "Nem található" }, { status: 404 });
   }
+  // pendingLineItems only ever gets populated by processInvoiceLineItems,
+  // which always runs with a real (non-null) supplier - a ledger-only NAV
+  // row (an untracked supplier, or a ledgerOnly backfill - see
+  // navInvoiceIngestion.ts) never touches pendingLineItems at all. A null
+  // supplier reaching here would mean that invariant broke somewhere else,
+  // so surface it loudly rather than writing a PriceObservation the schema
+  // wouldn't even accept (its own supplier column stays non-nullable).
+  if (!invoice.supplier) {
+    return NextResponse.json({ error: "A számlához nincs beszállító társítva" }, { status: 400 });
+  }
 
   const unitPrice = overrideUnitPrice !== undefined ? Math.round(overrideUnitPrice) : item.newPrice;
   const remaining = pending.filter((p) => p.id !== itemId);
@@ -44,7 +54,11 @@ export const POST = withApiErrorHandling(async (
         unitPrice,
         unit: item.unit ?? undefined,
         observedDate: new Date(item.observedDate),
-        source: PriceSource.INVOICE_PHOTO,
+        // The pending-review hold-back applies to both sources (see
+        // isLargePriceChange in invoiceProcessing.ts) - this used to be
+        // hardcoded to INVOICE_PHOTO from before the NAV integration
+        // existed, silently mislabeling a NAV-originated confirmation.
+        source: invoice.navInvoiceNumber ? PriceSource.NAV : PriceSource.INVOICE_PHOTO,
         rawText: item.rawText,
         invoiceId: invoice.id,
       },

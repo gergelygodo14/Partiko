@@ -1,14 +1,19 @@
 import { prisma } from "@/lib/db";
 import { InvoiceStatus, PriceSource, Supplier } from "@/generated/prisma/client";
-import { queryInvoiceDigest, queryInvoiceData } from "@/lib/nav";
+import { queryInvoiceDigest, queryInvoiceData, type InboundInvoiceDigest } from "@/lib/nav";
 import { processInvoiceLineItems, type ExtractedInvoice } from "@/lib/invoiceProcessing";
+import { addDaysStr } from "@/lib/dates";
 
 // Maps NAV's own supplier tax number to this app's Supplier enum - confirmed
 // with the owner 2026-09-07 (see project_partiko_nav_integration memory: the
 // 34-day digest surfaced 25 distinct real suppliers, most of them not
-// ingredient suppliers at all - this mapping is the deliberate, narrow
-// allowlist that keeps the NAV import scoped to exactly the same two
-// suppliers the app already tracks, not "whatever NAV happens to report".
+// ingredient suppliers at all). This is the allowlist that decides which
+// invoices get the FULL price-tracking pipeline (product matching,
+// PriceObservation, price-jump alerts) - every other NAV invoice still gets
+// recorded (see "ledger-only" below, owner request 2026-09-08: "Összes
+// számla" should list every incoming invoice, not just these two), just
+// without price analysis, since that only makes sense for ingredient
+// suppliers.
 export const NAV_SUPPLIER_TAX_NUMBER: Record<Supplier, string> = {
   SAJTFUTAR: "13833185", // SAJT-EXPRESSZ Kft.
   BAROMFIUDVAR: "12830093", // Baromfiudvar 2002 Kft.
@@ -53,73 +58,141 @@ export function toExtractedInvoice(data: {
 
 export type NavInvoiceImportOutcome =
   | { status: "imported"; supplier: Supplier; invoiceNumber: string; lineCount: number }
-  | { status: "already_imported"; supplier: Supplier; invoiceNumber: string }
+  | { status: "ledger_only"; supplier: Supplier | null; supplierName: string | null; invoiceNumber: string }
+  | { status: "already_imported"; invoiceNumber: string }
   | { status: "no_usable_lines"; supplier: Supplier; invoiceNumber: string }
-  | { status: "error"; supplier: Supplier; invoiceNumber: string; error: string };
+  | { status: "error"; supplierName: string | null; invoiceNumber: string; error: string };
 
-/** Sweeps queryInvoiceDigest for the given issue-date range (NAV caps a
- *  single query at 35 days), keeps only invoices from the two known
- *  suppliers, skips ones already imported (unique on [supplier,
- *  navInvoiceNumber] - see the Invoice model), and runs the rest through the
- *  exact same processInvoiceLineItems pipeline the photo-upload route uses
- *  (product matching, >=20% price-jump hold-back + Telegram alert). */
+// NAV caps a single queryInvoiceDigest call's issue-date range at 35 days
+// (BAD_QUERY_PARAM_RANGE_EXCEEDED past that, confirmed live 2026-09-07) - a
+// wide range (e.g. a historical backfill) is split into chunks here so no
+// caller has to worry about the cap itself.
+const MAX_QUERY_RANGE_DAYS = 35;
+
+/** Splits [dateFrom, dateTo] into consecutive <=35-day windows, inclusive on
+ *  both ends. Exported for direct unit testing. */
+export function splitDateRangeIntoChunks(dateFrom: string, dateTo: string): { from: string; to: string }[] {
+  const chunks: { from: string; to: string }[] = [];
+  let chunkStart = dateFrom;
+  while (chunkStart <= dateTo) {
+    const naturalEnd = addDaysStr(chunkStart, MAX_QUERY_RANGE_DAYS - 1);
+    const chunkEnd = naturalEnd < dateTo ? naturalEnd : dateTo;
+    chunks.push({ from: chunkStart, to: chunkEnd });
+    chunkStart = addDaysStr(chunkEnd, 1);
+  }
+  return chunks;
+}
+
+/** Sweeps queryInvoiceDigest for the given issue-date range (chunked into
+ *  <=35-day windows, see above), skips invoices already imported (dedup key
+ *  [supplierTaxNumber, navInvoiceNumber] - see the Invoice model), and for
+ *  each new one either:
+ *   - runs the tracked-supplier pipeline (product matching, price-jump
+ *     hold-back + Telegram alert, PriceObservation) - same as the
+ *     photo-upload route used to, or
+ *   - records a lightweight "ledger-only" row (date + net/vat amounts +
+ *     supplier name, no line-item/price analysis) - either because the
+ *     supplier is outside the 2-supplier tracked scope, or because the
+ *     caller passed `ledgerOnly: true` (see below).
+ *
+ *  `ledgerOnly: true` forces EVERY invoice (even the 2 tracked suppliers')
+ *  through the lightweight path. This exists for historical backfills: the
+ *  photo-upload pipeline already captured Sajtfutár/Baromfiudvar prices for
+ *  invoices before the NAV integration went live (2026-09-07), so re-running
+ *  those same invoices through product matching would create duplicate
+ *  PriceObservation rows and could fire spurious price-jump alerts against
+ *  data that's already correct. A ledger-only backfill still fully captures
+ *  everyone's spend for "Összes számla"/Kiadások (which only ever reads
+ *  netAmountHUF/vatAmountHUF, never priceObservations), with zero risk of
+ *  duplicating anything the photo pipeline already recorded. */
 export async function importNavInvoicesForRange(
   dateFrom: string,
-  dateTo: string
+  dateTo: string,
+  options?: { ledgerOnly?: boolean }
 ): Promise<NavInvoiceImportOutcome[]> {
-  const candidates: {
-    supplier: Supplier;
-    invoiceNumber: string;
-    netAmountHUF: number | null;
-    vatAmountHUF: number | null;
-  }[] = [];
+  const outcomes: NavInvoiceImportOutcome[] = [];
+  for (const chunk of splitDateRangeIntoChunks(dateFrom, dateTo)) {
+    outcomes.push(...(await importNavInvoicesForChunk(chunk.from, chunk.to, options?.ledgerOnly ?? false)));
+  }
+  return outcomes;
+}
 
+async function importNavInvoicesForChunk(
+  dateFrom: string,
+  dateTo: string,
+  ledgerOnly: boolean
+): Promise<NavInvoiceImportOutcome[]> {
+  const digestEntries: InboundInvoiceDigest[] = [];
   let page = 1;
   for (;;) {
     const { invoices, availablePage } = await queryInvoiceDigest({ dateFrom, dateTo, page });
-    for (const inv of invoices) {
-      const supplier = inv.supplierTaxNumber ? SUPPLIER_BY_TAX_NUMBER.get(inv.supplierTaxNumber) : undefined;
-      if (supplier) {
-        candidates.push({
-          supplier,
-          invoiceNumber: inv.invoiceNumber,
-          netAmountHUF: inv.invoiceNetAmountHUF,
-          vatAmountHUF: inv.invoiceVatAmountHUF,
-        });
-      }
-    }
+    digestEntries.push(...invoices);
     if (invoices.length === 0 || page >= availablePage) break;
     page++;
   }
 
+  // Oldest-first: the price-jump comparison in processInvoiceLineItems looks
+  // at whatever's currently the latest PriceObservation for a product - NAV's
+  // own digest order isn't guaranteed chronological, and importing out of
+  // order could compare an older invoice's price against an already-imported
+  // NEWER one, producing a wrong (or missed) price-jump flag.
+  digestEntries.sort((a, b) => a.issueDate.localeCompare(b.issueDate));
+
   const outcomes: NavInvoiceImportOutcome[] = [];
 
-  for (const { supplier, invoiceNumber, netAmountHUF, vatAmountHUF } of candidates) {
+  for (const entry of digestEntries) {
     const existing = await prisma.invoice.findFirst({
-      where: { supplier, navInvoiceNumber: invoiceNumber },
+      where: { navInvoiceNumber: entry.invoiceNumber, supplierTaxNumber: entry.supplierTaxNumber },
       select: { id: true },
     });
     if (existing) {
-      outcomes.push({ status: "already_imported", supplier, invoiceNumber });
+      outcomes.push({ status: "already_imported", invoiceNumber: entry.invoiceNumber });
+      continue;
+    }
+
+    const supplier = entry.supplierTaxNumber ? SUPPLIER_BY_TAX_NUMBER.get(entry.supplierTaxNumber) : undefined;
+
+    if (!supplier || ledgerOnly) {
+      await prisma.invoice.create({
+        data: {
+          supplier: supplier ?? null,
+          supplierTaxNumber: entry.supplierTaxNumber,
+          supplierName: entry.supplierName,
+          navInvoiceNumber: entry.invoiceNumber,
+          status: InvoiceStatus.PROCESSED,
+          processedAt: new Date(),
+          issueDate: new Date(entry.issueDate),
+          netAmountHUF: entry.invoiceNetAmountHUF,
+          vatAmountHUF: entry.invoiceVatAmountHUF,
+        },
+      });
+      outcomes.push({
+        status: "ledger_only",
+        supplier: supplier ?? null,
+        supplierName: entry.supplierName,
+        invoiceNumber: entry.invoiceNumber,
+      });
       continue;
     }
 
     try {
-      const data = await queryInvoiceData(invoiceNumber, "INBOUND");
+      const data = await queryInvoiceData(entry.invoiceNumber, "INBOUND");
       const extraction = toExtractedInvoice(data);
       if (extraction.lineItems.length === 0) {
-        outcomes.push({ status: "no_usable_lines", supplier, invoiceNumber });
+        outcomes.push({ status: "no_usable_lines", supplier, invoiceNumber: entry.invoiceNumber });
         continue;
       }
 
       const invoiceRow = await prisma.invoice.create({
         data: {
           supplier,
-          navInvoiceNumber: invoiceNumber,
+          supplierTaxNumber: entry.supplierTaxNumber,
+          supplierName: entry.supplierName,
+          navInvoiceNumber: entry.invoiceNumber,
           status: InvoiceStatus.PROCESSING,
           issueDate: extraction.invoiceDate ? new Date(extraction.invoiceDate) : null,
-          netAmountHUF,
-          vatAmountHUF,
+          netAmountHUF: entry.invoiceNetAmountHUF,
+          vatAmountHUF: entry.invoiceVatAmountHUF,
         },
       });
 
@@ -142,12 +215,17 @@ export async function importNavInvoicesForRange(
         },
       });
 
-      outcomes.push({ status: "imported", supplier, invoiceNumber, lineCount: extraction.lineItems.length });
+      outcomes.push({
+        status: "imported",
+        supplier,
+        invoiceNumber: entry.invoiceNumber,
+        lineCount: extraction.lineItems.length,
+      });
     } catch (e) {
       outcomes.push({
         status: "error",
-        supplier,
-        invoiceNumber,
+        supplierName: entry.supplierName,
+        invoiceNumber: entry.invoiceNumber,
         error: e instanceof Error ? e.message : "Ismeretlen hiba",
       });
     }

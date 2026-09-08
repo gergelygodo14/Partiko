@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { normalizeProductName } from "@/lib/productMatching";
-import { groupInvoicesByMonth, type NavLedgerRow } from "@/lib/expenseSummary";
+import { groupInvoicesByMonth, supplierDisplayName, type NavLedgerRow } from "@/lib/expenseSummary";
 import Loading from "@/components/Loading";
 
 function formatFt(value: number) {
@@ -657,7 +657,7 @@ export default function SzamlakPage() {
                             return (
                               <tr key={row.id} className="border-t border-surface-border">
                                 <td className="px-3 py-2.5">{row.issueDate.slice(8, 10)}.</td>
-                                <td className="px-3 py-2.5">{SUPPLIER_LABEL[row.supplier]}</td>
+                                <td className="px-3 py-2.5">{supplierDisplayName(row)}</td>
                                 <td className="px-3 py-2.5 text-faint">{row.navInvoiceNumber}</td>
                                 <td className="px-3 py-2.5 text-right">
                                   {row.netAmountHUF !== null ? formatFt(row.netAmountHUF) : "–"}
