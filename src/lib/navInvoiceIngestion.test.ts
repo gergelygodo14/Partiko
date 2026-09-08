@@ -159,6 +159,37 @@ describe("importNavInvoicesForRange", () => {
     );
   });
 
+  // 2026-09-08: these three feed the "Összes számla" ledger and the
+  // Riportok "Kiadások" report - netAmountHUF/vatAmountHUF come from the
+  // digest (queryInvoiceData has no invoice-level total, only per-line), and
+  // issueDate comes from the full invoice fetch (same value the extraction's
+  // own invoiceDate uses), not from uploadedAt.
+  it("carries the digest's net/vat amounts and the invoice's issueDate onto the created row", async () => {
+    queryInvoiceDigest.mockResolvedValue(digestOf([{ invoiceNumber: "BU-1", supplierTaxNumber: "12830093" }]));
+    invoiceFindFirst.mockResolvedValue(null);
+    invoiceCreate.mockResolvedValue({ id: "inv-1" });
+    invoiceUpdate.mockResolvedValue({});
+    queryInvoiceData.mockResolvedValue({
+      issueDate: "2026-09-01",
+      supplierName: "x",
+      lines: [{ description: "Tétel", quantity: 1, unit: "PIECE", unitPriceHUF: 100 }],
+    });
+    processInvoiceLineItems.mockResolvedValue({ summaryText: "ok", highlightText: null, pendingLineItems: [] });
+
+    await importNavInvoicesForRange("2026-09-01", "2026-09-01");
+
+    expect(invoiceCreate).toHaveBeenCalledWith({
+      data: {
+        supplier: "BAROMFIUDVAR",
+        navInvoiceNumber: "BU-1",
+        status: "PROCESSING",
+        issueDate: new Date("2026-09-01"),
+        netAmountHUF: 1000,
+        vatAmountHUF: 270,
+      },
+    });
+  });
+
   it("records an error outcome instead of throwing when queryInvoiceData fails for one invoice", async () => {
     queryInvoiceDigest.mockResolvedValue(digestOf([{ invoiceNumber: "BU-1", supplierTaxNumber: "12830093" }]));
     invoiceFindFirst.mockResolvedValue(null);

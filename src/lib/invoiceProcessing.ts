@@ -2,7 +2,6 @@ import { randomUUID } from "crypto";
 import { prisma } from "@/lib/db";
 import { PriceSource, ProductStatus, type Supplier } from "@/generated/prisma/client";
 import { findBestProductMatch } from "@/lib/productMatching";
-import { anthropicJsonCompletion } from "@/lib/anthropic";
 import { isLargePriceChange, LARGE_PRICE_CHANGE_THRESHOLD } from "@/lib/priceChangeThreshold";
 import { sendTelegramMessage } from "@/lib/telegram";
 
@@ -24,48 +23,10 @@ export type ExtractedInvoice = {
   lineItems: ExtractedLineItem[];
 };
 
-// json_schema-constrained output (direct Anthropic API, restored 2026-09-03 -
-// see src/lib/anthropic.ts) - identical shape to what the 2026-08-05 - 09-03
-// OpenRouter detour asked for via prompt instruction alone, just enforced by
-// the API itself now instead of by convention.
-const LINE_ITEM_SCHEMA = {
-  type: "object",
-  properties: {
-    invoiceDate: { anyOf: [{ type: "string", format: "date" }, { type: "null" }] },
-    lineItems: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          name: { type: "string" },
-          shortName: { type: "string" },
-          unit: { anyOf: [{ type: "string" }, { type: "null" }] },
-          quantity: { type: "number" },
-          unitPrice: { type: "number" },
-        },
-        required: ["name", "shortName", "unit", "quantity", "unitPrice"],
-        additionalProperties: false,
-      },
-    },
-  },
-  required: ["invoiceDate", "lineItems"],
-  additionalProperties: false,
-} as const;
-
-export async function extractInvoiceLineItems(imageUrl: string): Promise<ExtractedInvoice> {
-  const text = await anthropicJsonCompletion({
-    maxTokens: 8192,
-    schema: LINE_ITEM_SCHEMA,
-    content: [
-      { type: "image_url", image_url: { url: imageUrl } },
-      {
-        type: "text",
-        text: "Ez egy beszállítói számla fotója. Olvasd ki a tételsorokat (termék neve, mennyiségi egység, mennyiség, nettó egységár forintban) és a számla dátumát, ha szerepel rajta — a dátumot ISO 8601 formátumban add vissza (ÉÉÉÉ-HH-NN). Minden tételhez add meg a `shortName` mezőt is: egy rövid, köznyelvi magyar elnevezés (1-3 szó, pl. \"Csirkemell\", \"Tejföl\", \"Zsemlemorzsa\"), NEM a teljes, gyakran hosszú gyári/nagykereskedelmi terméknév (pl. \"FRISS CSIRKE MELLFILÉ FELEZETT FINOM CSIBE LÉDIG 12 KG/# HU1512EK\" helyett csak \"Csirkemell\") — ezt egy tömör árváltozás-összesítéshez használjuk.",
-      },
-    ],
-  });
-  return JSON.parse(text) as ExtractedInvoice;
-}
+// extractInvoiceLineItems (the Anthropic vision call that OCR'd a photographed
+// invoice) was removed 2026-09-08 along with the manual-upload UI/route - see
+// navInvoiceIngestion.ts for how line items arrive now (structured, straight
+// from NAV, no vision step needed).
 
 type PriceObservationRecord = { supplier: Supplier; unitPrice: number };
 

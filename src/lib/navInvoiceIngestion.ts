@@ -67,14 +67,26 @@ export async function importNavInvoicesForRange(
   dateFrom: string,
   dateTo: string
 ): Promise<NavInvoiceImportOutcome[]> {
-  const candidates: { supplier: Supplier; invoiceNumber: string }[] = [];
+  const candidates: {
+    supplier: Supplier;
+    invoiceNumber: string;
+    netAmountHUF: number | null;
+    vatAmountHUF: number | null;
+  }[] = [];
 
   let page = 1;
   for (;;) {
     const { invoices, availablePage } = await queryInvoiceDigest({ dateFrom, dateTo, page });
     for (const inv of invoices) {
       const supplier = inv.supplierTaxNumber ? SUPPLIER_BY_TAX_NUMBER.get(inv.supplierTaxNumber) : undefined;
-      if (supplier) candidates.push({ supplier, invoiceNumber: inv.invoiceNumber });
+      if (supplier) {
+        candidates.push({
+          supplier,
+          invoiceNumber: inv.invoiceNumber,
+          netAmountHUF: inv.invoiceNetAmountHUF,
+          vatAmountHUF: inv.invoiceVatAmountHUF,
+        });
+      }
     }
     if (invoices.length === 0 || page >= availablePage) break;
     page++;
@@ -82,7 +94,7 @@ export async function importNavInvoicesForRange(
 
   const outcomes: NavInvoiceImportOutcome[] = [];
 
-  for (const { supplier, invoiceNumber } of candidates) {
+  for (const { supplier, invoiceNumber, netAmountHUF, vatAmountHUF } of candidates) {
     const existing = await prisma.invoice.findFirst({
       where: { supplier, navInvoiceNumber: invoiceNumber },
       select: { id: true },
@@ -101,7 +113,14 @@ export async function importNavInvoicesForRange(
       }
 
       const invoiceRow = await prisma.invoice.create({
-        data: { supplier, navInvoiceNumber: invoiceNumber, status: InvoiceStatus.PROCESSING },
+        data: {
+          supplier,
+          navInvoiceNumber: invoiceNumber,
+          status: InvoiceStatus.PROCESSING,
+          issueDate: extraction.invoiceDate ? new Date(extraction.invoiceDate) : null,
+          netAmountHUF,
+          vatAmountHUF,
+        },
       });
 
       const { summaryText, highlightText, pendingLineItems } = await processInvoiceLineItems(

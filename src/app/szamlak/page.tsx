@@ -2,7 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import { normalizeProductName } from "@/lib/productMatching";
+import { groupInvoicesByMonth, type NavLedgerRow } from "@/lib/expenseSummary";
 import Loading from "@/components/Loading";
+
+function formatFt(value: number) {
+  return `${value.toLocaleString("hu-HU")} Ft`;
+}
+
+function formatMonthLabel(dateStr: string) {
+  return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString("hu-HU", { year: "numeric", month: "long" });
+}
 
 type Supplier = "SAJTFUTAR" | "BAROMFIUDVAR";
 
@@ -63,27 +72,6 @@ type PriceComparisonRow = {
   latestObservedDate: string | null;
   observationCount: number;
 };
-
-const MAX_DIMENSION = 2000;
-const JPEG_QUALITY = 0.8;
-
-async function compressImage(file: File): Promise<Blob> {
-  const bitmap = await createImageBitmap(file);
-  const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
-  const width = Math.round(bitmap.width * scale);
-  const height = Math.round(bitmap.height * scale);
-
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return file;
-  ctx.drawImage(bitmap, 0, 0, width, height);
-
-  return new Promise<Blob>((resolve) => {
-    canvas.toBlob((blob) => resolve(blob ?? file), "image/jpeg", JPEG_QUALITY);
-  });
-}
 
 function TrendIndicator({ point }: { point: SupplierPricePoint }) {
   const { trend, price, previousPrice } = point;
@@ -184,13 +172,12 @@ function hasPriceChange(row: PriceComparisonRow): boolean {
 }
 
 export default function SzamlakPage() {
-  const [supplier, setSupplier] = useState<Supplier>("BAROMFIUDVAR");
   const [comparisonFilter, setComparisonFilter] = useState<ComparisonFilter>("changed");
   const [comparisonSearch, setComparisonSearch] = useState("");
-  const [uploading, setUploading] = useState(false);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [pendingProducts, setPendingProducts] = useState<Product[]>([]);
   const [comparison, setComparison] = useState<PriceComparisonRow[]>([]);
+  const [navLedger, setNavLedger] = useState<NavLedgerRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [mergeTarget, setMergeTarget] = useState<Record<string, string>>({});
   const [mergeSearch, setMergeSearch] = useState<Record<string, string>>({});
@@ -198,35 +185,22 @@ export default function SzamlakPage() {
 
   async function loadAll() {
     setLoading(true);
-    const [invoicesRes, pendingRes, comparisonRes] = await Promise.all([
+    const [invoicesRes, pendingRes, comparisonRes, navLedgerRes] = await Promise.all([
       fetch("/api/szamlak/invoices"),
       fetch("/api/szamlak/products?status=PENDING"),
       fetch("/api/szamlak/price-comparison"),
+      fetch("/api/szamlak/nav-invoices"),
     ]);
     setInvoices(await invoicesRes.json());
     setPendingProducts(await pendingRes.json());
     setComparison(await comparisonRes.json());
+    setNavLedger(await navLedgerRes.json());
     setLoading(false);
   }
 
   useEffect(() => {
     loadAll();
   }, []);
-
-  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (!file) return;
-
-    setUploading(true);
-    const compressed = await compressImage(file);
-    const formData = new FormData();
-    formData.append("supplier", supplier);
-    formData.append("photo", compressed, "invoice.jpg");
-    await fetch("/api/szamlak/invoices", { method: "POST", body: formData });
-    setUploading(false);
-    await loadAll();
-  }
 
   async function confirmProduct(id: string) {
     await fetch(`/api/szamlak/products/${id}`, {
@@ -309,33 +283,6 @@ export default function SzamlakPage() {
           <p className="text-sm whitespace-pre-line">{latestHighlight}</p>
         </section>
       )}
-
-      <section>
-        <h2 className="text-lg font-semibold mb-3">Számla feltöltése</h2>
-        <div className="flex flex-wrap gap-3 items-end">
-          <div>
-            <label className="block text-xs text-muted mb-1">Beszállító</label>
-            <select
-              value={supplier}
-              onChange={(e) => setSupplier(e.target.value as Supplier)}
-              className="border border-strong rounded-xl px-3 py-2.5 text-base"
-            >
-              <option value="BAROMFIUDVAR">Baromfiudvar</option>
-              <option value="SAJTFUTAR">Sajtfutár</option>
-            </select>
-          </div>
-          <label className="bg-gold text-ink font-semibold text-base px-5 py-3 rounded-xl active:bg-gold-dark cursor-pointer">
-            {uploading ? "Feltöltés..." : "Számla feltöltése"}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleUpload}
-              disabled={uploading}
-              className="hidden"
-            />
-          </label>
-        </div>
-      </section>
 
       {pendingPriceReviews.length > 0 && (
         <section>
@@ -615,54 +562,125 @@ export default function SzamlakPage() {
         )}
       </section>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-3">Feltöltött számlák</h2>
+      <details className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm">
+        <summary className="px-4 py-3 text-lg font-semibold cursor-pointer select-none">
+          Feldolgozási napló
+        </summary>
+        <div className="px-4 pb-4">
+          {loading ? (
+            <Loading />
+          ) : invoices.length === 0 ? (
+            <p className="text-muted">Még nincs feldolgozott számla.</p>
+          ) : (
+            <ul className="space-y-2">
+              {invoices.map((inv) => (
+                <li
+                  key={inv.id}
+                  className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm"
+                >
+                  <div className="flex items-center justify-between text-xs text-muted mb-2">
+                    <span>
+                      {SUPPLIER_LABEL[inv.supplier]} ·{" "}
+                      {new Date(inv.uploadedAt).toLocaleDateString("hu-HU")}
+                      {inv.navInvoiceNumber && (
+                        <span className="ml-1.5 rounded-full bg-umber/10 px-2 py-0.5 text-umber-dark">
+                          NAV
+                        </span>
+                      )}
+                    </span>
+                    <span
+                      className={
+                        inv.status === "FAILED"
+                          ? "text-red-600 dark:text-red-400"
+                          : inv.status === "PROCESSED"
+                            ? "text-green-600 dark:text-green-400"
+                            : "text-muted"
+                      }
+                    >
+                      {inv.status === "PROCESSED"
+                        ? "Feldolgozva"
+                        : inv.status === "FAILED"
+                          ? "Hiba"
+                          : "Feldolgozás alatt"}
+                    </span>
+                  </div>
+                  {inv.summaryText && (
+                    <p className="text-sm whitespace-pre-line">{inv.summaryText}</p>
+                  )}
+                  {inv.errorMessage && (
+                    <p className="text-sm text-red-600 dark:text-red-400">{inv.errorMessage}</p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </details>
+
+      <section className="space-y-3">
+        <h2 className="text-lg font-semibold">Összes számla</h2>
         {loading ? (
           <Loading />
-        ) : invoices.length === 0 ? (
-          <p className="text-muted">Még nincs feltöltött számla.</p>
+        ) : navLedger.length === 0 ? (
+          <p className="text-muted">Még nincs NAV-számla.</p>
         ) : (
-          <ul className="space-y-2">
-            {invoices.map((inv) => (
-              <li
-                key={inv.id}
-                className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm"
-              >
-                <div className="flex items-center justify-between text-xs text-muted mb-2">
-                  <span>
-                    {SUPPLIER_LABEL[inv.supplier]} ·{" "}
-                    {new Date(inv.uploadedAt).toLocaleDateString("hu-HU")}
-                    {inv.navInvoiceNumber && (
-                      <span className="ml-1.5 rounded-full bg-umber/10 px-2 py-0.5 text-umber-dark">
-                        NAV
-                      </span>
-                    )}
-                  </span>
-                  <span
-                    className={
-                      inv.status === "FAILED"
-                        ? "text-red-600 dark:text-red-400"
-                        : inv.status === "PROCESSED"
-                          ? "text-green-600 dark:text-green-400"
-                          : "text-muted"
-                    }
+          (() => {
+            const monthGroups = groupInvoicesByMonth(navLedger);
+            const grandTotal = monthGroups.reduce((sum, g) => sum + g.subtotalGrossHUF, 0);
+            return (
+              <>
+                {monthGroups.map((group, i) => (
+                  <details
+                    key={group.month}
+                    open={i === 0}
+                    className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm"
                   >
-                    {inv.status === "PROCESSED"
-                      ? "Feldolgozva"
-                      : inv.status === "FAILED"
-                        ? "Hiba"
-                        : "Feldolgozás alatt"}
-                  </span>
+                    <summary className="px-4 py-3 text-sm font-medium cursor-pointer select-none flex items-center justify-between">
+                      <span className="capitalize">{formatMonthLabel(group.month)}</span>
+                      <span className="text-muted font-normal">{formatFt(group.subtotalGrossHUF)}</span>
+                    </summary>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead className="bg-surface-alt text-muted">
+                          <tr>
+                            <th className="text-left px-3 py-2.5">Dátum</th>
+                            <th className="text-left px-3 py-2.5">Beszállító</th>
+                            <th className="text-left px-3 py-2.5">Számlaszám</th>
+                            <th className="text-right px-3 py-2.5">Nettó</th>
+                            <th className="text-right px-3 py-2.5">ÁFA</th>
+                            <th className="text-right px-3 py-2.5">Bruttó</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {group.rows.map((row) => {
+                            const gross = (row.netAmountHUF ?? 0) + (row.vatAmountHUF ?? 0);
+                            return (
+                              <tr key={row.id} className="border-t border-surface-border">
+                                <td className="px-3 py-2.5">{row.issueDate.slice(8, 10)}.</td>
+                                <td className="px-3 py-2.5">{SUPPLIER_LABEL[row.supplier]}</td>
+                                <td className="px-3 py-2.5 text-faint">{row.navInvoiceNumber}</td>
+                                <td className="px-3 py-2.5 text-right">
+                                  {row.netAmountHUF !== null ? formatFt(row.netAmountHUF) : "–"}
+                                </td>
+                                <td className="px-3 py-2.5 text-right">
+                                  {row.vatAmountHUF !== null ? formatFt(row.vatAmountHUF) : "–"}
+                                </td>
+                                <td className="px-3 py-2.5 text-right font-medium">{formatFt(gross)}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </details>
+                ))}
+                <div className="border border-gold bg-gold/10 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+                  <span className="text-sm font-medium">Mindösszesen (bruttó)</span>
+                  <span className="font-semibold text-lg">{formatFt(grandTotal)}</span>
                 </div>
-                {inv.summaryText && (
-                  <p className="text-sm whitespace-pre-line">{inv.summaryText}</p>
-                )}
-                {inv.errorMessage && (
-                  <p className="text-sm text-red-600 dark:text-red-400">{inv.errorMessage}</p>
-                )}
-              </li>
-            ))}
-          </ul>
+              </>
+            );
+          })()
         )}
       </section>
     </div>

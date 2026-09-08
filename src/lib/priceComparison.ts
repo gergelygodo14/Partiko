@@ -1,5 +1,14 @@
 import { prisma } from "@/lib/db";
-import type { Supplier } from "@/generated/prisma/client";
+import { PriceSource, type Supplier } from "@/generated/prisma/client";
+
+// Only observations that came from an actual purchase invoice count toward
+// the comparison - EMAIL_PRICELIST (Baromfiudvar's weekly full price-list
+// email, removed 2026-09-08) listed every SKU whether or not Partiko ever
+// bought it, which is exactly the noise the owner asked to filter out
+// ("csak azok a tételek jelenjenek meg amiket ténylegesen vásároltunk számlák
+// alapján"). MANUAL is never actually written anywhere either, but is
+// excluded on the same "not an invoice" grounds if it ever is.
+const INVOICE_SOURCES: PriceSource[] = [PriceSource.INVOICE_PHOTO, PriceSource.NAV];
 
 export type SupplierPricePoint = {
   price: number;
@@ -53,13 +62,22 @@ function effectivePrice(
 
 export async function getPriceComparison(): Promise<ProductPriceComparisonRow[]> {
   const products = await prisma.product.findMany({
-    where: { status: "CONFIRMED" },
+    where: {
+      status: "CONFIRMED",
+      // Drop products whose only observations ever came from the (now
+      // removed) email price-list - nothing left to show once those are
+      // excluded below, so they shouldn't surface as an empty row either.
+      priceObservations: { some: { source: { in: INVOICE_SOURCES } } },
+    },
     include: {
-      // Same-day observations happen (e.g. a manual invoice-photo upload and
-      // an emailed price-list landing on the same calendar date) - break
-      // ties by createdAt so the actually-most-recently-recorded price wins,
-      // not whichever row Postgres happens to return first.
-      priceObservations: { orderBy: [{ observedDate: "desc" }, { createdAt: "desc" }] },
+      // Same-day observations happen (e.g. a NAV import and an old manual
+      // invoice-photo upload landing on the same calendar date) - break ties
+      // by createdAt so the actually-most-recently-recorded price wins, not
+      // whichever row Postgres happens to return first.
+      priceObservations: {
+        where: { source: { in: INVOICE_SOURCES } },
+        orderBy: [{ observedDate: "desc" }, { createdAt: "desc" }],
+      },
     },
   });
 

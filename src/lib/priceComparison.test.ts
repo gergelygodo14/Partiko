@@ -234,8 +234,26 @@ describe("getPriceComparison", () => {
       expect.objectContaining({
         include: {
           priceObservations: {
+            where: { source: { in: ["INVOICE_PHOTO", "NAV"] } },
             orderBy: [{ observedDate: "desc" }, { createdAt: "desc" }],
           },
+        },
+      })
+    );
+  });
+
+  // 2026-09-08: EMAIL_PRICELIST removed as an ingestion source entirely - a
+  // product whose only observations ever came from that weekly full price
+  // list (never an actual purchase) must not surface as an empty row.
+  it("only queries products with at least one invoice-sourced observation (not just EMAIL_PRICELIST)", async () => {
+    findMany.mockResolvedValue([]);
+    await getPriceComparison();
+
+    expect(findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          status: "CONFIRMED",
+          priceObservations: { some: { source: { in: ["INVOICE_PHOTO", "NAV"] } } },
         },
       })
     );

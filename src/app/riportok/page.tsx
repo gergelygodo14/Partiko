@@ -25,6 +25,16 @@ type SandwichProfitReport = {
 
 type MealProfitReport = { totalMeals: number; totalProfitFt: number };
 
+type Supplier = "SAJTFUTAR" | "BAROMFIUDVAR";
+const SUPPLIER_LABEL: Record<Supplier, string> = { SAJTFUTAR: "Sajtfutár", BAROMFIUDVAR: "Baromfiudvar" };
+
+type MonthlyExpenseSummary = {
+  bySupplier: Partial<Record<Supplier, { netHUF: number; grossHUF: number }>>;
+  totalNetHUF: number;
+  totalGrossHUF: number;
+  invoiceCount: number;
+};
+
 type SandwichMonthSummary = { byItem: ItemQuantityRow[]; totalValueFt: number };
 type MealMonthSummary = { totalMeals: number; totalValue: number };
 
@@ -128,6 +138,37 @@ function TurnoverCard({
         <span className="text-sm font-medium">Összesen</span>
         <span className="font-semibold text-lg">{formatFt(combined)}</span>
       </div>
+    </section>
+  );
+}
+
+// NAV-invoice based (owner request, 2026-09-08) - scoped to the two tracked
+// suppliers, same as everywhere else in Számlák. Gross (bruttó, net+VAT) is
+// the headline figure since "kiadás" means what actually left the bank
+// account; net is shown as a smaller sub-line for cost analysis.
+function ExpensesCard({ summary }: { summary: MonthlyExpenseSummary | null }) {
+  return (
+    <section className="space-y-3">
+      <h2 className="text-lg font-semibold">Kiadások</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {(["SAJTFUTAR", "BAROMFIUDVAR"] as Supplier[]).map((supplier) => (
+          <div key={supplier} className="border border-surface-border bg-surface rounded-2xl p-4 shadow-sm space-y-1">
+            <div className="text-sm text-muted">{SUPPLIER_LABEL[supplier]}</div>
+            <div className="text-2xl font-semibold">
+              {summary ? formatFt(summary.bySupplier[supplier]?.grossHUF ?? 0) : "…"}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="border border-gold bg-gold/10 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+        <span className="text-sm font-medium">Összesen (bruttó)</span>
+        <span className="font-semibold text-lg">{summary ? formatFt(summary.totalGrossHUF) : "…"}</span>
+      </div>
+      {summary && (
+        <p className="text-xs text-faint">
+          {summary.invoiceCount} NAV-számla alapján · nettó {formatFt(summary.totalNetHUF)}
+        </p>
+      )}
     </section>
   );
 }
@@ -509,6 +550,7 @@ export default function RiportokPage() {
   const [sandwichSummary, setSandwichSummary] = useState<SandwichMonthSummary | null>(null);
   const [mealSummary, setMealSummary] = useState<MealMonthSummary | null>(null);
   const [ingredientSummary, setIngredientSummary] = useState<BilledIngredientReport | null>(null);
+  const [expenseSummary, setExpenseSummary] = useState<MonthlyExpenseSummary | null>(null);
   const [sandwichProfit, setSandwichProfit] = useState<SandwichProfitReport | null>(null);
   const [mealProfit, setMealProfit] = useState<MealProfitReport | null>(null);
   const [dishBreakdown, setDishBreakdown] = useState<DishBreakdownReport | null>(null);
@@ -526,6 +568,7 @@ export default function RiportokPage() {
     setSandwichSummary(null);
     setMealSummary(null);
     setIngredientSummary(null);
+    setExpenseSummary(null);
     setSandwichProfit(null);
     setMealProfit(null);
     setDishBreakdown(null);
@@ -570,6 +613,11 @@ export default function RiportokPage() {
     (async () => {
       const res = await fetch(`/api/summary/billed?month=${reportMonth}`);
       setIngredientSummary(await res.json());
+    })();
+
+    (async () => {
+      const res = await fetch(`/api/szamlak/expenses?month=${reportMonth}`);
+      setExpenseSummary(await res.json());
     })();
   }, [reportMonth]);
 
@@ -634,6 +682,7 @@ export default function RiportokPage() {
         mealValue={mealSummary?.totalValue ?? null}
         ingredientValueFt={ingredientSummary?.grandTotal ?? null}
       />
+      <ExpensesCard summary={expenseSummary} />
       <ProfitCards
         sandwichProfit={sandwichProfit}
         mealProfit={mealProfit}
