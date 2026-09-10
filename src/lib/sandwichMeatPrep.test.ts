@@ -8,7 +8,7 @@ describe("computeMeatPrep", () => {
       { itemName: "Rántott húsos vekni (teljes kiőrlésű)", quantity: 2 },
       { itemName: "Rántott húsos papucs", quantity: 4 },
     ]);
-    expect(totals).toEqual({ rantottHusDb: 9, tortillaHusDb: 0, grillHusDkg: 0 });
+    expect(totals).toEqual({ rantottHusDb: 9, tortillaHusDb: 0, grillHusDkg: 0, hotdogVirsliDb: 0 });
   });
 
   it("counts Pötyi pogi double (2x rántott hús per portion)", () => {
@@ -34,15 +34,27 @@ describe("computeMeatPrep", () => {
     expect(totals.grillHusDkg).toBe(36);
   });
 
-  it("ignores items that don't consume any of the three tracked meats", () => {
+  // 2026-09-10 owner request: 1 virsli per Hotdog, tracked the same way as
+  // the other meats (a "last week" estimate reads off this same total).
+  it("counts 1 virsli per Hotdog", () => {
+    const totals = computeMeatPrep([{ itemName: "Hotdog", quantity: 7 }]);
+    expect(totals.hotdogVirsliDb).toBe(7);
+  });
+
+  it("ignores items that don't consume any of the tracked meats", () => {
     const totals = computeMeatPrep([
       { itemName: "Sajtburger", quantity: 10 },
       { itemName: "Hamburger", quantity: 10 },
     ]);
-    expect(totals).toEqual({ rantottHusDb: 0, tortillaHusDb: 0, grillHusDkg: 0 });
+    expect(totals).toEqual({ rantottHusDb: 0, tortillaHusDb: 0, grillHusDkg: 0, hotdogVirsliDb: 0 });
   });
 
   it("returns all zeros for an empty period", () => {
-    expect(computeMeatPrep([])).toEqual({ rantottHusDb: 0, tortillaHusDb: 0, grillHusDkg: 0 });
+    expect(computeMeatPrep([])).toEqual({
+      rantottHusDb: 0,
+      tortillaHusDb: 0,
+      grillHusDkg: 0,
+      hotdogVirsliDb: 0,
+    });
   });
 });

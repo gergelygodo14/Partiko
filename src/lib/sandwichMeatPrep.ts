@@ -1,7 +1,10 @@
 // How many portions of each raw-meat type go into one of a given sandwich -
 // confirmed with the owner. Most items use 1 portion; Pötyi pogi (a "double"
 // breaded-meat pogácsa) and the tortilla/panini items use 2.
-const MEAT_MULTIPLIERS: Record<string, { rantottHus?: number; tortillaHus?: number; grillHus?: number }> = {
+const MEAT_MULTIPLIERS: Record<
+  string,
+  { rantottHus?: number; tortillaHus?: number; grillHus?: number; hotdogVirsli?: number }
+> = {
   "Rántott húsos vekni": { rantottHus: 1 },
   "Rántott húsos vekni (teljes kiőrlésű)": { rantottHus: 1 },
   "Rántott húsos papucs": { rantottHus: 1 },
@@ -11,6 +14,8 @@ const MEAT_MULTIPLIERS: Record<string, { rantottHus?: number; tortillaHus?: numb
   "Grillezett csirkemell papucs": { grillHus: 1 },
   "Csirkemelles bigkifli": { grillHus: 1 },
   "Fetasajtos bigkifli": { grillHus: 1 },
+  // 2026-09-10, owner request - only 1 virsli (sausage) per Hotdog.
+  Hotdog: { hotdogVirsli: 1 },
 };
 
 // Grill hús isn't prepped as discrete portions like the other two meats - it's
@@ -18,7 +23,12 @@ const MEAT_MULTIPLIERS: Record<string, { rantottHus?: number; tortillaHus?: numb
 // 4dkg per portion.
 const GRILL_HUS_DKG_PER_PORTION = 4;
 
-export type MeatPrepTotals = { rantottHusDb: number; tortillaHusDb: number; grillHusDkg: number };
+export type MeatPrepTotals = {
+  rantottHusDb: number;
+  tortillaHusDb: number;
+  grillHusDkg: number;
+  hotdogVirsliDb: number;
+};
 
 // Kitchen-prep quantities ("how much raw meat to cook") derived from a
 // period's per-item order totals - not a stored value, always recomputed
@@ -27,12 +37,19 @@ export function computeMeatPrep(byItem: { itemName: string; quantity: number }[]
   let rantottHusDb = 0;
   let tortillaHusDb = 0;
   let grillHusPortions = 0;
+  let hotdogVirsliDb = 0;
   for (const item of byItem) {
     const multiplier = MEAT_MULTIPLIERS[item.itemName];
     if (!multiplier) continue;
     rantottHusDb += (multiplier.rantottHus ?? 0) * item.quantity;
     tortillaHusDb += (multiplier.tortillaHus ?? 0) * item.quantity;
     grillHusPortions += (multiplier.grillHus ?? 0) * item.quantity;
+    hotdogVirsliDb += (multiplier.hotdogVirsli ?? 0) * item.quantity;
   }
-  return { rantottHusDb, tortillaHusDb, grillHusDkg: grillHusPortions * GRILL_HUS_DKG_PER_PORTION };
+  return {
+    rantottHusDb,
+    tortillaHusDb,
+    grillHusDkg: grillHusPortions * GRILL_HUS_DKG_PER_PORTION,
+    hotdogVirsliDb,
+  };
 }

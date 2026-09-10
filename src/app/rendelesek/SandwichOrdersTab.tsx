@@ -39,6 +39,7 @@ type MeatPrepTotals = {
   rantottHusDb: number;
   tortillaHusDb: number;
   grillHusDkg: number;
+  hotdogVirsliDb: number;
 };
 type MeatPrep = MeatPrepTotals & {
   date: string;
@@ -144,7 +145,7 @@ function MeatPrepSection({ meatPrep }: { meatPrep: MeatPrep }) {
           ({meatPrep.dayName} {formatDate(meatPrep.date)})
         </span>
       </h2>
-      <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm grid grid-cols-3 divide-x divide-surface-border">
+      <div className="border border-surface-border bg-surface rounded-2xl overflow-hidden shadow-sm grid grid-cols-4 divide-x divide-surface-border">
         <div className="p-4 text-center">
           <div className="text-2xl font-semibold">{meatPrep.rantottHusDb}</div>
           <div className="text-xs text-muted mt-1">db rántott hús</div>
@@ -159,12 +160,16 @@ function MeatPrepSection({ meatPrep }: { meatPrep: MeatPrep }) {
           </div>
           <div className="text-xs text-muted mt-1">kg grill hús</div>
         </div>
+        <div className="p-4 text-center">
+          <div className="text-2xl font-semibold">{meatPrep.hotdogVirsliDb}</div>
+          <div className="text-xs text-muted mt-1">db virsli</div>
+        </div>
       </div>
       <p className="text-xs text-muted">
         Előző héten ({meatPrep.previousWeek.dayName} {formatDate(meatPrep.previousWeek.date)}):{" "}
         {meatPrep.previousWeek.rantottHusDb} db rántott hús, {meatPrep.previousWeek.tortillaHusDb} db tortilla hús,{" "}
         {(meatPrep.previousWeek.grillHusDkg / 100).toLocaleString("hu-HU", { maximumFractionDigits: 2 })} kg grill
-        hús
+        hús, {meatPrep.previousWeek.hotdogVirsliDb} db virsli
       </p>
     </section>
   );
