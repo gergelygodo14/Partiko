@@ -177,6 +177,7 @@ export default function DailyEntryPage() {
                     <input
                       type="text"
                       inputMode="decimal"
+                      autoComplete="off"
                       placeholder="mennyiség"
                       value={inputs[ing.id] ?? ""}
                       onChange={(e) =>
