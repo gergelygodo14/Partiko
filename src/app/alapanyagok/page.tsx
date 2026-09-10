@@ -102,6 +102,7 @@ export default function IngredientsPage() {
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               className="border border-strong rounded-xl px-3 py-2.5 text-base"
               placeholder="pl. Csirkeszárny"
+              autoComplete="off"
             />
           </div>
           <div>
@@ -111,6 +112,7 @@ export default function IngredientsPage() {
               onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))}
               className="border border-strong rounded-xl px-3 py-2.5 text-base w-24"
               placeholder="kg / db / l"
+              autoComplete="off"
             />
           </div>
           <div>
@@ -174,6 +176,7 @@ export default function IngredientsPage() {
                         setEditForm((f) => ({ ...f, name: e.target.value }))
                       }
                       className="border border-strong rounded-xl px-3 py-2 text-base"
+                      autoComplete="off"
                     />
                     <input
                       value={editForm.unit}
@@ -181,6 +184,7 @@ export default function IngredientsPage() {
                         setEditForm((f) => ({ ...f, unit: e.target.value }))
                       }
                       className="border border-strong rounded-xl px-3 py-2 text-base w-20"
+                      autoComplete="off"
                     />
                     <input
                       type="number"

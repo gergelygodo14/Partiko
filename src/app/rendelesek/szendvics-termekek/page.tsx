@@ -103,6 +103,7 @@ export default function SandwichItemsPage() {
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               className="border border-strong rounded-xl px-3 py-2.5 text-base"
               placeholder="pl. Hamburger"
+              autoComplete="off"
             />
           </div>
           <div>
@@ -164,6 +165,7 @@ export default function SandwichItemsPage() {
                       value={editForm.name}
                       onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
                       className="border border-strong rounded-xl px-3 py-2 text-base"
+                      autoComplete="off"
                     />
                     <input
                       type="number"
