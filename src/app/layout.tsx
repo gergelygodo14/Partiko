@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Image from "next/image";
 import { Geist, Geist_Mono } from "next/font/google";
 import UpdateNotifier from "@/components/UpdateNotifier";
@@ -26,6 +26,17 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Partiko",
   description: "Alapanyag-nyilvántartó",
+};
+
+// viewportFit: "cover" is what makes iOS actually report a nonzero
+// env(safe-area-inset-bottom) - without it, the browser reports 0 and
+// BottomNav's safe-area padding below does nothing, so the nav sits flush
+// against (and its taps get eaten by) the home-indicator gesture strip on
+// notched/Face-ID iPhones. 2026-09-10, owner report from real iPhone use.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

@@ -150,7 +150,7 @@ export default function BottomNav() {
   return (
     <nav
       ref={navRef}
-      className="fixed bottom-0 left-0 right-0 z-40 bg-ink pb-[env(safe-area-inset-bottom)]"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-ink pb-[calc(env(safe-area-inset-bottom)+8px)]"
       aria-label="Fő navigáció"
     >
       <div className="relative max-w-3xl mx-auto">
